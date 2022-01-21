@@ -1,0 +1,95 @@
+body {
+    width: 100vw;
+    weight: 100vh;
+    color: black;
+    font-family: sans serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+ }
+ 
+ #page {
+    display: grid;
+    width: 100vw;
+    height: 100vh;;
+     grid-template-areas: "head"
+                          "main"
+                          "nav" 
+                          "foot";
+    grid-template-rows: 50px 1fr 1fr 30px;
+    grid-template-columns: auto;   
+  }
+
+
+  @media (min-width: 1024px) {   
+    #page {   
+        grid-template-areas: "head head"
+                             "nav  main"
+                             "foot  foot";
+       grid-template-rows: 50px 1fr 30px;
+       grid-template-columns: 350px auto;      
+    }      
+ }   
+  
+  #page > header {
+    grid-area: head;
+    background-color: #8ca0ff;
+  }
+  
+  #page > nav {
+    grid-area: nav;
+    background-color: #ffa08c;
+  }
+  
+  #page > main {
+    grid-area: main;
+    background-color: #ffff64;
+  }
+  
+  #page > footer {
+    grid-area: foot;
+    background-color: #8cffa0;
+  }
+
+
+  .dr {
+    border: 3px dashed red;
+  }
+
+  .db {
+    border: 3px dashed blue;
+  }
+
+  .dg {
+    border: 3px dashed green;
+  }
+ 
+
+div.right-content {
+  display: grid;
+  grid-template-columns: minmax(1rem, 4rem) auto minmax(1rem, 4rem);
+}
+
+table.gridview {
+  width: 100%;
+}
+
+div.subheading {
+  display: flex;
+  justify-content: center;
+}
+
+div.controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;  
+  align-items: center;
+  height: 3rem;
+}
+
+.mt-3 {
+  margin-top: 1rem;
+}
+.mr-3 {
+  margin-right: 1rem;
+}

@@ -1,0 +1,163 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>
+        Untitled Page
+    </title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="stylesheet" href="../public/vendor/css/bootstrap5/bootstrap.min.css" />
+    <link href="../public/vendor/fontawesome/css/all.css" rel="stylesheet" /> <!--load all styles -->
+
+
+    <style>
+        div.container {
+            border: red dashed 1px;
+        }
+    </style>
+
+
+</head>
+<body>
+
+    <div class="container-fluid alert-danger">
+        <small>Debugging is enabled</small>
+    </div>
+    <form method="post" action="./customerForm.aspx" id="form1">
+        <div class="aspNetHidden">
+            <input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+            <input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+            <input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="8LUiT1pyFw21wwYtE+eDC26IPIJ6HNYGBS+90s17BwGFSGRqNzG0lNSXgAbaKwi3AplodAjTACdpnDFEuioUVxugCm3SHCA3rZe9/SbJ5avAzYayjyfvOsTKRUUXGPurORLWeEiL3wSjNKjCQi28ckbZlFBdWqhogvIBuqetV2W6iY6IkyB2DexIp7v+fNJhHeZXv9kRM7JMwKVABx9UPHMfeoMzSXqoQqrazaXl7/Ex03gPC1Fd4DgID1B/RTRZmMA7m6cjjmKi7zTh8Cv94VLyfwniSLXk9gs+jeMnG6wHyGokKX4FI5U+tjOgJtcifk3m01/NwXi+nATlcRupMRY7uhTFBl9TqArMRFQMLgXeVepj6yKu0ZwgbRQvh/cR+eqa+4Y8KszwNbRZP+XdEwCsJXzdb2+rg/lnmbGH9xFR6bmUPH0HPSEKb2t8psoSV5qefUANSfd1flneQMRLzfNoznV+5w7DsAkLb2AhimRdCAiFauEkSTjYgo/B2eNMKyJ+Md5+dhmB1vyhYUb4LPAV5U58XvS2bA3I6e3PnCnJb7cBKFInMEzOlugYyf5C1lk/ufkKjeFFdMQxpaGairdPPTb6C0n6BHE49Y0YROXj0bHwtLwHH8KoL3RwjUq9DEF1fOR89QaKhuDs+FMBHRaZ5Fj1YK3ueOoAdyBJuwhc0VeM7EiMGGQ7PFXXPqSVyRj/fLSYVB09RZdYfk7XEhysu6Ovjaf2XLvKe7lNK4rEQXApyvx/sEs719m5AMu+MY39PbzeNPxc9w1eNmT2S8R2SBwvmQ7ssWdzgukSaHTyg+KqfFwNGjX/Gakc9p+i91VccRMw2NK6o1xQznsk4x5r8dWnxSdQEZHgrnGzlV+sdJj51xeuf8nhW1/D/HheC4hJtLJ65KC20dcpRFCPihEbgh1oGXxVQR1mQuFOJ8/dMYsGk/sJIybCoyZblncEmB+/SmzS2lNe/Uww0KwBK2RYpBQmJCHLrR9Y2CXf/6FWUxztEhHCU9y6nrg4yak9CM5YULfVXWsPMQfMKho0hNp3mPAWFoQceRI+PnjVCgCV4gl76HbFDC2p4/AEwnd1loJTYp7dGmZpiSKDZTKDZQvnCrT+JjSFuzxVO3VZCoMPf1+gl1qG4VBIEC86VP8PWdmeuHt3YxG3rHFJZ9ZCTd7FrLSpe+Z7bhayYCCxdtH+I+6BL4+vY3Py9aVL0ihQ475ipQA7WrseQwOpbgSc6iDIST8B3310odzevXMYxSG3TCZLG8oH6WAGDMjE4KpPjtVpJmyYiUDcptjPAm20SdwgskRvh/jPMWXOkYF73ZaYhV3BMn0kpCsk2QyjwC4Pe/TbIizssNMSgC8pve4JHvTHREp1FdpkudR61d5RjSbSLzEh/Uo9+sWtcAEjX/sm23zCtvA+NoF3xLQ+yA0vGkXqpzPlP81nGj64pdx6N7EoeBzyWIRRBVfY18IqqiK0vDCFwSdrgc7dExDsd2YIJ3FL2vAsybb4QE8LQhq13QWbjVZXK0hcRh9Ds4W9aevh6O9o00lB3hdwdNW3VGc+hFOlebY8art47TpeQjoFw0VU0YxWbzRf/uB0S+08XS9ZGlCYMJM2klQzR7gfxt5cXvMcW2l906FpGzcTQz0+Q6pzB1BP6zxsrQVQWZtEwMTxciFVO+IaRt96Y04quFf3RF85c+aBnvvu4kihjuOLyZMk6mSlvIr+TUung0HJQDkxvPytKabqBVd6g2tUvvddq3k9zXgpMNYx45HKUqc0zJuJni9j6JouOPf1drs/wrqBS51eJLEJqgY3VUeEJ9E3gCuTwZRAwf+uIEmyuAQcDstniI5tGY3qV5WFetWBGynamle2sD3xR1lmqHPU9muVeZKoKb1CRjY4tZ3iUesXnYvbJaSj2seFjPK0DuyB/pGm+RnxlfrwTXKwjorcBJQRaEKBlIoVsJCwfypBZbEq24dkFj5XgxIq+Rlh25Wietx5" />
+        </div>
+
+        <script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+        </script>
+
+
+        <div class="aspNetHidden">
+
+            <input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="7FABF604" />
+            <input type="hidden" name="__VIEWSTATEENCRYPTED" id="__VIEWSTATEENCRYPTED" value="" />
+            <input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/IW0KyBDGiBiRA59H9dPnzpV1lRWlJcJ5PqBQVAn+N96Abk4ygAOPRiyfQm5cpOwXK5vtgDmoHEpOMXXRZO1oJOuI3jcw6kXtcFVUP8TQiK6emL6a9P14zq195CQTRcVQOj0se98ufwouphzvY+bBcKYFny14HhA+PDof9qWJy6hSBnu4sNctCJK2U4zUCQVbG/RAweL4ItUSsUfIPXheupPJDz3pD1vBJxwn5uuXSjnDmsbNX5LafA4I9VfT6dRGCp6GxvtTkVLBbPWtwGMwTVRytIhBswG8zC3Vz+KRK/9b1BSOLEMB9hAlaRVjFL42UnghdKbRlptubzWS5HoZGBEUmb9jfi4Q9L+B/UybSR3+otRY9wLQNwmoyQ9IE8LDOUNKmHZEewFUOIHxA8TsidmtIXI1RD4WwUlcrI+7UoPpN1H5dq2TpcYif8lk6KyF55MUBdwT0Nndy2Q2a6Ek+3/HFy8wxI5AuqPdYXwXAkIpfbbrLvCstjFu79IwYDQQ8Nupt6zz2At37LK9yMcUyDC3yfZnyLswYm9DgHFefv550Um/sigzUs9THYn0mXjlniWe4SaIdOGPCEm/t7lI4k7hysnBhVc/P+FpRFQAGwZ4T5GQd/PPIRkeuI09kOX" />
+        </div>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Navbar</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="index.aspx">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Link</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Dropdown
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="customerForm.aspx">Customer Form</a></li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <span class="navbar-text">
+
+                        Welcome back, <span id="LoginName1">rogerso</span>&nbsp;
+                        <a id="LoginStatus1" class="p-2 roger" href="javascript:__doPostBack(&#39;ctl00$LoginStatus1$ctl00&#39;,&#39;&#39;)">Logout</a>
+
+                    </span>
+                </div>
+
+
+            </div>
+        </nav>
+
+        <div>
+
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-8  d-flex flex-column justify-content-center text-center">
+                        <div>
+                            <h2>Customer Form</h2>
+                            <div>
+                                <input type="submit" name="ctl00$content$buttonNext" value="Next" id="content_buttonNext" />
+                                <div id="content_Panel1" onkeypress="javascript:return WebForm_FireDefaultButton(event, &#39;content_buttonPositionTo&#39;)" style="display:inline;">
+
+                                    <input type="submit" name="ctl00$content$buttonPositionTo" value="Position to" id="content_buttonPositionTo" />
+                                    <input name="ctl00$content$textboxPositionTo" type="text" id="content_textboxPositionTo" placeholder="Position to value" />
+
+                                </div>
+                            </div>
+                            <table class="FixedSizeText" cellspacing="0" cellpadding="4" id="content_gridviewCust" style="color:#333333;border-collapse:collapse;">
+                                <tr style="color:Black;background-color:Silver;font-weight:bold;">
+                                    <th scope="col">Number</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">&nbsp;</th>
+                                    <th scope="col">&nbsp;</th>
+                                </tr>
+                                <tr style="background-color:#E4E4E4;">
+                                    <td style="width:12%;">98100</td>
+                                    <td>Union Career P Usa Co</td>
+                                    <td><a href="javascript:__doPostBack(&#39;ctl00$content$gridviewCust&#39;,&#39;ActionEdit$0&#39;)" style="color:#333333;"><i class='fa-solid fa-pencil'></i></a></td>
+                                    <td><a href="javascript:__doPostBack(&#39;ctl00$content$gridviewCust&#39;,&#39;ActionDelete$0&#39;)" style="color:#333333;"><i class='fa-light fa-trash-can'></i></a></td>
+                                </tr>
+                                <tr style="background-color:White;">
+                                    <td style="width:12%;">34700</td>
+                                    <td>Union Club Herald Transport Associates</td>
+                                    <td><a href="javascript:__doPostBack(&#39;ctl00$content$gridviewCust&#39;,&#39;ActionEdit$1&#39;)" style="color:#333333;"><i class='fa-solid fa-pencil'></i></a></td>
+                                    <td><a href="javascript:__doPostBack(&#39;ctl00$content$gridviewCust&#39;,&#39;ActionDelete$1&#39;)" style="color:#333333;"><i class='fa-light fa-trash-can'></i></a></td>
+                                </tr>
+                                <tr style="color:White;background-color:Silver;font-weight:bold;">
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+
+        </div>
+
+        <script src="/WebResource.axd?d=m28GkYT1wnO0yTP9GrUQHKztAcJz4pSNPAMBMg7u0vRmNO_D_r84GMvPj98DtPAPCXaSdVyRVMMwtZ4xMK3K2i04APJwKtaedhZPfYV7Z381&amp;t=637453854340000000" type="text/javascript"></script>
+    </form>
+
+    <script src="/public/vendor/js/bootstrap5/bootstrap.bundle.min.js"></script>
+    <script src="/public/js/applib.js"></script>
+
+
+    <script>
+        applib.removeAspNetCheckboxWrapper('input[type="radio"],input[type="checkbox"]');
+    </script>
+
+</body>
+</html>

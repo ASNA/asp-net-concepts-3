@@ -1,0 +1,97 @@
+﻿Using System
+Using System.Data
+Using System.Configuration
+Using System.Web.UI
+Using System.Web.UI.WebControls
+
+BegClass CustomerByNameList Access(*Public)
+
+    DclDB DGDB DBName( "*Public/DG Net Local" ) 
+                
+    DclDiskFile Customer +
+            Type(*Input) + 
+            Org(*Indexed) + 
+            Prefix(Customer_) + 
+            File("examples/cmastnewl2") +
+            DB(DGDB) +
+            ImpOpen(*No)  
+
+    DclMemoryFile MemFile ImpOpen( *Yes ) 
+        DclRecordFormat Customers 
+        DclRecordFld    Customer_CMCustNo  Type( *Packed ) Len( 9,0 )
+        DclRecordFld    Customer_CMName    Type( *Char ) Len( 40 )     
+
+    DclProp LastCMName Like(Customer_CMName) Access(*Public) 
+    DclProp LastCMCustNo Like(Customer_CMCustNo) Access(*Public) 
+    DclProp MoreRows Type(*Boolean) Access(*Public) 
+
+    DclFld RowsToDisplay Type(*Integer4) 
+
+    BegConstructor Access(*Public)
+        DclSrParm DGDB Type(ASNA.VisualRPG.Runtime.Database) 
+        DclSrParm RowsToDisplay Type(*Integer4) 
+
+        *This.DGDB = DGDB
+        *This.RowsToDisplay = RowsToDisplay 
+    EndConstructor 
+    
+    // Open - Connect to DB and open files.
+    BegSr Open Access(*Public)
+        If NOT DGDB.IsOpen
+            Connect DGDB
+        EndIf             
+        If NOT Customer.IsOpen
+            Open Customer
+        EndIf 
+    EndSr
+
+    // --------------------------------------
+    // Close - Close all files and disconnect
+    // --------------------------------------
+    BegSr Close Access(*Public)
+        Close *All
+    EndSr
+
+    BegFunc ReadPage Type(DataTable) Access(*Public) 
+        *This.Open()
+        Do FromVal(1) ToVal(*This.RowsToDisplay) 
+            Read Customer 
+            If Customer.IsEof()            
+                Leave
+            EndIf
+
+            Write MemFile                
+
+            *This.LastCMName = Customer_CMName
+            *This.LastCMCustNo = Customer_CMCustNo
+        EndDo 
+
+        Read Customer 
+        *This.MoreRows = NOT Customer.IsEof()
+
+        *This.Close() 
+        LeaveSr MemFile.DataSet.Tables[0]
+    EndFunc
+
+    BegFunc ReadNextPage Type(DataTable) Access(*Public) 
+        *This.Open() 
+        SetGT Customer Key(*This.LastCMName, *This.LastCMCustno)
+        LeaveSr ReadPage()
+    EndFunc 
+
+    BegFunc PositionPageTo  Type(DataTable) Access(*Public) 
+        DclsrParm Name Like(Customer_CMName) 
+
+        LeaveSr PositionPageTo(Name, 0) 
+    EndFunc 
+
+    BegFunc PositionPageTo  Type(DataTable) Access(*Public) 
+        DclsrParm Name Like(Customer_CMName) 
+        DclsrParm Number Like(Customer_CMCustNo) 
+
+        *This.Open() 
+        SetLL Customer Key(Name, Number)
+        LeaveSr ReadPage()
+    EndFunc 
+
+EndClass
