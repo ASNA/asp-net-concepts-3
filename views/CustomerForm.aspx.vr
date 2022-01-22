@@ -45,6 +45,11 @@ BegClass CustomerForm Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
         Session['lastCMCustNo'] = CustNameList.LastCMCustNo
         Session['lastCMName'] = CustNameList.LastCMName
         buttonNext.Enabled = CustNameList.MoreRows
+        If buttonNext.Enabled 
+            labelTableFooter.Text = 'More records to show'
+        Else
+            labelTableFooter.Text = 'No more records to show'
+        EndIf 
     EndSr 
 
     BegSr Page_Unload Access(*Private) Event(*This.Unload)
