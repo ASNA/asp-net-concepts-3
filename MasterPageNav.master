@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link rel="stylesheet" href="public/vendor/css/bootstrap5/bootstrap.min.css" />
+    <link rel="stylesheet" href="public/css/layout.css" />
     
     <link href="public/vendor/fontawesome/css/all.css" rel="stylesheet"> <!--load all styles -->
 

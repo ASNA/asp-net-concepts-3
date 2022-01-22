@@ -1,4 +1,4 @@
-body {
+/*body {
     width: 100vw;
     weight: 100vh;
     color: black;
@@ -6,8 +6,9 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
- }
+ }*/
  
+/*
  #page {
     display: grid;
     width: 100vw;
@@ -51,23 +52,25 @@ body {
     background-color: #8cffa0;
   }
 
+*/
 
-  .dr {
+  .r {
     border: 3px dashed red;
   }
 
-  .db {
+  .b {
     border: 3px dashed blue;
   }
 
-  .dg {
+  .g {
     border: 3px dashed green;
   }
- 
+
+
 
 div.right-content {
-  display: grid;
-  grid-template-columns: minmax(1rem, 4rem) auto minmax(1rem, 4rem);
+    display: grid;
+    grid-template-columns:  minmax(15%, 5%) minmax(70%, 90%) minmax(15%, 5%);
 }
 
 table.gridview {
@@ -80,11 +83,13 @@ div.subheading {
 }
 
 div.controls {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;  
-  align-items: center;
-  height: 3rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    padding-top: 1rem;
+    padding-bottom: .5rem;
+    /*height: 3rem;*/
 }
 
 .mt-3 {

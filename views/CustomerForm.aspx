@@ -9,56 +9,57 @@
 // If you did that the combined and minified CSS would be specified 
 // for the production version.
 #--%>
-    <%
-    If (HttpContext.Current.IsDebuggingEnabled)     
-    %>
-    <link rel="stylesheet" href="/public/css/one-column-layout.css">
-    <link rel="stylesheet" href="/public/css/grid.css">
-    <%
-    Else
-    %>
-    <link rel="stylesheet" href="/public/css/one-column-layout.css">
-    <link rel="stylesheet" href="/public/css/grid.css">
-    <%
-    EndIf 
-    %>
 </asp:Content>
+
 <asp:Content ID="Content2" ContentPlaceHolderID="Content" Runat="Server">
 
-    <div class="container">
-    <h2>Customer Form</h2>
-        <div>
-            <asp:Button ID="buttonNext" runat="server" Text="Next" />
-            <asp:Panel ID="Panel1" runat="server" DefaultButton="buttonPositionTo" Style="display:inline;">
-                <asp:Button ID="buttonPositionTo" runat="server" Text="Position to"/>
-                <asp:TextBox ID="textboxPositionTo" runat="server" placeholder="Position to value"></asp:TextBox>
-            </asp:Panel> 
-        </div>
-        <div style="margin-top: 3em;">
-        <asp:GridView ID="gridviewCust" runat="server" AutoGenerateColumns="False" CellPadding="4" GridLines="None" 
-            AllowPaging="True" CssClass="FixedSizeText" ForeColor="#333333" ShowFooter="True" DataKeyNames="customer_cmname,customer_cmcustno">
-            <FooterStyle BackColor="Silver" ForeColor="White" Font-Bold="True" />
-            <Columns>
-                <asp:BoundField DataField="Customer_CMCustNo" HeaderText="Number" DataFormatString="{0:00000}" HtmlEncode="False">
-                    <ItemStyle Width="12%" />
-                </asp:BoundField>
-                <asp:BoundField DataField="customer_cmname" HeaderText="Name" />
+    <%--<div class="container">--%>
+
+    <div class="right-content">
+        <div class="gutter g">x</div>
+        <div class="center-gutter">
+            <div class="subheading mt-3 b">
+                <h2>Customer Form</h2>
+            </div>
+            <div class="subnav r">
+                <div class="controls">
+                    <asp:Button ID="buttonNext" runat="server" Text="Next" />
+                    <asp:Panel ID="Panel1" runat="server" DefaultButton="buttonPositionTo" Style="display:inline;">
+                        <asp:Button ID="buttonPositionTo" runat="server" Text="Position to"/>
+                        <asp:TextBox ID="textboxPositionTo" runat="server" placeholder="Position to value"></asp:TextBox>
+                    </asp:Panel> 
+                </div>
+                    <!-- gridview start -->
+                        <asp:GridView ID="gridviewCust" runat="server" AutoGenerateColumns="False" CellPadding="4" GridLines="None" 
+                            AllowPaging="True" CssClass="FixedSizeText gridview" ForeColor="#333333" ShowFooter="True" DataKeyNames="customer_cmname,customer_cmcustno">
+                            <FooterStyle BackColor="Silver" ForeColor="White" Font-Bold="True" />
+                            <Columns>
+                                <asp:BoundField DataField="Customer_CMCustNo" HeaderText="Number" DataFormatString="{0:00000}" HtmlEncode="False">
+                                    <ItemStyle Width="12%" />
+                                </asp:BoundField>
+                                <asp:BoundField DataField="customer_cmname" HeaderText="Name" />
                 
-                <asp:ButtonField CommandName="ActionEdit" Text="<i class='fa-solid fa-pencil'></i>" />
+                                <asp:ButtonField CommandName="ActionEdit" Text="<i class='fa-solid fa-pencil'></i>" />
 
-                <asp:ButtonField CommandName="ActionDelete" Text="<i class='fa-light fa-trash-can'></i>" />
+                                <asp:ButtonField CommandName="ActionDelete" Text="<i class='fa-light fa-trash-can'></i>" />
 
-            </Columns>
-            <RowStyle BackColor="#E4E4E4" />
-            <SelectedRowStyle BackColor="#D1DDF1" Font-Bold="True" ForeColor="#333333" />
-            <PagerStyle BackColor="#2461BF" ForeColor="White" HorizontalAlign="Center" />
-            <HeaderStyle BackColor="Silver" Font-Bold="True" ForeColor="Black" />
-            <AlternatingRowStyle BackColor="White" />
-            <PagerSettings Visible="False" />
-            <EditRowStyle BackColor="#2461BF" />
-        </asp:GridView>
+                            </Columns>
+                            <RowStyle BackColor="#E4E4E4" />
+                            <SelectedRowStyle BackColor="#D1DDF1" Font-Bold="True" ForeColor="#333333" />
+                            <PagerStyle BackColor="#2461BF" ForeColor="White" HorizontalAlign="Center" />
+                            <HeaderStyle BackColor="Silver" Font-Bold="True" ForeColor="Black" />
+                            <AlternatingRowStyle BackColor="White" />
+                            <PagerSettings Visible="False" />
+                            <EditRowStyle BackColor="#2461BF" />
+                        </asp:GridView>
+                    <!-- gridview end -->
+            </div>
         </div>
-</div>
+        <div class="gutter g">x</div>
+    </div>
+
+
+    <%--</div>--%>
 
 
 </asp:Content>
