@@ -10,25 +10,6 @@
 // for the production version.
 #--%>
 
-
-    <!-- Set table column widths -->
-    <style>
-        .zebra-stripe td:nth-child(1) {
-            width: 6rem;
-        }
-
-        .zebra-stripe td:nth-child(2) {
-            width: auto;
-        }
-
-        .zebra-stripe td:nth-child(3) {
-            width: 4rem;
-        }
-
-        .zebra-stripe td:nth-child(4) {
-            width: 4rem;
-        }
-    </style>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="Content" Runat="Server">
@@ -43,25 +24,65 @@
             </div>
             <div class="subnav r">
                 <div class="controls">
-                    <asp:Button ID="buttonNext" runat="server" Text="Next" />
-                    <asp:Panel ID="Panel1" runat="server" DefaultButton="buttonPositionTo">
-                        <asp:Button cssClass="ms-3" ID="buttonPositionTo" runat="server" Text="Position to"/>
-                        <asp:TextBox ID="textboxPositionTo" runat="server" placeholder="Position to value"></asp:TextBox>
-                    </asp:Panel> 
+                    <asp:Label ID="labelCustomerNumber" runat="server" Text="Label"></asp:Label>
                 </div>
-                <!-- gridview start -->
-                <asp:GridView ID="gridviewCust" runat="server" AutoGenerateColumns="False" 
-                    AllowPaging="False" CssClass="gridview zebra-stripe" DataKeyNames="customer_cmname,customer_cmcustno">
-                    <Columns>
-                        <asp:BoundField DataField="Customer_CMCustNo" HeaderText="Number" DataFormatString="{0:00000}" HtmlEncode="False"/>
-                        <asp:BoundField DataField="customer_cmname" HeaderText="Name" />                
-                        <asp:ButtonField CommandName="ActionEdit" Text="<i class='fa-solid fa-pencil'></i>" />
-                        <asp:ButtonField CommandName="ActionDelete" Text="<i class='fa-light fa-trash-can'></i>" />
-                    </Columns>
-                </asp:GridView>
-                <!-- gridview end -->
-                <div class="table-footer">
-                    <asp:Label ID="labelTableFooter" runat="server" Text="Label"></asp:Label>
+                <div>
+                    <asp:Panel ID="panelInput" runat="server">
+                        <div class="row mt-3">
+                            <div class="col-12 mt-3">
+                                <label for="CMCustNo" class="form-label">Customer Number</label>
+                                <asp:TextBox ID="CMCustNo" runat="server"  placeholder="Name" CssClass="form-control" ReadOnly="True"></asp:TextBox>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-12 mt-3">
+                                <label for="CMName" class="form-label">Name</label>
+                                <asp:TextBox ID="CMName" runat="server"  placeholder="Name" CssClass="form-control"></asp:TextBox>
+                            </div>
+                            <div class="col-12 mt-3">
+                                <label for="CMAddr1" class="form-label">Address</label>
+                                <asp:TextBox ID="CMAddr1" runat="server" PlaceHolder="City" CssClass="form-control"></asp:TextBox>
+                            </div>
+                        </div>
+    
+                        <div class="row">
+                            <div class="col-6 mt-3">
+                                <label for="CMCity" class="form-label">City</label>
+                                <asp:TextBox ID="CMCity" runat="server" PlaceHolder="City" CssClass="form-control"></asp:TextBox>
+                            </div>
+                            <div class="col-6 mt-3">
+                                <label for="CMState" class="form-label">State</label>
+                                <asp:DropDownList ID="CMState" runat="server" CssClass="form-control"></asp:DropDownList>
+                            </div>
+                        </div>
+    
+                        <div class="row">
+                            <div class="col-6 mt-3">
+                                <label for="CMPostCode" class="form-label">Zip</label>
+                                <asp:TextBox ID="CMPostCode" runat="server" PlaceHolder="Zip code" CssClass="form-control"></asp:TextBox>
+                            </div>
+                            <div class="col-6 mt-3">
+                                <label for="CMCntry" class="form-label">Country</label>
+                                <asp:TextBox ID="CMCntry" runat="server" PlaceHolder="Country" CssClass="form-control"></asp:TextBox>
+                            </div>
+                        </div>
+    
+                        <div class="row">
+                            <div class="col-12 mt-3">
+                                <div class="form-check">
+                                    <asp:CheckBox ID="CMActive" runat="server"  PlaceHolder="Active" CssClass="form-control"/>
+                                    <label class="form-check-label" for="CMActive">
+                                        Active
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="col-12 mt-3">
+                            <asp:Button ID="buttonUpdateCustomer" runat="server" Text="Update"  cssclass="btn btn-primary"/>
+                        </div>
+                    </asp:Panel>
                 </div>
             </div>
         </div>

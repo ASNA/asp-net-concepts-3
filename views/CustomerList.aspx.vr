@@ -1,0 +1,126 @@
+﻿Using System
+Using System.Data
+Using System.Configuration
+Using System.Collections
+Using System.Web
+Using System.Web.Security
+Using System.Web.UI
+Using System.Web.UI.WebControls
+Using System.Web.UI.WebControls.WebParts
+Using System.Web.UI.HtmlControls
+
+BegClass views_CustomerList Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
+
+    DclDB DGDB 
+    DclFld dt Type(DataTable) 
+    DclFld CustNameList Type(CustomerByNameList) 
+    DclConst ROWS_TO_DISPLAY Value(16) 
+
+    BegSr Page_Load Access(*Private) Event(*This.Load)
+        DclSrParm sender Type(*Object)
+        DclSrParm e Type(System.EventArgs)
+
+        DGDB.DBName = Application['dbname'].ToString()
+//        If Session['user'] = *Nothing
+//            FormsAuthentication.SignOut()
+//            Response.Redirect("customerform.aspx") 
+//        EndIf
+
+        DGDB.User = Session['user'].ToString()
+        DGDB.Password = Session['password'].ToString()
+
+        Connect DGDB 
+        CustNameList = *New CustomerByNameList(DGDB, ROWS_TO_DISPLAY) 
+
+        If (NOT Page.IsPostBack)
+            dt = CustNamelist.ReadPage()
+            BindGridView() 
+        Else
+        EndIf
+    EndSr
+
+    BegSr BindGridView 
+        gridviewCust.DataSource = dt
+        gridviewCust.DataBind()
+        Session['lastCMCustNo'] = CustNameList.LastCMCustNo
+        Session['lastCMName'] = CustNameList.LastCMName
+        buttonNext.Enabled = CustNameList.MoreRows
+        If buttonNext.Enabled 
+            labelTableFooter.Text = 'More records to show'
+        Else
+            labelTableFooter.Text = 'No more records to show'
+        EndIf 
+    EndSr 
+
+    BegSr Page_Unload Access(*Private) Event(*This.Unload)
+        DclSrParm sender Type(*Object)
+        DclSrParm e Type(System.EventArgs)
+
+        Disconnect DGDB 
+        //
+        // Called when the page is unloaded.
+        //
+    EndSr
+
+	BegSr gridviewCust_SelectedIndexChanged Access(*Private) Event(*This.gridviewCust.SelectedIndexChanged)
+		DclSrParm sender Type(*Object)
+		DclSrParm e Type(System.EventArgs)
+		
+        DclFld SelectedRow Type(*Integer4) 
+
+        SelectedRow = gridviewCust.SelectedIndex
+
+        DclFld CustomerNumber Type(*Integer4) 
+        DclFld CustomerName Type(*String) 
+
+        CustomerNumber = Convert.ToInt32(gridviewCust.DataKeys[SelectedRow]['customer_cmcustno'])
+        CustomerName = gridviewCust.DataKeys[SelectedRow]['customer_cmname'].ToString()
+	EndSr
+
+	BegSr buttonNext_Click Access(*Private) Event(*This.buttonNext.Click)
+		DclSrParm sender Type(*Object)
+		DclSrParm e Type(System.EventArgs)
+
+        CustNameList.LastCMCustNo = Convert.ToInt32(Session['lastCMCustNo'])
+        CustNameList.LastCMName = Session['lastCMName'].ToString()
+        dt = CustNamelist.ReadNextPage()
+
+        BindGridView() 		
+	EndSr
+
+	BegSr buttonPositionTo_Click Access(*Private) Event(*This.buttonPositionTo.Click)
+		DclSrParm sender Type(*Object)
+		DclSrParm e Type(System.EventArgs)
+
+        If textboxPositionTo.Text.Trim() <> String.Empty 
+            dt = CustNamelist.PositionPageTo(textboxPositionTo.Text.Trim())
+            // If no rows then position-to failed--leave grid as is and show message. 
+            If dt.Rows.Count = 0 
+                LeaveSr 
+            EndIf 
+
+            BindGridView() 		
+            textboxPositionTo.Text = String.Empty 
+        EndIf 
+	EndSr
+
+	BegSr gridviewCust_RowCommand Access(*Private) Event(*This.gridviewCust.RowCommand)
+		DclSrParm sender Type(*Object)
+		DclSrParm e Type(System.Web.UI.WebControls.GridViewCommandEventArgs)
+
+        DclFld CommandName    Type(*String)
+        DclFld SelectedIndex  Type(*Integer4) 
+        DclFld SelectedRow    Type(GridViewRow)
+        DclFld CustomerNumber Type(*Integer4)
+
+        CommandName = e.CommandName
+        SelectedIndex = e.CommandArgument.ToString() 
+        SelectedRow = gridviewCust.Rows[SelectedIndex]
+        CustomerNumber = gridviewCust.DataKeys[SelectedIndex]["customer_cmcustno"].ToString()		
+
+        If CommandName = 'ActionEdit'
+            Session['customer-number'] = CustomerNumber
+            Response.Redirect('customerform.aspx')
+        EndIf 
+	EndSr
+EndClass

@@ -1,0 +1,81 @@
+﻿Using System
+Using System.Data
+Using System.Collections.Specialized
+Using System.Configuration
+Using System.Web.UI
+Using System.Web.UI.WebControls
+
+BegClass CustomerCrud Access(*Public)
+
+    DclDB DGDB DBName( "*Public/DG Net Local" ) 
+                
+    DclDiskFile Customer +
+            Type(*Update) + 
+            Org(*Indexed) + 
+            File("examples/cmastnewl1") +
+            DB(DGDB) +
+            ImpOpen(*No)  
+
+    DclMemoryFile MemFile +
+          DBDesc( "*Public/DG Net Local" ) +
+          FileDesc( "Examples/CMastNewL1" ) +          
+          ImpOpen( *Yes ) + 
+          RnmFmt( MemFileR )
+
+    BegConstructor Access(*Public)
+        DclSrParm DGDB Type(ASNA.VisualRPG.Runtime.Database) 
+
+        *This.DGDB = DGDB
+    EndConstructor 
+    
+    // Open - Connect to DB and open files.
+    BegSr Open Access(*Public)
+        If NOT DGDB.IsOpen
+            Connect DGDB
+        EndIf             
+        If NOT Customer.IsOpen
+            Open Customer
+        EndIf 
+    EndSr
+
+    // Close - Close all files
+    BegSr Close Access(*Public)
+        Close *All
+    EndSr
+
+    BegSr UpdateCustomer Access(*Public) 
+        DclSrParm CustomerNumber Like(CMCustNo) 
+        DclSrParm NewFieldValues Type(DataTable) 
+       
+        *This.Open()
+
+        Chain Customer Key(CustomerNumber) 
+        If Customer.IsFound() 
+
+            Write MemFile
+            CrudHelpers.UpdateFirstDataRow(MemFile.DataSet, NewFieldValues)
+            Chain MemFile Key(1) 
+
+            Update Customer 
+        EndIf 
+        
+        *This.Close()
+    EndSr 
+
+    BegFunc ReadCustomer Type(DataTable) Access(*Public) 
+        DclSrParm CustomerNumber Like(CMCustNo) 
+        
+        *This.Open()
+
+        Chain Customer Key(CustomerNumber) 
+        If Customer.IsFound() 
+            Write MemFile
+            LeaveSr MemFile.DataSet.Tables[0]
+        Else
+            LeaveSr *Nothing 
+        EndIf 
+
+        *This.Close() 
+    EndFunc 
+
+EndClass

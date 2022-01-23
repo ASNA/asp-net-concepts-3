@@ -1,0 +1,178 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en" >
+<head><title>
+	Untitled Page
+</title><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="stylesheet" href="../public/vendor/css/bootstrap5/bootstrap.min.css" /><link rel="stylesheet" href="../public/css/layout.css" /><link href="../public/vendor/fontawesome/css/all.css" rel="stylesheet" /> <!--load all styles -->
+
+    
+    
+
+</head>
+<body>
+    
+     <div class="container-fluid alert-danger">
+        <small>Debugging is enabled</small>
+    </div>
+    <form method="post" action="./customerform.aspx" id="form1">
+<div class="aspNetHidden">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUJLTQ5MTUyMzQ1D2QWAmYPZBYCAgEPZBYCAgIPZBYCAgIPDxYCHgRUZXh0BQU0OTMwMGRkGAEFHl9fQ29udHJvbHNSZXF1aXJlUG9zdEJhY2tLZXlfXxYCBRhjdGwwMCRMb2dpblN0YXR1czEkY3RsMDEFGGN0bDAwJExvZ2luU3RhdHVzMSRjdGwwM/F77+Ix7ZPUeXPaVcYXRKdhMLqA7Jh/kEwgw8Qw06nl" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="7FABF604" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/wEdAAI1OZ0Buaai0fd2hbr+Sshtt32TQLAooT3C8ukr4Z8v0CQYqKA/UyEO6wFGAXFOXl6d3Oh8xHPrboWDEjQEZJkd" />
+</div>       
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+          <div class="container-fluid">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+
+                        
+            <div class="collapse navbar-collapse" id ="navbarSupportedContent">
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="index.aspx">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Dropdown
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="customerList.aspx">Customer List</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                  </ul>
+                </li>
+              </ul>
+                <span class="navbar-text">                   
+                                    
+                        Welcome back, <span id="LoginName1">rogerso</span>&nbsp;
+                                      <a id="LoginStatus1" class="p-2 roger" href="javascript:__doPostBack(&#39;ctl00$LoginStatus1$ctl00&#39;,&#39;&#39;)">Logout</a>
+                    
+                </span>
+             </div>
+            
+
+          </div>
+        </nav>
+
+        <div>
+            
+
+    
+
+    <div class="right-content">
+        <div class="gutter g"></div>
+        <div class="center-gutter">
+            <div class="subheading mt-3 b">
+                <h2>Customer Form</h2>
+            </div>
+            <div class="subnav r">
+                <div class="controls">
+                    <span id="content_labelCustomerNumber">49300</span>
+                </div>
+                <div>
+                    <div class="row mt-3">
+                        <div class="col-12 mt-3">
+                            <label for="customer_name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="customer_name" placeholder="Name">
+                        </div>
+                        <div class="col-12 mt-3">
+                            <label for="customer_address" class="form-label">Address</label>
+                            <input type="text" class="form-control" id="customer_address" placeholder="Address">
+                        </div>
+                    </div>
+    
+                    <div class="row">
+                        <div class="col-6 mt-3">
+                            <label for="inputCity" class="form-label">City</label>
+                            <input type="text" class="form-control" id="inputCity">
+                        </div>
+                        <div class="col-6 mt-3">
+                            <label for="inputState" class="form-label">State</label>
+                            <select id="inputState" class="form-select">
+                                <option selected>Choose...</option>
+                                <option>...</option>
+                            </select>
+                        </div>
+                    </div>
+    
+                    <div class="row">
+                        <div class="col-6 mt-3">
+                            <label for="customer_zip" class="form-label">Zip</label>
+                            <input type="text" class="form-control" id="customer_zip">
+                        </div>
+                        <div class="col-6 mt-3">
+                            <label for="customer_country" class="form-label">Country</label>
+                            <input type="text" class="form-control" id="customer_country" placeholder="Country">
+                        </div>
+                    </div>
+    
+                    <div class="row">
+                        <div class="col-12 mt-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="customer_status"/>
+                                <label class="form-check-label" for="customer_status">
+                                    Active
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="col-12 mt-3">
+                        <button type="submit" class="btn btn-primary">Sign in</button>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+        <div class="gutter g"></div>
+    </div>
+
+
+    
+
+
+
+        </div>
+    </form>
+
+        <script src="/public/vendor/js/bootstrap5/bootstrap.bundle.min.js"></script>
+        <script src="/public/js/applib.js"></script>
+
+        
+    <script>
+        applib.removeAspNetCheckboxWrapper('input[type="radiozz"],input[type="checkboxzz"]');
+    </script>
+
+    </body>
+</html>

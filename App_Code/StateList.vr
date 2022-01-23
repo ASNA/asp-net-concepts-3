@@ -1,0 +1,55 @@
+Using System
+Using System.Data 
+Using System.Web.UI.WebControls
+Using System.Web
+
+BegClass StateList Access( *Public ) Extends( System.Object ) 
+
+    DclDB pgmDB DBName( "*Public/DG NET Local" ) 
+
+    DclDiskFile  States              +
+          Type( *Input  )            +
+          Org( *Indexed )            +
+          Prefix( States_ )          +
+          File( "Examples/States" )  +
+          DB( pgmDB )                +
+          ImpOpen( *No )  
+
+    BegConstructor Access(*Public)
+        DclSrParm ExternalpgmDB Type( ASNA.VisualRPG.Runtime.Database ) 
+
+        *This.pgmDb = ExternalpgmDB
+    EndConstructor
+
+    BegFunc GetList Type( ListItemCollection ) Access( *Public ) 
+        DclFld Result Type( ListItemCollection ) New()
+        
+        OpenData()
+
+        Read States
+        DoWhile ( NOT States.IsEof )
+            //
+            // Either of these may need a ToString().
+            //
+            Result.Add( *New ListItem( States_State.Trim(), States_Abbrev ) )
+            Read States
+        EndDo 
+
+        CloseData()
+
+        LeaveSr Result 
+    EndFunc          
+
+    BegSr OpenData 
+        If ( NOT pgmDB.IsOpen ) 
+            Connect pgmDB 
+        EndIf     
+        Open    States
+    EndSr
+
+    BegSr CloseData
+        Close States
+    EndSr          
+
+
+EndClass
