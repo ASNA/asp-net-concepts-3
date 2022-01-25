@@ -39,10 +39,14 @@
                             <div class="col-12 mt-3">
                                 <label for="CMName" class="form-label">Name</label>
                                 <asp:TextBox ID="CMName" runat="server"  placeholder="Name" CssClass="form-control"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" cssClass="alert alert-danger p-1" Display="Dynamic"
+                                     ErrorMessage="Name required" ControlToValidate="CMName"></asp:RequiredFieldValidator>
                             </div>
                             <div class="col-12 mt-3">
                                 <label for="CMAddr1" class="form-label">Address</label>
                                 <asp:TextBox ID="CMAddr1" runat="server" PlaceHolder="City" CssClass="form-control"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" cssClass="alert alert-danger p-1" Display="Dynamic"
+                                     ErrorMessage="Address required" ControlToValidate="CMAddr1"></asp:RequiredFieldValidator>
                             </div>
                         </div>
     
@@ -50,6 +54,8 @@
                             <div class="col-6 mt-3">
                                 <label for="CMCity" class="form-label">City</label>
                                 <asp:TextBox ID="CMCity" runat="server" PlaceHolder="City" CssClass="form-control"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" cssClass="alert alert-danger p-1" Display="Dynamic"
+                                     ErrorMessage="City required" ControlToValidate="CMCity"></asp:RequiredFieldValidator>
                             </div>
                             <div class="col-6 mt-3">
                                 <label for="CMState" class="form-label">State</label>
@@ -61,10 +67,17 @@
                             <div class="col-6 mt-3">
                                 <label for="CMPostCode" class="form-label">Zip</label>
                                 <asp:TextBox ID="CMPostCode" runat="server" PlaceHolder="Zip code" CssClass="form-control"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="RequiredFieldValidator4" runat="server" cssClass="alert alert-danger p-1" Display="Dynamic"
+                                     ErrorMessage="Zip code required" ControlToValidate="CMPostCode"></asp:RequiredFieldValidator>
+                                <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" ControlToValidate="CMPostCode"  cssClass="alert alert-danger p-1" Display="Dynamic"
+                                    ErrorMessage="Zip code must be in the format nnnnn or nnnnn-nnnn" ValidationExpression="^\d{5}(-\d{4})?$" ></asp:RegularExpressionValidator>
                             </div>
                             <div class="col-6 mt-3">
                                 <label for="CMCntry" class="form-label">Country</label>
                                 <asp:TextBox ID="CMCntry" runat="server" PlaceHolder="Country" CssClass="form-control"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="RequiredFieldValidator5" runat="server" cssClass="alert alert-danger p-1" Display="Dynamic"
+                                     ErrorMessage="Country required" ControlToValidate="CMCntry"></asp:RequiredFieldValidator>
+
                             </div>
                         </div>
     
