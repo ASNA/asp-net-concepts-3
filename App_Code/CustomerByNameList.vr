@@ -1,12 +1,10 @@
 ﻿Using System
 Using System.Data
 Using System.Configuration
-Using System.Web.UI
-Using System.Web.UI.WebControls
 
 BegClass CustomerByNameList Access(*Public)
 
-    DclDB DGDB DBName( "*Public/DG Net Local" ) 
+    DclDB DGDB DBName("*Public/DG Net Local") 
                 
     DclDiskFile Customer +
             Type(*Input) + 
@@ -16,13 +14,17 @@ BegClass CustomerByNameList Access(*Public)
             DB(DGDB) +
             ImpOpen(*No)  
 
-    DclMemoryFile MemFile ImpOpen( *Yes ) 
+    DclMemoryFile MemFile ImpOpen(*Yes) 
         DclRecordFormat Customers 
-        DclRecordFld    Customer_CMCustNo  Type( *Packed ) Len( 9,0 )
-        DclRecordFld    Customer_CMName    Type( *Char ) Len( 40 )     
+        DclRecordFld    Customer_CMCustNo  Type(*Packed) Len(9,0)
+        DclRecordFld    Customer_CMName    Type(*Char) Len(40)     
+
+    DclProp FirstCMName Like(Customer_CMName) Access(*Public) 
+    DclProp FirstCMCustNo Like(Customer_CMCustNo) Access(*Public) 
 
     DclProp LastCMName Like(Customer_CMName) Access(*Public) 
     DclProp LastCMCustNo Like(Customer_CMCustNo) Access(*Public) 
+
     DclProp MoreRows Type(*Boolean) Access(*Public) 
 
     DclFld RowsToDisplay Type(*Integer4) 
@@ -53,18 +55,24 @@ BegClass CustomerByNameList Access(*Public)
     EndSr
 
     BegFunc ReadPage Type(DataTable) Access(*Public) 
+        DclFld RowCounter Type(*Integer4) 
+
         *This.Open()
-        Do FromVal(1) ToVal(*This.RowsToDisplay) 
+        Do FromVal(1) ToVal(*This.RowsToDisplay) Index(RowCounter)
             Read Customer 
             If Customer.IsEof()            
                 Leave
             EndIf
 
             Write MemFile                
-
-            *This.LastCMName = Customer_CMName
-            *This.LastCMCustNo = Customer_CMCustNo
+            If RowCounter = 1
+                *This.FirstCMName = Customer_CMName.Trim()
+                *This.FirstCMCustNo = Customer_CMCustNo
+            EndIf 
         EndDo 
+
+        *This.LastCMName = Customer_CMName.Trim()
+        *This.LastCMCustNo = Customer_CMCustNo
 
         Read Customer 
         *This.MoreRows = NOT Customer.IsEof()
@@ -90,7 +98,7 @@ BegClass CustomerByNameList Access(*Public)
         DclsrParm Number Like(Customer_CMCustNo) 
 
         *This.Open() 
-        SetLL Customer Key(Name, Number)
+        SetLL Customer Key(Name.Trim(), Number)
         LeaveSr ReadPage()
     EndFunc 
 

@@ -17,6 +17,7 @@ BegClass CustomerForm Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
 
     DclFld crud Type(CustomerCrud) 
     DclFld crudhelp Type(CrudHelpers) 
+    DclFld StateHelper Type(AppStateHelper) New(*This.Context) 
 
     BegSr Page_Load Access(*Private) Event(*This.Load)
         DclSrParm sender Type(*Object)
@@ -25,9 +26,9 @@ BegClass CustomerForm Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
         DclFld CustomerNumber Type(*Integer4) 
         DclFld statesList Type(ListItemCollection) 
 
-        DGDB.DBName = Application['dbname'].ToString()
-        DGDB.User = Session['user'].ToString()
-        DGDB.Password = Session['password'].ToString()
+        DGDB.DBName = StateHelper.GetApplicationValueAsString('dbname') 
+        DGDB.User = StateHelper.GetSessionValueAsString('user') 
+        DGDB.Password = StateHelper.GetSessionValueAsString('password') 
 
         Connect DGDB 
         crud = *New CustomerCrud(DGDB)
@@ -37,7 +38,7 @@ BegClass CustomerForm Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
             StatesList = (*New StateList(DGDB)).GetList()
             crudhelp.LoadListControl(CMState, StatesList)
 
-            CustomerNumber = Session['customer-number'].ToString() 
+            CustomerNumber = StateHelper.GetSessionValueAsInt32('customer-number') 
             labelCustomerNumber.Text = CustomerNumber
 
             dt = Crud.ReadCustomer(CustomerNumber) 
@@ -59,149 +60,16 @@ BegClass CustomerForm Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
 
         DclFld CustomerNumber Type(*Integer4) 
 
-        CustomerNumber = Session['customer-number'].ToString() 
-
+        CustomerNumber = Convert.ToInt32(CMCustNo.Text) 
+        
         dt = Crud.ReadCustomer(CustomerNumber) 
         crudhelp.PopulateFormat(dt) 
 
+        Session['first-customer-name'] = CMName.Text
+        Session['first-customer-number'] = CMCustNo.Text
+
         Crud.UpdateCustomer(CustomerNumber, dt) 
         Response.Redirect("CustomerList.aspx") 
-
-
-
-//        DclFld x Type(*String) 
-//        DclFld FieldNameList Type(StringCollection)
-//
-//        FieldNameList =  GetDataFieldNames(dt)
-//
-//        ForEach FieldName Type(*String) Collection(FieldNameList) 
-//            x = dt.Rows[0][FieldName].ToString()
-//        EndFor  
-//
-//        DclFld CustomerNumber Type(*Integer4) 
-//        CustomerNumber = Session['customer-number'].ToString() 
-//
-
-
 	EndSr
 
-
-    // ---------------------------------------------------------------------
-    // ---------------------------------------------------------------------
-//    BegSr PopulateUI 
-//        DclSrParm dt Type(DataTable) 
-//
-//        DclFld FieldNameList Type(StringCollection)
-//
-//        FieldNameList = GetDataFieldNames(dt)
-//
-//        ForEach FieldName Type(*String) Collection(FieldNameList) 
-//            PopulateControlValue(FieldName, dt.Rows[0]) 
-//        EndFor  
-//    EndSr 
-//
-//    BegSr PopulateFormat 
-//        DclSrParm dt Type(DataTable) 
-//
-//        DclFld FieldNameList Type(StringCollection)
-//
-//        FieldNameList = GetDataFieldNames(dt)
-//
-//        ForEach FieldName Type(*String) Collection(FieldNameList) 
-//            PopulateFormatField(FieldName, dt.Rows[0]) 
-//        EndFor  
-//    EndSr 
-//
-//
-//    BegFunc GetDataFieldNames Type(StringCollection) 
-//        DclSrParm dt Type(DataTable) 
-//
-//        DclFld FieldNameList Type(StringCollection) New()
-//        DclFld dc Type(DataColumn) 
-//        DclFld i Type(*Integer4) 
-//
-//        For Index(i = 0) To(dt.Columns.Count - 1)
-//            dc = dt.Columns[i]
-//            FieldNameList.Add(dt.Columns[i].ColumnName.ToLower())
-//        EndFor 
-//
-//        LeaveSr FieldNameList 
-//    EndFunc 
-//
-//    BegSr PopulateControlValue
-//        DclSrParm FldName Type(*String) 
-//        DclSrParm dr Type(DataRow) 
-//
-//        DclFld ctrl Type(Control) 
-//
-//        ctrl = FindControlRecursive(*This, FldName) 
-//        If ctrl <> *Nothing 
-//            If ctrl *Is TextBox 
-//                (ctrl *As TextBox).Text = dr[fldName].ToString()
-//            Elseif ctrl *Is RadioButton
-//                (ctrl *As RadioButton).Text =  dr[fldName].ToString().Trim() = '1'
-//            Elseif ctrl *Is CheckBox 
-//                (ctrl *As CheckBox).Checked = dr[fldName].ToString().Trim() = '1'
-//            Elseif ctrl *Is ListControl
-//                (ctrl *As ListControl).SelectedValue = dr[fldName].ToString().Trim()
-//            EndIf 
-//        EndIf 
-//    EndSr 
-//
-//    BegSr PopulateFormatField 
-//        DclSrParm FldName Type(*String) 
-//        DclSrParm dr Type(DataRow) 
-//
-//        DclFld ctrl Type(Control) 
-//
-//        ctrl = FindControlRecursive(*This, FldName) 
-//        If ctrl <> *Nothing 
-//            If ctrl *Is TextBox 
-//                 dr[fldName] = (ctrl *As TextBox).Text.Trim()
-//            Elseif ctrl *Is RadioButton
-//                 dr[fldName] = (ctrl *As RadioButton).Checked ? '1' : '0'
-//            Elseif ctrl *Is CheckBox 
-//                dr[fldName] = (ctrl *As CheckBox).Checked ? '1' : '0'
-//            Elseif ctrl *Is ListControl
-//                dr[FldName] = (ctrl *As ListControl).SelectedValue
-//            EndIf 
-//        EndIf 
-//    EndSr
-//
-//    BegFunc FindControlRecursive Type(Control) 
-//        DclSrParm parent Type(Control) 
-//        DclSrParm id Type(*String) 
-//
-//        DclFld foundControl Type(Control) 
-//
-//        If parent.id <> *Nothing AND parent.id.ToLower() = id.ToLower()
-//            Leavesr parent 
-//        EndIf 
-//
-//        ForEach ctrl Type(Control) Collection(parent.Controls)
-//            foundControl = FindControlRecursive(Ctrl, id) 
-//            If foundControl <> *Nothing
-//                LeaveSr foundControl 
-//            EndIf 
-//        EndFor 
-//
-//        leaveSr *Nothing 
-//    EndFunc 
-//
-//    BegSr LoadListControl 
-//        DclSrParm ListControlInstance Type(ListControl) 
-//        DclSrParm lic Type( ListItemCollection )
-//       
-//        // When using data binding, the control
-//        // loses track of what the "columns" in the data
-//        // source represent.
-//        // These two lines of code ensure the Text and Value
-//        // fields are appropriately synchronized between the
-//        // bound list and the dropdown control.
-//        ListControlInstance.DataTextField  = "Text"
-//        ListControlInstance.DataValueField = "Value"
-//
-//        ListControlInstance.DataSource = lic
-//        ListControlInstance.DataBind()
-//    EndSr    
 EndClass

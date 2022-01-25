@@ -19,7 +19,6 @@ BegClass CustomerCrud Access(*Public)
     DclMemoryFile MemFile +
           DBDesc( "*Public/DG Net Local" ) +
           FileDesc( "Examples/CMastNewL1" ) +          
-          ImpOpen( *Yes ) + 
           RnmFmt( MemFileR )
 
     BegConstructor Access(*Public)
@@ -51,11 +50,9 @@ BegClass CustomerCrud Access(*Public)
 
         Chain Customer Key(CustomerNumber) 
         If Customer.IsFound() 
-
             Write MemFile
-            CrudHelpers.UpdateFirstDataRow(MemFile.DataSet, NewFieldValues)
+            CrudHelpers.UpdateFieldValues(MemFile.DataSet, NewFieldValues)
             Chain MemFile Key(1) 
-
             Update Customer 
         EndIf 
         

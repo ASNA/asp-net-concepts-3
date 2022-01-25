@@ -42,7 +42,7 @@ BegClass CrudHelpers Access(*Public)
         LeaveSr FieldNameList 
     EndFunc 
 
-    BegSr UpdateFirstDataRow Access(*Public) Shared(*Yes) 
+    BegSr UpdateFieldValues Access(*Public) Shared(*Yes) 
         DclSrParm MemFileDataSet Type(DataSet) 
         DclSrParm NewFieldValues Type(DataTable) 
 
@@ -58,7 +58,6 @@ BegClass CrudHelpers Access(*Public)
     EndSr 
 
     // -------------------------------------------------
-
     
     BegSr PopulateUI Access(*Public) 
         DclSrParm dt Type(DataTable) 
@@ -93,7 +92,7 @@ BegClass CrudHelpers Access(*Public)
         ctrl = FindControlRecursive(Page, FldName) 
         If ctrl <> *Nothing 
             If ctrl *Is TextBox 
-                (ctrl *As TextBox).Text = dr[fldName].ToString()
+                (ctrl *As TextBox).Text = dr[fldName].ToString().Trim()
             Elseif ctrl *Is RadioButton
                 (ctrl *As RadioButton).Text =  dr[fldName].ToString().Trim() = '1'
             Elseif ctrl *Is CheckBox 

@@ -8,42 +8,60 @@ Using System.Web.UI
 Using System.Web.UI.WebControls
 Using System.Web.UI.WebControls.WebParts
 Using System.Web.UI.HtmlControls
+Using rpExtensionMethods
 
 BegClass views_CustomerList Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
 
     DclDB DGDB 
-    DclFld dt Type(DataTable) 
     DclFld CustNameList Type(CustomerByNameList) 
     DclConst ROWS_TO_DISPLAY Value(16) 
+
+    DclFld StateHelper Type(AppStateHelper) New(*This.Context) 
 
     BegSr Page_Load Access(*Private) Event(*This.Load)
         DclSrParm sender Type(*Object)
         DclSrParm e Type(System.EventArgs)
 
-        DGDB.DBName = Application['dbname'].ToString()
-//        If Session['user'] = *Nothing
-//            FormsAuthentication.SignOut()
-//            Response.Redirect("customerform.aspx") 
-//        EndIf
+        DclFld dt Type(DataTable) 
+        DclFld CustomerName Type(*String) 
+        DclFld CustomerNumber Type(*Integer4) 
 
-        DGDB.User = Session['user'].ToString()
-        DGDB.Password = Session['password'].ToString()
+        DGDB.DBName = StateHelper.GetApplicationValue('dbname').ToString()
+
+        DGDB.User = StateHelper.GetSessionValueAsString('user')
+        DGDB.Password = StateHelper.GetSessionValueAsString('password')
 
         Connect DGDB 
         CustNameList = *New CustomerByNameList(DGDB, ROWS_TO_DISPLAY) 
 
         If (NOT Page.IsPostBack)
-            dt = CustNamelist.ReadPage()
-            BindGridView() 
+            If  Session['first-customer-name'] <> *Nothing AND Session['first-customer-number'] <> *Nothing
+
+                CustomerName = StateHelper.GetSessionValueAsString('first-customer-name')
+                CustomerNumber = StateHelper.GetSessionValueAsInt32('first-customer-number')
+
+                dt = PositionListTo(CustomerName, CustomerNumber) 
+                BindGridView(dt) 
+            Else 
+                dt = CustNamelist.ReadPage()            
+                BindGridView(dt) 
+            EndIf 
         Else
         EndIf
     EndSr
 
     BegSr BindGridView 
+        DclSrParm dt Type(DataTable) 
+
         gridviewCust.DataSource = dt
         gridviewCust.DataBind()
+
+        Session['lastCMName'] = CustNameList.LastCMName.Trim()
         Session['lastCMCustNo'] = CustNameList.LastCMCustNo
-        Session['lastCMName'] = CustNameList.LastCMName
+
+        Session['first-customer-name'] = CustNameList.FirstCMName.Trim()
+        Session['first-customer-number'] = CustNameList.FirstCMCustNo
+
         buttonNext.Enabled = CustNameList.MoreRows
         If buttonNext.Enabled 
             labelTableFooter.Text = 'More records to show'
@@ -81,26 +99,28 @@ BegClass views_CustomerList Partial(*Yes) Access(*Public) Extends(System.Web.UI.
 		DclSrParm sender Type(*Object)
 		DclSrParm e Type(System.EventArgs)
 
-        CustNameList.LastCMCustNo = Convert.ToInt32(Session['lastCMCustNo'])
-        CustNameList.LastCMName = Session['lastCMName'].ToString()
+        DclFld dt Type(DataTable) 
+
+        CustNameList.LastCMName = StateHelper.GetSessionValueAsString('lastCMName')
+        CustNameList.LastCMCustNo = StateHelper.GetSessionValueAsInt32('lastCMCustNo')
+        
         dt = CustNamelist.ReadNextPage()
 
-        BindGridView() 		
+        BindGridView(dt) 		
 	EndSr
 
 	BegSr buttonPositionTo_Click Access(*Private) Event(*This.buttonPositionTo.Click)
 		DclSrParm sender Type(*Object)
 		DclSrParm e Type(System.EventArgs)
 
-        If textboxPositionTo.Text.Trim() <> String.Empty 
-            dt = CustNamelist.PositionPageTo(textboxPositionTo.Text.Trim())
-            // If no rows then position-to failed--leave grid as is and show message. 
-            If dt.Rows.Count = 0 
-                LeaveSr 
-            EndIf 
+        DclFld dt Type(DataTable) 
 
-            BindGridView() 		
-            textboxPositionTo.Text = String.Empty 
+        If textboxPositionTo.Text.Trim() <> String.Empty 
+            dt = PositionListTo(textboxPositionTo.Text)
+            If dt.Rows.Count <> 0 
+                BindGridView(dt) 		
+                textboxPositionTo.Text = String.Empty 
+            EndIf 
         EndIf 
 	EndSr
 
@@ -123,4 +143,26 @@ BegClass views_CustomerList Partial(*Yes) Access(*Public) Extends(System.Web.UI.
             Response.Redirect('customerform.aspx')
         EndIf 
 	EndSr
+
+    BegFunc PositionListTo Type(DataTable) 
+        DclSrParm CustomerName Type(*String) 
+
+        LeaveSr PositionListTo(CustomerName, 0) 
+    EndFunc             
+
+    BegFunc  PositionListTo Type(DataTable) 
+        DclSrParm CustomerName Type(*String) 
+        DclSrParm CustomerNumber Type(*Integer4) 
+
+        DclFld dt Type(DataTable) 
+
+        dt = CustNamelist.PositionPageTo(CustomerName.Trim(), CustomerNumber)
+        If dt.Rows.Count = 0 
+            LeaveSr *Nothing 
+        EndIf 
+
+        LeaveSr dt
+    EndFunc 
+
+
 EndClass
