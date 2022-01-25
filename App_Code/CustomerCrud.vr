@@ -1,7 +1,6 @@
 ﻿Using System
 Using System.Data
 Using System.Collections.Specialized
-Using System.Configuration
 Using System.Web.UI
 Using System.Web.UI.WebControls
 
@@ -19,7 +18,8 @@ BegClass CustomerCrud Access(*Public)
     DclMemoryFile MemFile +
           DBDesc( "*Public/DG Net Local" ) +
           FileDesc( "Examples/CMastNewL1" ) +          
-          RnmFmt( MemFileR )
+          RnmFmt( MemFileR ) + 
+          Access(*Public) 
 
     BegConstructor Access(*Public)
         DclSrParm DGDB Type(ASNA.VisualRPG.Runtime.Database) 
@@ -45,14 +45,28 @@ BegClass CustomerCrud Access(*Public)
     BegSr UpdateCustomer Access(*Public) 
         DclSrParm CustomerNumber Like(CMCustNo) 
         DclSrParm NewFieldValues Type(DataTable) 
+
+        DclFld debugText1 Type(*String)
+        DclFld debugText2 Type(*String)
+        DclFld debugText3 Type(*String)
        
         *This.Open()
 
         Chain Customer Key(CustomerNumber) 
         If Customer.IsFound() 
-            Write MemFile
-            CrudHelpers.UpdateFieldValues(MemFile.DataSet, NewFieldValues)
+            MemFile.DataSet.Tables[0].Clear()
+            MemFile.DataSet.Tables[0].ImportRow(NewFieldValues.Rows[0]) 
+
+            debugText1 = CrudHelpers.GetDataRowValuesForDebugging(MemFile.DataSet.Tables[0])
+
+            //Write MemFile
+            
+            //CrudHelpers.UpdateFieldValues(MemFile.DataSet, NewFieldValues)
+            //debugText2 = CrudHelpers.GetDataRowValuesForDebugging(NewFieldValues)
+
             Chain MemFile Key(1) 
+//            debugText3 = CrudHelpers.GetDataRowValuesForDebugging(MemFile.DataSet.Tables[0])
+
             Update Customer 
         EndIf 
         

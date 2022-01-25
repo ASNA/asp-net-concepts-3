@@ -24,7 +24,6 @@
             </div>
             <div class="subnav r">
                 <div class="controls">
-                    <asp:Label ID="labelCustomerNumber" runat="server" Text="Label"></asp:Label>
                 </div>
                 <div>
                     <asp:Panel ID="panelInput" runat="server">
@@ -41,6 +40,9 @@
                                 <asp:TextBox ID="CMName" runat="server"  placeholder="Name" CssClass="form-control"></asp:TextBox>
                                 <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" cssClass="alert alert-danger p-1" Display="Dynamic"
                                      ErrorMessage="Name required" ControlToValidate="CMName"></asp:RequiredFieldValidator>
+
+                                <asp:CustomValidator ID="customvalidatorCMName" runat="server" ErrorMessage="CustomValidator" cssClass="alert alert-danger p-1" Display="Dynamic"
+                                    ControlToValidate="CMName" ValidateEmptyText="True"></asp:CustomValidator>
                             </div>
                             <div class="col-12 mt-3">
                                 <label for="CMAddr1" class="form-label">Address</label>
@@ -71,6 +73,8 @@
                                      ErrorMessage="Zip code required" ControlToValidate="CMPostCode"></asp:RequiredFieldValidator>
                                 <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" ControlToValidate="CMPostCode"  cssClass="alert alert-danger p-1" Display="Dynamic"
                                     ErrorMessage="Zip code must be in the format nnnnn or nnnnn-nnnn" ValidationExpression="^\d{5}(-\d{4})?$" ></asp:RegularExpressionValidator>
+
+                                    <%-- See this page to try out this regex: /^\d{5}(-\d{4})?$/ https://regex101.com/r/lC1xQy/1 --%>
                             </div>
                             <div class="col-6 mt-3">
                                 <label for="CMCntry" class="form-label">Country</label>
@@ -93,7 +97,8 @@
                         </div>
     
                         <div class="col-12 mt-3">
-                            <asp:Button ID="buttonUpdateCustomer" runat="server" Text="Update"  cssclass="btn btn-primary"/>
+                            <asp:Button ID="buttonUpdateCustomer" runat="server" Text="Update"  cssclass="btn btn-success"/>
+                            <asp:Button ID="buttonCancel" runat="server" Text="Cancel"  cssclass="btn btn-danger ms-3"/>
                         </div>
                     </asp:Panel>
                 </div>

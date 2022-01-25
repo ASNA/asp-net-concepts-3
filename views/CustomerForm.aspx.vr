@@ -1,14 +1,6 @@
 ﻿Using System
 Using System.Data
-Using System.Configuration
-Using System.Collections.Specialized
-Using System.Collections
-Using System.Web
-Using System.Web.Security
-Using System.Web.UI
 Using System.Web.UI.WebControls
-Using System.Web.UI.WebControls.WebParts
-Using System.Web.UI.HtmlControls
 
 BegClass CustomerForm Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
 
@@ -16,7 +8,6 @@ BegClass CustomerForm Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
     DclFld dt Type(DataTable) 
 
     DclFld crud Type(CustomerCrud) 
-    DclFld crudhelp Type(CrudHelpers) 
     DclFld StateHelper Type(AppStateHelper) New(*This.Context) 
 
     BegSr Page_Load Access(*Private) Event(*This.Load)
@@ -27,22 +18,20 @@ BegClass CustomerForm Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
         DclFld statesList Type(ListItemCollection) 
 
         DGDB.DBName = StateHelper.GetApplicationValueAsString('dbname') 
-        DGDB.User = StateHelper.GetSessionValueAsString('user') 
-        DGDB.Password = StateHelper.GetSessionValueAsString('password') 
+        //DGDB.User = StateHelper.GetSessionValueAsString('user') 
+        //DGDB.Password = StateHelper.GetSessionValueAsString('password') 
 
         Connect DGDB 
         crud = *New CustomerCrud(DGDB)
-        crudhelp = *New CrudHelpers(*This) 
 
         If (NOT Page.IsPostBack)
             StatesList = (*New StateList(DGDB)).GetList()
-            crudhelp.LoadListControl(CMState, StatesList)
+            CrudHelpers.LoadListControl(CMState, StatesList)
 
             CustomerNumber = StateHelper.GetSessionValueAsInt32('customer-number') 
-            labelCustomerNumber.Text = CustomerNumber
-
             dt = Crud.ReadCustomer(CustomerNumber) 
-            crudhelp.PopulateUI(dt) 
+
+            CrudHelpers.PopulateUI(*This, dt) 
         Else
         EndIf 
     EndSr 
@@ -59,17 +48,53 @@ BegClass CustomerForm Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
 		DclSrParm e Type(System.EventArgs)
 
         DclFld CustomerNumber Type(*Integer4) 
+        DclFld dtClone Type(DataTable) 
+
+        If NOT *This.IsValid
+            LeaveSr 
+        EndIf 
 
         CustomerNumber = Convert.ToInt32(CMCustNo.Text) 
         
-        dt = Crud.ReadCustomer(CustomerNumber) 
-        crudhelp.PopulateFormat(dt) 
+
+        dtClone = Crud.MemFile.DataSet.Tables[0].Clone()
+
+        dt = Crud.ReadCustomer(CustomerNumber)
+        
+        dtClone.ImportRow(dt.Rows[0]) 
+
+
+        CrudHelpers.PopulateFormat(*This, dtClone) 
+
+        DclFld debugText1 Type(*String) 
+        debugText1 = CrudHelpers.GetDataRowValuesForDebugging(dtClone)
+
+
 
         Session['first-customer-name'] = CMName.Text
         Session['first-customer-number'] = CMCustNo.Text
 
-        Crud.UpdateCustomer(CustomerNumber, dt) 
+        Crud.UpdateCustomer(CustomerNumber, dtClone) 
         Response.Redirect("CustomerList.aspx") 
 	EndSr
 
+	BegSr buttonCancel_Click Access(*Private) Event(*This.buttonCancel.Click)
+		DclSrParm sender Type(*Object)
+		DclSrParm e Type(System.EventArgs)
+
+        Session['first-customer-name']   = Session['first-customer-name'] 
+        Session['first-customer-number'] = Session['first-customer-number']
+
+        Response.Redirect("CustomerList.aspx") 
+    EndSr
+
+	BegSr CustomValidator1_ServerValidate Access(*Private) Event(*This.customvalidatorCMName.ServerValidate)
+		DclSrParm source Type(*Object)
+		DclSrParm args Type(System.Web.UI.WebControls.ServerValidateEventArgs)
+		
+        If CMName.Text.Trim().ToLower() = "neil young"
+            args.IsValid = *False 
+            customvalidatorCMName.ErrorMessage = "Sorry, the name can't be Neil Young!" 
+        EndIf 
+	EndSr
 EndClass

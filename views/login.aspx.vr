@@ -64,8 +64,8 @@ BegClass views_login Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
         DGDB.User = User
         DGDB.Password = Password
 
-        Session['user'] = User
-        Session['password'] = Password
+        //Session['user'] = User
+        //Session['password'] = Password
 
         Try 
             Connect DGDB 

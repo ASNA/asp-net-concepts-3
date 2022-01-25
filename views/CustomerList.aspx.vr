@@ -1,20 +1,12 @@
 ﻿Using System
 Using System.Data
-Using System.Configuration
-Using System.Collections
-Using System.Web
-Using System.Web.Security
-Using System.Web.UI
 Using System.Web.UI.WebControls
-Using System.Web.UI.WebControls.WebParts
-Using System.Web.UI.HtmlControls
-Using rpExtensionMethods
 
 BegClass views_CustomerList Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
 
     DclDB DGDB 
     DclFld CustNameList Type(CustomerByNameList) 
-    DclConst ROWS_TO_DISPLAY Value(16) 
+    DclConst ROWS_TO_DISPLAY Value(12) 
 
     DclFld StateHelper Type(AppStateHelper) New(*This.Context) 
 
@@ -27,16 +19,14 @@ BegClass views_CustomerList Partial(*Yes) Access(*Public) Extends(System.Web.UI.
         DclFld CustomerNumber Type(*Integer4) 
 
         DGDB.DBName = StateHelper.GetApplicationValue('dbname').ToString()
-
-        DGDB.User = StateHelper.GetSessionValueAsString('user')
-        DGDB.Password = StateHelper.GetSessionValueAsString('password')
+        //DGDB.User = StateHelper.GetSessionValueAsString('user')
+        //DGDB.Password = StateHelper.GetSessionValueAsString('password')
 
         Connect DGDB 
         CustNameList = *New CustomerByNameList(DGDB, ROWS_TO_DISPLAY) 
 
         If (NOT Page.IsPostBack)
-            If  Session['first-customer-name'] <> *Nothing AND Session['first-customer-number'] <> *Nothing
-
+            If  ArePositionToValuesProvided()
                 CustomerName = StateHelper.GetSessionValueAsString('first-customer-name')
                 CustomerNumber = StateHelper.GetSessionValueAsInt32('first-customer-number')
 
@@ -49,6 +39,10 @@ BegClass views_CustomerList Partial(*Yes) Access(*Public) Extends(System.Web.UI.
         Else
         EndIf
     EndSr
+
+    BegFunc ArePositionToValuesProvided Type(*Boolean) 
+        LeaveSr Session['first-customer-name'] <> *Nothing AND Session['first-customer-number'] <> *Nothing
+    EndFunc
 
     BegSr BindGridView 
         DclSrParm dt Type(DataTable) 
