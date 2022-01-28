@@ -85,11 +85,10 @@ Buttton fields
       - These command names surface the RowCommand event.
    - https://asna.com/us/articles/newsletter/2013/q3/multi-columns-click #link
 - Later we'll change the text to icons (using FontAwesome)
-
+   - Code
 ```
 <asp:ButtonField CommandName="ActionEdit" Text="<i class='fa-solid fa-pencil'></i>" />
 <asp:ButtonField CommandName="ActionDelete" Text="<i class='fa-light fa-trash-can'></i>" />
-```
 
 Add DataKeyNames (`customer_cmname,customer_cmcustno`)
 
