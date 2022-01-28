@@ -98,7 +98,7 @@
     
                         <div class="col-12 mt-3">
                             <asp:Button ID="buttonUpdateCustomer" runat="server" Text="Update"  cssclass="btn btn-success"/>
-                            <asp:Button ID="buttonCancel" runat="server" Text="Cancel"  cssclass="btn btn-danger ms-3"/>
+                            <asp:Button ID="buttonCancel" runat="server" Text="Cancel"  cssclass="btn btn-danger ms-3" CausesValidation="False" />
                         </div>
                     </asp:Panel>
                 </div>

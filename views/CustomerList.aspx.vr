@@ -53,12 +53,8 @@ BegClass views_CustomerList Partial(*Yes) Access(*Public) Extends(System.Web.UI.
         gridviewCust.DataSource = dt
         gridviewCust.DataBind()
 
-        //Session['last-customer-name'] = CustNameList.LastCMName.Trim()
-        //Session['last-customer-number'] = CustNameList.LastCMCustNo
-
         ViewState['last-customer-name'] = CustNameList.LastCMName.Trim()
         ViewState['last-customer-number'] = CustNameList.LastCMCustNo
-
 
         Session['first-customer-name'] = CustNameList.FirstCMName.Trim()
         Session['first-customer-number'] = CustNameList.FirstCMCustNo
@@ -102,11 +98,9 @@ BegClass views_CustomerList Partial(*Yes) Access(*Public) Extends(System.Web.UI.
 
         DclFld dt Type(DataTable) 
 
-//        CustNameList.LastCMName = StateHelper.GetSessionValueAsString('last-customer-name')
-//        CustNameList.LastCMCustNo = StateHelper.GetSessionValueAsInt32('last-customer-number')
-
-       CustNameList.LastCMName = ViewState['last-customer-name'].ToString()
+        CustNameList.LastCMName = ViewState['last-customer-name'].ToString()
         CustNameList.LastCMCustNo = ViewState['last-customer-number'].ToString()
+ 
         dt = CustNamelist.ReadNextPage()
 
         BindGridView(dt) 		

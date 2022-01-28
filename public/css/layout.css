@@ -1,72 +1,19 @@
-/*body {
-    width: 100vw;
-    weight: 100vh;
-    color: black;
-    font-family: sans serif;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
- }*/
- 
-/*
- #page {
-    display: grid;
-    width: 100vw;
-    height: 100vh;;
-     grid-template-areas: "head"
-                          "main"
-                          "nav" 
-                          "foot";
-    grid-template-rows: 50px 1fr 1fr 30px;
-    grid-template-columns: auto;   
-  }
-
-
-  @media (min-width: 1024px) {   
-    #page {   
-        grid-template-areas: "head head"
-                             "nav  main"
-                             "foot  foot";
-       grid-template-rows: 50px 1fr 30px;
-       grid-template-columns: 350px auto;      
-    }      
- }   
-  
-  #page > header {
-    grid-area: head;
-    background-color: #8ca0ff;
-  }
-  
-  #page > nav {
-    grid-area: nav;
-    background-color: #ffa08c;
-  }
-  
-  #page > main {
-    grid-area: main;
-    background-color: #ffff64;
-  }
-  
-  #page > footer {
-    grid-area: foot;
-    background-color: #8cffa0;
-  }
-
-*/
-
-
-  .r {
+  .xr {
     border: 3px dashed red;
   }
 
-  .b {
+  .xb {
     border: 3px dashed blue;
   }
 
-  .g {
+  .xg {
     border: 3px dashed green;
   }
 
+
+/*
+    Page layout
+*/
 
 div.right-content {
     display: grid;
@@ -122,7 +69,11 @@ div.controls {
     background-color: rgba(245, 255, 144, 0.93);
 }
 
+/*
+    Set column widths by column position.
+*/
 
+/*
 .zebra-stripe td:nth-child(1) {
     width: 6rem;
 }
@@ -138,6 +89,29 @@ div.controls {
 .zebra-stripe td:nth-child(4) {
     width: 6rem;
 }
+
+*/
+
+/*
+    Alternatively set widths by column CSS class names.
+*/
+.col-number {
+    width: 6rem;
+}
+
+.col-name {
+    width: auto;
+}
+
+.col-text-button {
+    width: 3rem;
+}
+
+.col-icon-button {
+    width: 2rem;
+}
+
+
 
 i {
     color: black;

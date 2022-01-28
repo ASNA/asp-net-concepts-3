@@ -1,229 +1,192 @@
-# ASP.NET WebForms concepts 2 #
+# ASP.NET Webforms concepts 3 #
 
-### Master pages
+Changes made to #2 example
 
-Set document type to HTML 5 on all master pages
+- enable views/system to all users in web.config
+- Start a new project by copying from your template project
 
-```
-<!DOCTYPE html>
-```
+Programming with classes
 
-Recommended content placeholders
+- Instancing
+- Shared members
+- Properties
+- Referencing
+- *This
 
-- "Head" - at bottom of master page Head tag. This is for injecting anything from a content page that needs to be in the Head tag.
-- "Content" - main content placeholder. Location dictated by CSS and HTML
-- "pageScripts" - just above Body tag. This is primarily for injecting JavaScript from a content page.
+### CUSTOMER LIST
 
-Content page events fire first then master page events fire
+Starting a new project from an existing one
 
-Add ChildPage property
+- Although Visual Studio has a templating feature, it makes changing templates cumbersome.
+- I think it's better to simply a copy a project you want to use as the template.
 
-- By default, a master page doesn't know what content page it is displaying. Adding a public ChildPage property fixes that. Add this code in the master page's PageLoad event hander:
+Creating the CustomerList.aspx page
 
-```
-// gets page in this format: ~/views/Index.aspx
-*This.ChildPage = Page.AppRelativeVirtualPath.ToLower()
-```
-
-Discuss conditional code (`<% ... %>`) in the master page.
-
-Install Bootstap from download
-
-Add JavaScript for master page
-
-- The `removeAspNetCheckboxWrapper` method removes some markup that ASP.NET checkbox and radio buttons generate. This lets those two controls work with Bootstrap CSS. If you're not using Bootstrap, this may not be necessary.
-- We'll see this code in action in the `login.aspx` page.
-
-### web.config
-
-AppSettings
-
-- web.config's AppSettings section provides a way to soft-code values (usually configuration values) for your app.
-
-```
-<appSettings>
-  <!-- 
-  // Define database names and assign default database name
-  -->
-  <add key="DefaultDBName" value="Leyland"/>
-  <add key="Local" value="*Public/DG NET Local"/>
-  <add key="Leyland" value="*Public/Leyland"/>
-  <!-- 
-  // Disable MS's [BrowserLink feature.]
-  (https://efficientuser.com/2017/07/06/browser-link-option-in-visual-studio/) 
-  -->
-  <add key="vs:EnableBrowserLink" value="false"/>
-</appSettings>
-```
-
-You fetch appSettings with the `System.Configuration.ConfigurationManager` class's appSettings property (which is a NameValueCollection type)
+- Controls on CustomerList.aspx
+   - Disable CSS initially -- need to remove it from the discussion for a while
+   - panelControl, buttonNext, buttonPositionTo, and textboxPositionTo
+      - Note that the Panel control has a `controls` property. It is is a control container. We'll discuss this in more detail when we discussing creating the `CustomerList.aspx` page
+   - Explain panel control and it provides a default button for its contents
+   - GridView
+      - Add a GridView control. Do _not_ add any property styling. We'll do all of that with CSS.
+      - Add two BoundFields and two ButtonFields
+         - Bound fields
+            - Number: provide HeaderText (`Number`) and DataField (`Customer_CMCustNo`) and DataFormatString (`{0:00000}`)
+            - Name: provide HeaderText (`Name`) and DataField (`Customer_CMName`)
+         - Buttton fields
+            - ActionEdit
+            - ActionDelete
+            - Explain the ButtonField's CommandName property
+               - https://asna.com/us/articles/newsletter/2013/q3/multi-columns-click #link
+            - Later we'll change the text to icons (using FontAwesome)
 
 ```
-DclFld ActiveDBNameKey  Type(*String)
-
-ActiveDBNameKey = System.Configuration.ConfigurationManager.AppSettings["DefaultDBName"]
+<asp:ButtonField CommandName="ActionEdit" Text="<i class='fa-solid fa-pencil'></i>" />
+<asp:ButtonField CommandName="ActionDelete" Text="<i class='fa-light fa-trash-can'></i>" />
 ```
 
-Enabling debug in web.config
+Add DataKeyNames (`customer_cmname,customer_cmcustno`)
 
-- Debug is enabled in web.config like this:
+- DataKeyNames are essentially hidden fields in the GridView
 
-```
-  <system.web>
-    <compilation debug="true"/>
-```
+HTML in CustomerList.aspx markup
 
-It is very important to set `debug` to `false` before deploying the application to production. Debug mode disables all caching and a production application runs faster with caching enabled.
-
-Disable Microsoft's BrowserLink
-
-- Microsoft's BrowserLink was intended as a way to keep your browser refreshed during development but it is buggy and annoying. I always explicitly disable it with:
+- This HTML is a way to provide a three-column subpage where the left and right columns are gutters that won't have content. This helps center content in the page. We'll hook up CSS to it later.
 
 ```
-<appSettings>   
-    ....
-    <add key="vs:EnableBrowserLink" value="false"/>
-    ...
+<div class="right-content">
+
+    <div class="gutter"></div>
+
+    <div class="center-gutter">
+        <div class="subnav">
+            <div class="controls">
+			
+            </div>
+			
+			[sibling divs or other top-level elements here as needed.]
+			
+        </div>
+    </div>
+    <div class="gutter"></div>
+</div>
 ```
 
-We'll learn more about web.config in the "User authentication" section.
+Discuss connection pooling and singleton DB pattern
 
-### Global.asax
+- [Read about DataGate connection pooling](https://asna.com/us/tech/kb/doc/connection-pooling)
+- [Read about how to find ASP.NET job leaks](https://asna.com/us/tech/kb/doc/ibm-i-orphan-jobs)
+- [Singleton DB pattern in AVR](https://asna.com/us/tech/kb/doc/singleton-db-pattern)
+- Rules of thumb
+   - Disconnect before _every_ DB connection goes out of scope
+   - Use the singleton DB pattern to pass DB connections around to secondary classes
+- Also discuss the need to persist user id and password in session variables if you want the user to always connection with those credentials.
 
-The Global.asax file provides access to the application- and session-side event handlers.
+Helper classes
 
-To add a Global.asax file, use "Add->New Item" and selection "Global Application Class"
+- CustomerByNameList
+- AppStateHelpers
 
-Including
+CodeBehind - CustomerList.aspx.vr
 
-- Application_Start
-- Application_End
-- Application_Error
-- Session_Start
-- Session_End
+- Code
+   - All file IO will be done in classes
+   - Show `WindowsAppToShowDataList` Windows app
+- Class: CustomerByNameList
+   - MemoryFile
+   - Properties
+   - Constructor
+   - Methods: Open, Close, ReadPage, ReadNextPage, PositionPageTo
+   - Show Windows app using this class
 
-For example, this code gets the active database name from the appSettings in web.config and puts the database name in a application variable named 'dbname.'
+Enable CSS and icons
 
-```
-DclFld ActiveDBNameKey  Type(*String)
-DclFld DBName        Type(*String) 
+- layout.css
+   - Minimal page layout
+   - Zebra stripe a table
+   - Give Bootstrap form-controls a great background
+- FontAwesome
+   - https://fontawesome.com/
 
-ActiveDBNameKey = System.Configuration.ConfigurationManager.AppSettings["DefaultDBName"]
-DBName = System.Configuration.ConfigurationManager.AppSettings[ActiveDBNameKey]
-Application['dbname'] = DBName
-```
+Creating the CustomerForm.aspx
 
-Global.asax links
+- Discuss [System.Web.UI.Page.Controls](https://docs.microsoft.com/en-us/dotnet/api/system.web.ui.control.controls?view=netframework-4.7.1#system-web-ui-control-controls) property
+   - There are several controls that are containers that also have a `Controls` property.
+   - Best way to find a control is to recursively iterate a `controls` property looking for the desired control by Id. See `FindControlRecursive` in the `CrudHelpers` class.
 
-- https://docs.microsoft.com/en-us/previous-versions/dotnet/netframework-4.0/2027ewzw(v=vs.100)?redirectedfrom=MSDN
-- https://stackoverflow.com/questions/2340572/what-is-the-purpose-of-global-asax-in-asp-net
-- https://docs.microsoft.com/en-us/previous-versions/aspnet/ms178473(v=vs.100)
+### CUSTOMER FORM
 
-### User authentication
+Creating the CustomerForm.aspx page
 
-Change web.config
+- Validators - don't forget causesvalidation on buttons
+- Helper classes
+   - CrudHelpers
+   - CustomerCrud
+   - StateList
+      - This class is a file-specific class that creates a ListItemCollection for binding to a listcontrol.
 
-- Add this code as an immediately child of the `<configuration>` element:
+Fixing ASP.NET checkbox and radio buttons
 
-```
-<system.webServer>
-    <modules runAllManagedModulesForAllRequests="true" />
-</system.webServer>
-```
-
-Note: If there is already a `<system.webServer>` element in your web.config, add the `<modules...` element inside it.
-
-Add this code immediately under the `<system.web>` element:
-
-```
-<authentication mode="Forms">
-  <forms name="Loginform" loginUrl="views/login.aspx" timeout="30"/>
-  <!-- 
-    // The timeout value is specified in minutes. 
-    // This value also determines how long the authentication cookie, if used,
-    // persists.
-    -->
-</authentication>
-```
-
-The session timeout value is specified in minutes. Generally you'll want this to be at least 20 minutes.
-
-Add this code immediately after the `<authentication>` element. It disables _all_ pages from unauthenticated users.
+- The ASP.NET checkbox and radio button controls inject a SPAN tag around the input tag. This SPAN tag
+breaks Bootstrap checkbox/radiobutton rendering.
 
 ```
-<authorization>
-    <deny users="?"/>
-</authorization>
+<div class="form-check">
+    <span class="form-control" placeholder="Active">
+	    <input id="content_CMActive" type="checkbox" name="ctl00$content$CMActive" checked="checked">
+	</span>
+    <label class="form-check-label" for="CMActive">Active</label>
+</div>
 ```
 
-Where `?` means "unauthenticated users"
-
-Add this code immediately after the `<system.web>` element. It adds exceptions to what pages are available to unauthenticated users.
-
-```  
-<location path="public">
-    <system.web>
-      <authorization>
-        <allow users="?"/>
-      </authorization>
-    </system.web>
-</location>
-```
-
-[MS forms authentication docs](https://docs.microsoft.com/en-US/troubleshoot/developer/webapps/aspnet/development/forms-based-authentication)
-
-Add login page with UI
-
-- Discuss validator controls
-   - [MS Validator control docs](https://docs.microsoft.com/en-us/previous-versions/aspnet/debza5t0(v=vs.100))
-
-Add logic for authenticating user
-
-### Global error handling
-
-C:\Users\roger\Documents\Programming\AVR\test-web-config
-
-Add Error.aspx and Error.aspx.vr
-
-- This page includes some CSS in a 'style' tag that should probably be moved to a separate CSS file.
-
-Add PageNotFound.aspx and PageNotFound.aspx.vr
-
-Add 'homer.png' image
-
-Add "error" folder immediately off of root
-
-- Errors are logged here
-
-Nothing needed in web.config
-
-Add this code to Global.asax's Application_Error event handler
+Bootstrap wants this
 
 ```
-DclFld OuterError Type(System.Exception)
-DclFld InnerError Type(System.Exception)
-DclFld guid Type(System.Guid)
-DclFld ErrorKey Type(*String) 
-DclFld HttpStatusCode Type(*Integer4) 
+<div class="form-check">
+    <input id="content_CMActive" type="checkbox" name="ctl00$content$CMActive" checked="checked">	
+    <label class="form-check-label" for="CMActive">Active</label>
+</div>
+```
 
-OuterError = Server.GetLastError()
+JavaScript to the rescue
 
-HttpStatusCode = (OuterError *As HttpException).GetHttpCode()
-If HttpStatusCode = 404
-    Server.ClearError()
-    Response.Redirect('PageNotFound.aspx?page=' + Context.Request.FilePath) 
-EndIf 
+```
+"use strict";
 
-If OuterError.InnerException <> *Nothing 
-    InnerError = OuterError.InnerException
-EndIf 
-Server.ClearError()
+var applib = applib || {};
 
-guid = System.Guid.NewGuid()
-ErrorKey = guid.ToString()
+applib = class Core {
 
-If OuterError *Is System.Web.HttpUnhandledException
-    Application[ErrorKey] = InnerError <> *Nothing ? InnerError : OuterError
-    Server.TransferRequest('Error.aspx?error=' + ErrorKey, *True)
-EndIf
+    static removeAspNetCheckboxWrapper(selector) {
+        // ASP.NET's checkbox control puts a span tag wrapper around
+        // the checkbox. This wrapper disturbs correct Bootstrap 
+        // checkbox behavior. This function removes that wrapper for 
+        // a given checkbox element. 
+
+        // Select all elements that match selector.
+        const wrappedElements = document.querySelectorAll(selector);
+
+        // For each selected element... 
+        wrappedElements.forEach(wrappedElement => {
+            const elementToRemove = wrappedElement.parentNode;
+
+            const elementToMove = document.createDocumentFragment();
+            elementToMove.appendChild(wrappedElement);
+
+            // ASP.NET also removed this class name. This puts it back.
+            wrappedElement.classList.add('form-check-input');
+            elementToRemove.parentNode.replaceChild(elementToMove, elementToRemove);
+        });
+    }
+}
+```
+
+This JavaScript calls the `removeAspNetCheckboxWrapper` method:
+
+```
+<asp:Content ID="Content3" ContentPlaceHolderID="PageScripts" Runat="Server">
+    <script>
+        applib.removeAspNetCheckboxWrapper('input[type="radio"],input[type="checkbox"]');
+    </script>
+</asp:Content>
 ```

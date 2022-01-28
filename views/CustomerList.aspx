@@ -10,25 +10,6 @@
 // for the production version.
 #--%>
 
-
-    <!-- Set table column widths -->
-    <style>
-        .zebra-stripe td:nth-child(1) {
-            width: 6rem;
-        }
-
-        .zebra-stripe td:nth-child(2) {
-            width: auto;
-        }
-
-        .zebra-stripe td:nth-child(3) {
-            width: 4rem;
-        }
-
-        .zebra-stripe td:nth-child(4) {
-            width: 4rem;
-        }
-    </style>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="Content" Runat="Server">
@@ -50,13 +31,23 @@
                     </asp:Panel> 
                 </div>
                 <!-- gridview start -->
-                <asp:GridView ID="gridviewCust" runat="server" AutoGenerateColumns="False" 
-                    AllowPaging="False" CssClass="gridview zebra-stripe" DataKeyNames="customer_cmname,customer_cmcustno">
+                <asp:GridView ID="gridviewCust" runat="server" AutoGenerateColumns="False" CssClass="gridview zebra-stripe customerlist" DataKeyNames="customer_cmname,customer_cmcustno">
                     <Columns>
-                        <asp:BoundField DataField="Customer_CMCustNo" HeaderText="Number" DataFormatString="{0:00000}" HtmlEncode="False"/>
-                        <asp:BoundField DataField="customer_cmname" HeaderText="Name" />                
-                        <asp:ButtonField CommandName="ActionEdit" Text="<i class='fa-solid fa-pencil'></i>" />
-                        <asp:ButtonField CommandName="ActionDelete" Text="<i class='fa-light fa-trash-can'></i>" />
+                        <asp:BoundField DataField="Customer_CMCustNo" HeaderText="Number" DataFormatString="{0:00000}" HtmlEncode="False">
+                        <ItemStyle CssClass="col-number" />
+                        </asp:BoundField>
+
+                        <asp:BoundField DataField="customer_cmname" HeaderText="Name" >                
+                        <ItemStyle CssClass="col-name" />
+                        </asp:BoundField>
+
+                        <asp:ButtonField CommandName="ActionEdit" Text="Edit" >
+                        <ItemStyle CssClass="col-text-button" />
+                        </asp:ButtonField>
+
+                        <asp:ButtonField CommandName="ActionDelete" Text="Delete" >
+                        <ItemStyle CssClass="col-text-button" />
+                        </asp:ButtonField>
                     </Columns>
                 </asp:GridView>
                 <!-- gridview end -->
