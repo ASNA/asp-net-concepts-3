@@ -10,10 +10,7 @@ Using System.Web.UI.WebControls
 Using System.Web.UI.WebControls.WebParts
 Using System.Web.UI.HtmlControls
 
-/// <summary>
-/// Summary description for AppStateHelper
-/// </summary>
-BegClass AppStateHelper Access(*Public)
+BegClass AppStateHelpers Access(*Public)
 
     DclFld Context Type(System.Web.HttpContext) 
 
@@ -77,6 +74,8 @@ BegClass AppStateHelper Access(*Public)
         LeaveSr Result 
     EndFunc 
 
+
+    // Application values.
 
     BegFunc GetApplicationValue Type(*Object) Access(*Public) 
         DclSrParm Key Type(*String) 

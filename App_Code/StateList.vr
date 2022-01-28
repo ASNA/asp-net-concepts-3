@@ -5,20 +5,20 @@ Using System.Web
 
 BegClass StateList Access(*Public) Extends(System.Object) 
 
-    DclDB pgmDB DBName("*Public/DG NET Local") 
+    DclDB DGDB DBName("*Public/DG NET Local") 
 
     DclDiskFile  States              +
           Type(*Input )            +
           Org(*Indexed)            +
           Prefix(States_)          +
           File("Examples/States")  +
-          DB(pgmDB)                +
+          DB(DGDB)                +
           ImpOpen(*No)  
 
     BegConstructor Access(*Public)
-        DclSrParm ExternalpgmDB Type(ASNA.VisualRPG.Runtime.Database) 
+        DclSrParm DGDB Type(ASNA.VisualRPG.Runtime.Database) 
 
-        *This.pgmDb = ExternalpgmDB
+        *This.DGDB = DGDB
     EndConstructor
 
     BegFunc GetList Type(ListItemCollection) Access(*Public) 
@@ -28,9 +28,8 @@ BegClass StateList Access(*Public) Extends(System.Object)
 
         Read States
         DoWhile (NOT States.IsEof)
-            //
-            // Either of these may need a ToString().
-            //
+            // Either of these may need a ToString() and/or Trim(), 
+            // depending on your data.
             Result.Add(*New ListItem(States_State.Trim(), States_Abbrev))
             Read States
         EndDo 
@@ -41,15 +40,14 @@ BegClass StateList Access(*Public) Extends(System.Object)
     EndFunc          
 
     BegSr OpenData 
-        If (NOT pgmDB.IsOpen) 
-            Connect pgmDB 
+        If (NOT DGDB.IsOpen) 
+            Connect DGDB 
         EndIf     
-        Open    States
+        Open States
     EndSr
 
     BegSr CloseData
-        Close States
+        Close *All 
     EndSr          
-
 
 EndClass

@@ -8,7 +8,7 @@ BegClass CustomerForm Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
     DclFld dt Type(DataTable) 
 
     DclFld crud Type(CustomerCrud) 
-    DclFld StateHelper Type(AppStateHelper) New(*This.Context) 
+    DclFld StateHelper Type(AppStateHelpers) New(*This.Context) 
 
     BegSr Page_Load Access(*Private) Event(*This.Load)
         DclSrParm sender Type(*Object)
@@ -18,18 +18,22 @@ BegClass CustomerForm Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
         DclFld statesList Type(ListItemCollection) 
 
         DGDB.DBName = StateHelper.GetApplicationValueAsString('dbname') 
-        //DGDB.User = StateHelper.GetSessionValueAsString('user') 
-        //DGDB.Password = StateHelper.GetSessionValueAsString('password') 
+        // DGDB.User = StateHelper.GetSessionValueAsString('user') 
+        // DGDB.Password = StateHelper.GetSessionValueAsString('password') 
 
         Connect DGDB 
         crud = *New CustomerCrud(DGDB)
 
         If (NOT Page.IsPostBack)
-            StatesList = (*New StateList(DGDB)).GetList()
-            CrudHelpers.LoadListControl(CMState, StatesList)
-
             CustomerNumber = StateHelper.GetSessionValueAsInt32('customer-number') 
             dt = Crud.ReadCustomer(CustomerNumber) 
+
+            // Access to fields is available through the zeroth row of the DataTable.
+            // Set page title.
+            *This.Title = dt.Rows[0]['CMName'].ToString()
+
+            StatesList = (*New StateList(DGDB)).GetList()
+            CrudHelpers.LoadListControl(CMState, StatesList)
 
             CrudHelpers.PopulateUI(*This, dt) 
         Else
@@ -55,26 +59,13 @@ BegClass CustomerForm Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
         EndIf 
 
         CustomerNumber = Convert.ToInt32(CMCustNo.Text) 
-        
 
-        dtClone = Crud.MemFile.DataSet.Tables[0].Clone()
-
-        dt = Crud.ReadCustomer(CustomerNumber)
-        
-        dtClone.ImportRow(dt.Rows[0]) 
-
-
-        CrudHelpers.PopulateFormat(*This, dtClone) 
-
-        DclFld debugText1 Type(*String) 
-        debugText1 = CrudHelpers.GetDataRowValuesForDebugging(dtClone)
-
-
+        dt = Crud.ReadCustomer(CustomerNumber)       
+        CrudHelpers.PopulateDataRowFromUI(*This, dt) 
+        Crud.UpdateCustomer(CustomerNumber, dt) 
 
         Session['first-customer-name'] = CMName.Text
         Session['first-customer-number'] = CMCustNo.Text
-
-        Crud.UpdateCustomer(CustomerNumber, dtClone) 
         Response.Redirect("CustomerList.aspx") 
 	EndSr
 

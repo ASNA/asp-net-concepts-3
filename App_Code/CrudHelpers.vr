@@ -13,7 +13,36 @@ Using System.Web.UI.WebControls
 BegClass CrudHelpers Access(*Public)
 
     /*
-     | Get field names from a DataTable as a string collection. 
+     | This is primarily for debugging:
+     | Return a formatted string showing field names and values for the given DataRow. 
+     | Two overloads: first defaults to zeroth DataRow, second
+     | uses zero-based row position provided. 
+     */
+    BegFunc GetDataRowValuesForDebugging Type(*String)  Access(*Public) Shared(*Yes) 
+        DclSrParm dt Type(DataTable) 
+
+        LeaveSr GetDataRowValuesForDebugging(dt, 0) 
+    EndFunc 
+
+    BegFunc GetDataRowValuesForDebugging Type(*String)  Access(*Public) Shared(*Yes) 
+        DclSrParm dt Type(DataTable) 
+        DclSrParm Row Type(*Integer4) 
+        
+        DclFld sb Type(StringBuilder) New()
+        DclFld dr Type(DataRow) 
+
+        dr = dt.Rows[Row]
+
+        ForEach Field Type(*String) Collection(CrudHelpers.GetDataFieldNames(dt))
+            sb.AppendLine(String.Format("{0,-16} = {1}", Field, dr[Field]))  
+        EndFor 
+
+        LeaveSr sb.ToString()
+    EndFunc 
+
+    /*
+     | Get field names from a DataTable's Columns collecton as a string collection. 
+     | Field names are returned as lower case.
      */
     BegFunc GetDataFieldNames Type(StringCollection) Access(*Public) Shared(*Yes) 
         DclSrParm dt Type(DataTable) 
@@ -29,47 +58,7 @@ BegClass CrudHelpers Access(*Public)
 
         LeaveSr FieldNameList 
     EndFunc 
-
-    /*
-     | Return a formatted string showing field names and values for the given DataRow. This
-     | is for debugging purposes. 
-     */
-    BegFunc GetDataRowValuesForDebugging Type(*String)  Access(*Public) Shared(*Yes) 
-        DclSrParm dt Type(DataTable) 
-        
-        DclFld sb Type(StringBuilder) New()
-        DclFld dr Type(DataRow) 
-
-        dr = dt.Rows[0]
-
-        ForEach Field Type(*String) Collection(CrudHelpers.GetDataFieldNames(dt))
-            sb.AppendLine(String.Format("{0,-16} = {1}", Field, dr[Field]))  
-        EndFor 
-
-        LeaveSr sb.ToString()
-    EndFunc 
-
-    /*
-     | Update zeroth DataRow in the incoming DataSet with the zeroth DataRow 
-     | in the incoming DataTable. 
-     */
-    BegSr UpdateFieldValues Access(*Public) Shared(*Yes) 
-        DclSrParm MemFileDataSet Type(DataSet) 
-        DclSrParm NewFieldValues Type(DataTable) 
-
-        DclFld dt Type(DataTable) 
-        DclFld dr Type(DataRow) 
-
-        dt = MemFileDataSet.Tables[0]
-        dr = dt.Rows[0]
-
-        ForEach Field Type(*String) Collection(CrudHelpers.GetDataFieldNames(dt))
-            dr[field] = NewFieldValues.Rows[0][field].ToString()
-        EndFor 
-    EndSr 
-
-    // -------------------------------------------------
-    
+   
     /*
      | For each field name in the FieldNameList, update the ASP.NET control
      | on the form with that field name as its Id. 
@@ -88,7 +77,7 @@ BegClass CrudHelpers Access(*Public)
     EndSr 
 
     /*
-     | For a given field name update the ASP.NET control
+     | For a given field name update the value of the ASP.NET control
      | on the form with that field name as its Id. 
      */
     BegSr PopulateControlValue Access(*Public) Shared(*Yes)  
@@ -98,10 +87,19 @@ BegClass CrudHelpers Access(*Public)
 
         DclFld ctrl Type(Control) 
 
+        /* 
+         | This is a subset of the UI controls available. For example,
+         | it does not include CheckBoxList and RadioButtonList controls.
+         | For those controls, and other others not included, populate 
+         | those controls manually after calling this method to populate 
+         | the other controls.
+         */
         ctrl = FindControlRecursive(Parent, FldName) 
         If ctrl <> *Nothing 
             If ctrl *Is TextBox 
                 (ctrl *As TextBox).Text = dr[fldName].ToString().Trim()
+            ElseIf ctrl *Is Label
+                (ctrl *As Label).Text = dr[fldName].ToString().Trim()
             Elseif ctrl *Is RadioButton
                 (ctrl *As RadioButton).Text =  dr[fldName].ToString().Trim() = '1'
             Elseif ctrl *Is CheckBox 
@@ -112,12 +110,11 @@ BegClass CrudHelpers Access(*Public)
         EndIf 
     EndSr 
 
-
     /*
      | For each field name in the FieldNameList, populate the corresponding
      | zeroth DataRow field value with the like-named ASP.NET control value.
      */
-    BegSr PopulateFormat Access(*Public) Shared(*Yes)  
+    BegSr PopulateDataRowFromUI Access(*Public) Shared(*Yes)  
         DclSrParm Parent Type(Control) 
         DclSrParm dt Type(DataTable) 
 
@@ -126,7 +123,7 @@ BegClass CrudHelpers Access(*Public)
         FieldNameList = GetDataFieldNames(dt)
 
         ForEach FieldName Type(*String) Collection(FieldNameList) 
-            PopulateFormatField(Parent, FieldName, dt.Rows[0]) 
+            PopulateDataRowField(Parent, FieldName, dt.Rows[0]) 
         EndFor  
     EndSr 
 
@@ -134,17 +131,26 @@ BegClass CrudHelpers Access(*Public)
      | For a given field name, populate the corresponding
      | DataRow field value with the like-named ASP.NET control value.     
      */
-    BegSr PopulateFormatField Access(*Public) Shared(*Yes)  
+    BegSr PopulateDataRowField Access(*Public) Shared(*Yes)  
         DclSrParm Parent Type(Control) 
         DclSrParm FldName Type(*String) 
         DclSrParm dr Type(DataRow) 
 
         DclFld ctrl Type(Control) 
 
+        /* 
+         | This is a subset of the UI controls available. For example,
+         | it does not include CheckBoxList and RadioButtonList controls.
+         | For those controls, and other others not included, populate 
+         | the necessary DataRow fields manually after calling this method 
+         | to populate the other DataRow fields. 
+         */
         ctrl = FindControlRecursive(Parent, FldName) 
         If ctrl <> *Nothing 
             If ctrl *Is TextBox 
                  dr[fldName] = (ctrl *As TextBox).Text.Trim()
+            ElseIf ctrl *Is Label
+                 dr[fldName] = (ctrl *As Label).Text.Trim()
             Elseif ctrl *Is RadioButton
                  dr[fldName] = (ctrl *As RadioButton).Checked ? '1' : '0'
             Elseif ctrl *Is CheckBox 
@@ -156,9 +162,8 @@ BegClass CrudHelpers Access(*Public)
     EndSr
 
     /*
-     | Find a control with given Id in the parent control. When this routine is 
-     | called from PopulateFormField, the entire page is the parent that is 
-     | searched for the control.
+     | Find a control with given Id in the parent control. The parent 
+     | control must derive from System.Web.UI.Control.
      */
     BegFunc FindControlRecursive Type(Control) Access(*Public) Shared(*Yes)  
         DclSrParm parent Type(Control) 
@@ -177,23 +182,19 @@ BegClass CrudHelpers Access(*Public)
             EndIf 
         EndFor 
 
-        leaveSr *Nothing 
+        LeaveSr *Nothing 
     EndFunc 
 
     /*
      | Populate the incoming ListControl with the incoming ListItemCollection.
-     | ListControls are: BulletedList, ListBox, DropDownList, CheckBoxList, and RadioButtonList.
+     | ListControls are: BulletedList, ListBox, DropDownList, CheckBoxList, 
+     | and RadioButtonList.
      */
     BegSr LoadListControl Access(*Public) Shared(*Yes)  
         DclSrParm ListControlInstance Type(ListControl) 
-        DclSrParm lic Type( ListItemCollection )
-       
-        // When using data binding, the control
-        // loses track of what the "columns" in the data
-        // source represent.
-        // These two lines of code ensure the Text and Value
-        // fields are appropriately synchronized between the
-        // bound list and the dropdown control.
+        DclSrParm lic Type(ListItemCollection)
+
+        // Use ListItem Text property for text and ListItem Value property for value.
         ListControlInstance.DataTextField  = "Text"
         ListControlInstance.DataValueField = "Value"
 

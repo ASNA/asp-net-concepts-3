@@ -48,25 +48,25 @@ BegClass CustomerCrud Access(*Public)
 
         DclFld debugText1 Type(*String)
         DclFld debugText2 Type(*String)
-        DclFld debugText3 Type(*String)
        
         *This.Open()
 
+        // This method assumes that DataRow[0] has values 
+        // from the UI. 
+
         Chain Customer Key(CustomerNumber) 
         If Customer.IsFound() 
-            MemFile.DataSet.Tables[0].Clear()
-            MemFile.DataSet.Tables[0].ImportRow(NewFieldValues.Rows[0]) 
+            // DataRow[0] = new values from UI. 
+            Write MemFile
+            // After this write, DataRow[1] = existing values on disk.
+            // See new values.
+            debugText1 = CrudHelpers.GetDataRowValuesForDebugging(MemFile.DataSet.Tables[0], 0) 
+            // See old values. 
+            debugText2 = CrudHelpers.GetDataRowValuesForDebugging(MemFile.DataSet.Tables[0], 1) 
 
-            debugText1 = CrudHelpers.GetDataRowValuesForDebugging(MemFile.DataSet.Tables[0])
-
-            //Write MemFile
-            
-            //CrudHelpers.UpdateFieldValues(MemFile.DataSet, NewFieldValues)
-            //debugText2 = CrudHelpers.GetDataRowValuesForDebugging(NewFieldValues)
-
-            Chain MemFile Key(1) 
-//            debugText3 = CrudHelpers.GetDataRowValuesForDebugging(MemFile.DataSet.Tables[0])
-
+            // Read the zeroth record (as a one-based value) to refresh fields in record
+            // buffer with new values.
+            Chain MemFile Key(1) // Chains are one-based, not zero based! 
             Update Customer 
         EndIf 
         
