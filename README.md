@@ -22,36 +22,8 @@ Starting a new project from an existing one
 
 Creating the CustomerList.aspx page
 
-- Controls on CustomerList.aspx
-   - Disable CSS initially -- need to remove it from the discussion for a while
-   - panelControl, buttonNext, buttonPositionTo, and textboxPositionTo
-      - Note that the Panel control has a `controls` property. It is is a control container. We'll discuss this in more detail when we discussing creating the `CustomerList.aspx` page
-   - Explain panel control and it provides a default button for its contents
-   - GridView
-      - Add a GridView control. Do _not_ add any property styling. We'll do all of that with CSS.
-      - Add two BoundFields and two ButtonFields
-         - Bound fields
-            - Number: provide HeaderText (`Number`) and DataField (`Customer_CMCustNo`) and DataFormatString (`{0:00000}`)
-            - Name: provide HeaderText (`Name`) and DataField (`Customer_CMName`)
-         - Buttton fields
-            - ActionEdit
-            - ActionDelete
-            - Explain the ButtonField's CommandName property
-               - https://asna.com/us/articles/newsletter/2013/q3/multi-columns-click #link
-            - Later we'll change the text to icons (using FontAwesome)
-
-```
-<asp:ButtonField CommandName="ActionEdit" Text="<i class='fa-solid fa-pencil'></i>" />
-<asp:ButtonField CommandName="ActionDelete" Text="<i class='fa-light fa-trash-can'></i>" />
-```
-
-Add DataKeyNames (`customer_cmname,customer_cmcustno`)
-
-- DataKeyNames are essentially hidden fields in the GridView
-
-HTML in CustomerList.aspx markup
-
-- This HTML is a way to provide a three-column subpage where the left and right columns are gutters that won't have content. This helps center content in the page. We'll hook up CSS to it later.
+- HTML in CustomerList.aspx markup
+   - This HTML is a way to provide a three-column subpage where the left and right columns are gutters that won't have content. This helps center content in the page. We'll hook up CSS to it later.
 
 ```
 <div class="right-content">
@@ -72,6 +44,69 @@ HTML in CustomerList.aspx markup
 </div>
 ```
 
+Controls on CustomerList.aspx
+
+- Disable CSS initially -- need to remove it from the discussion for a while
+- panelControl, buttonNext, buttonPositionTo, and textboxPositionTo
+   - Note that the Panel control has a `controls` property. It is is a control container. We'll discuss this in more detail when we discussing creating the `CustomerList.aspx` page
+- Explain panel control and it provides a default button for its contents
+- GridView
+   - Add a GridView control. Do _not_ add any property styling. We'll do all of that with CSS.
+   - Add two BoundFields and two ButtonFields
+      - Bound fields
+         - GridView's `DataField` names must match those in Memory file
+            - Data file uses a prefix and memory uses a pseudo prefix (ie, starts with `Customer_`) to match the field name in the Customer record format.
+
+```
+DclDiskFile Customer +
+        Type(*Input) + 
+        Org(*Indexed) + 
+        Prefix(Customer_) + 
+        File("examples/cmastnewl2") +
+        DB(DGDB) +
+        ImpOpen(*No)  
+
+DclMemoryFile MemFile ImpOpen(*Yes) 
+    DclRecordFormat Customers 
+    DclRecordFld    Customer_CMCustNo  Type(*Packed) Len(9,0)
+    DclRecordFld    Customer_CMName    Type(*Char) Len(40)
+```
+
+Number: provide HeaderText (`Number`) and DataField (`Customer_CMCustNo`) and DataFormatString (`{0:00000}`)
+
+Name: provide HeaderText (`Name`) and DataField (`Customer_CMName`)
+
+Buttton fields
+
+- ActionEdit - direct user to Customer edit page
+- ActionDelete - not used in this code but shows how to implement multiple buttons
+- Explain the ButtonField's CommandName property
+   - ActionEdit and ActionDelete
+      - These command names surface the RowCommand event.
+   - https://asna.com/us/articles/newsletter/2013/q3/multi-columns-click #link
+- Later we'll change the text to icons (using FontAwesome)
+
+```
+<asp:ButtonField CommandName="ActionEdit" Text="<i class='fa-solid fa-pencil'></i>" />
+<asp:ButtonField CommandName="ActionDelete" Text="<i class='fa-light fa-trash-can'></i>" />
+```
+
+Add DataKeyNames (`customer_cmname,customer_cmcustno`)
+
+- DataKeyNames are essentially hidden fields in the GridView
+
+GridView events
+
+- RowCommand
+   - The `RowCommand` event fires when a GridView button has been clicked that has a `CommandName` property value assigned.
+   - Note how information is passed into the RowCommand event through its `e` argument.
+- SelectedIndexChanged
+   - This event isn't used in this code, but its stubbed in here to show that it's available.
+
+GridView methods
+
+- The GridView's `DataBind` method is what causes the GridView's corresponding HTML to be generated and injected into the page.
+
 Discuss connection pooling and singleton DB pattern
 
 - [Read about DataGate connection pooling](https://asna.com/us/tech/kb/doc/connection-pooling)
@@ -85,19 +120,44 @@ Discuss connection pooling and singleton DB pattern
 Helper classes
 
 - CustomerByNameList
+   - This classes provides the file IO to populate the GridView's DataSource.
 - AppStateHelpers
+   - This helper class provides some convenient methods to make it easier to use the Session and Application objects.
+   - Note how it has be instanced by passing in a reference to the page's System.Web.HttpContext. This reference provides access to the Session and Application objects.
 
 CodeBehind - CustomerList.aspx.vr
 
-- Code
-   - All file IO will be done in classes
-   - Show `WindowsAppToShowDataList` Windows app
+- All file IO for populating the list is done in the CustomerByNameList class.
 - Class: CustomerByNameList
    - MemoryFile
    - Properties
    - Constructor
    - Methods: Open, Close, ReadPage, ReadNextPage, PositionPageTo
-   - Show Windows app using this class
+- Page methods
+   - Page_Load
+      - Connects to DB
+      - Instance CustomerByNameList
+      - Fetch first page of data if first time page is displayed
+         - If position-to values are provided position the list to those values
+         - Otherwise, get first set of rows
+   - ArePositionValuesProvided
+      - Check session vars to see if position-to values are provided
+   - BindGridView
+      - Assigns and binds data to the GridView
+      - Persist last row keys in ViewState
+      - Persist top row keys in SessionState
+      - Set Next button enabled status and show "more records" status message
+   - Page_Unload
+      - Disconnects the database.
+   - gridviewCust_SelectedIndexChanged
+      - This event handler isn't used in this code but shows how to fetch data from DataKeys if needed.
+   - buttonNext_Click
+      - Using key values from last row, fetch next page of rows
+   - buttonPositionTo_Click
+      - Using value in PositionTo textbox attempt to position list at that value
+   - gridviewCust_RowCommand
+      - Get CommandName, row index (via SelectedIndex), and customer number from that row from the GridView's DataKeys property
+      - If CommandName is 'ActionEdit' the save the current customer in a session variable and redirect to the CustomerForm.aspx
 
 Enable CSS and icons
 

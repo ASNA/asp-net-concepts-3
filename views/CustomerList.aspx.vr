@@ -127,17 +127,17 @@ BegClass views_CustomerList Partial(*Yes) Access(*Public) Extends(System.Web.UI.
 
         DclFld CommandName    Type(*String)
         DclFld SelectedIndex  Type(*Integer4) 
-        DclFld SelectedRow    Type(GridViewRow)
         DclFld CustomerNumber Type(*Integer4)
 
         CommandName = e.CommandName
         SelectedIndex = e.CommandArgument.ToString() 
-        SelectedRow = gridviewCust.Rows[SelectedIndex]
         CustomerNumber = gridviewCust.DataKeys[SelectedIndex]["customer_cmcustno"].ToString()		
 
         If CommandName = 'ActionEdit'
             Session['customer-number'] = CustomerNumber
             Response.Redirect('customerform.aspx')
+        ElseIf CommandName = 'ActionDelete'
+            // Do something here for delete action.
         EndIf 
 	EndSr
 

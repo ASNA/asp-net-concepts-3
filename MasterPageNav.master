@@ -8,8 +8,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="public/vendor/css/bootstrap5/bootstrap.min.css" />
-    <link rel="stylesheet" href="public/css/layout.css" />
+    <link rel="stylesheet" href="public/vendor/css/bootstrap5/bootstrap.min.cssxx" />
+    <link rel="stylesheet" href="public/css/layout.cssxx" />
     
     <link href="public/vendor/fontawesome/css/all.css" rel="stylesheet"> <!--load all styles -->
 
@@ -50,7 +50,7 @@
                   </a>
                   <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="customerList.aspx">Customer List</a></li>
-                    <li><a class="dropdown-item" href="system/testdbconnection.aspx">Test DB connection</a></li>
+                    <%--<li><a class="dropdown-item" href="system/testdbconnection.aspx">Test DB connection</a></li>--%>
                     <li><a class="dropdown-item" href="#">Another action</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="#">Something else here</a></li>
