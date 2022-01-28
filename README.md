@@ -56,7 +56,7 @@ Controls on CustomerList.aspx
       - Bound fields
          - GridView's `DataField` names must match those in Memory file
             - Data file uses a prefix and memory uses a pseudo prefix (ie, starts with `Customer_`) to match the field name in the Customer record format.
-
+            -  
 ```
 DclDiskFile Customer +
         Type(*Input) + 
@@ -70,41 +70,34 @@ DclMemoryFile MemFile ImpOpen(*Yes)
     DclRecordFormat Customers 
     DclRecordFld    Customer_CMCustNo  Type(*Packed) Len(9,0)
     DclRecordFld    Customer_CMName    Type(*Char) Len(40)
+ 
 ```
-
-Number: provide HeaderText (`Number`) and DataField (`Customer_CMCustNo`) and DataFormatString (`{0:00000}`)
-
-Name: provide HeaderText (`Name`) and DataField (`Customer_CMName`)
-
-Buttton fields
-
-- ActionEdit - direct user to Customer edit page
-- ActionDelete - not used in this code but shows how to implement multiple buttons
-- Explain the ButtonField's CommandName property
-   - ActionEdit and ActionDelete
-      - These command names surface the RowCommand event.
-   - https://asna.com/us/articles/newsletter/2013/q3/multi-columns-click #link
-- Later we'll change the text to icons (using FontAwesome)
-   - Code
+         - Number: provide HeaderText (`Number`) and DataField (`Customer_CMCustNo`) and DataFormatString (`{0:00000}`)
+         - Name: provide HeaderText (`Name`) and DataField (`Customer_CMName`)
+      - Buttton fields
+         - ActionEdit - direct user to Customer edit page
+         - ActionDelete - not used in this code but shows how to implement multiple buttons
+         - Explain the ButtonField's CommandName property
+            - ActionEdit and ActionDelete
+               - These command names surface the RowCommand event.
+            - https://asna.com/us/articles/newsletter/2013/q3/multi-columns-click #link
+         - Later we'll change the text to icons (using FontAwesome)
+            -  
 ```
 <asp:ButtonField CommandName="ActionEdit" Text="<i class='fa-solid fa-pencil'></i>" />
 <asp:ButtonField CommandName="ActionDelete" Text="<i class='fa-light fa-trash-can'></i>" />
-
-Add DataKeyNames (`customer_cmname,customer_cmcustno`)
-
-- DataKeyNames are essentially hidden fields in the GridView
-
-GridView events
-
-- RowCommand
-   - The `RowCommand` event fires when a GridView button has been clicked that has a `CommandName` property value assigned.
-   - Note how information is passed into the RowCommand event through its `e` argument.
-- SelectedIndexChanged
-   - This event isn't used in this code, but its stubbed in here to show that it's available.
-
-GridView methods
-
-- The GridView's `DataBind` method is what causes the GridView's corresponding HTML to be generated and injected into the page.
+ 
+```
+   - Add DataKeyNames (`customer_cmname,customer_cmcustno`)
+      - DataKeyNames are essentially hidden fields in the GridView
+   - GridView events
+      - RowCommand
+         - The `RowCommand` event fires when a GridView button has been clicked that has a `CommandName` property value assigned.
+         - Note how information is passed into the RowCommand event through its `e` argument.
+      - SelectedIndexChanged
+         - This event isn't used in this code, but its stubbed in here to show that it's available.
+   - GridView methods
+      - The GridView's `DataBind` method is what causes the GridView's corresponding HTML to be generated and injected into the page.
 
 Discuss connection pooling and singleton DB pattern
 
