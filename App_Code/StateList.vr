@@ -21,6 +21,24 @@ BegClass StateList Access(*Public) Extends(System.Object)
         *This.DGDB = DGDB
     EndConstructor
 
+//    BegFunc GetList Type(ListItemCollection) Access(*Public) 
+//        DclSrParm Library Type(*String) 
+//        DclSrParm File Type(*String) 
+//        DclSrParm TextField Type(*String) 
+//        DclSrParm ValueField  Type(*String) 
+//
+//        DclFld lih Type(ASNA.DataGateHelper.ListItemHelper) New(*This.DGDB) 
+//        DclFld RecordsRead Type(*Integer4) 
+//
+//        RecordsRead = lih.LoadList(Library, File, TextField, ValueField) 
+//        If RecordsRead > 0 
+//            LeaveSr lih.ListItems
+//        Else
+//            LeaveSr *Nothing
+//        EndIf 
+//    EndFunc
+
+
     BegFunc GetList Type(ListItemCollection) Access(*Public) 
         DclFld Result Type(ListItemCollection) New()
         

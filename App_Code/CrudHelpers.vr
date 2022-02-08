@@ -63,7 +63,7 @@ BegClass CrudHelpers Access(*Public)
      | For each field name in the FieldNameList, update the ASP.NET control
      | on the form with that field name as its Id. 
      */
-    BegSr PopulateUI Access(*Public)  Shared(*Yes) 
+    BegSr PopulateUIFromDataRow Access(*Public)  Shared(*Yes) 
         DclSrParm Parent Type(Control) 
         DclSrParm dt Type(DataTable) 
 

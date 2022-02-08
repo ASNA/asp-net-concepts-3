@@ -41,11 +41,15 @@
                         <ItemStyle CssClass="col-name" />
                         </asp:BoundField>
 
-                        <asp:ButtonField CommandName="ActionEdit" Text="Edit" >
+                        <%--<asp:ButtonField CommandName="ActionEdit" Text="Edit" >--%>
+                        <asp:ButtonField CommandName="ActionEdit" Text='<i class="fas fa-edit"></i>' >
                         <ItemStyle CssClass="col-text-button" />
                         </asp:ButtonField>
 
-                        <asp:ButtonField CommandName="ActionDelete" Text="Delete" >
+
+
+                        <%--<asp:ButtonField CommandName="ActionDelete" Text="Delete" >--%>
+                        <asp:ButtonField CommandName="ActionDelete" Text='<i class="fas fa-trash"></i>' >
                         <ItemStyle CssClass="col-text-button" />
                         </asp:ButtonField>
                     </Columns>

@@ -112,7 +112,7 @@ BegClass views_CustomerList Partial(*Yes) Access(*Public) Extends(System.Web.UI.
 
         DclFld dt Type(DataTable) 
 
-        If textboxPositionTo.Text.Trim() <> String.Empty 
+        If textboxPositionTo.Text.Trim() <> String.Empty
             dt = PositionListTo(textboxPositionTo.Text)
             If dt.Rows.Count <> 0 
                 BindGridView(dt) 		

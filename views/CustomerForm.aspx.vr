@@ -32,10 +32,16 @@ BegClass CustomerForm Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
             // Set page title.
             *This.Title = dt.Rows[0]['CMName'].ToString()
 
-            StatesList = (*New StateList(DGDB)).GetList()
-            CrudHelpers.LoadListControl(CMState, StatesList)
+            // Alternative way of populating a ListItemCollection dynamically. 
+            DclFld lih Type(ASNA.DataGateHelper.ListItemHelper) New(*This.DGDB) 
+            lih.LoadList('examples', 'states', 'state', 'abbrev')
+            CrudHelpers.LoadListControl(CMState, lih.ListItems) 
+                       
+            // Use hand-written class to populate a ListItemCollection.
+            // StatesList = (*New StateList(DGDB)).GetList()
+            // CrudHelpers.LoadListControl(CMState, StatesList)
 
-            CrudHelpers.PopulateUI(*This, dt) 
+            CrudHelpers.PopulateUIFromDataRow(*This, dt) 
         Else
         EndIf 
     EndSr 

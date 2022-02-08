@@ -8,8 +8,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="public/vendor/css/bootstrap5/bootstrap.min.cssxx" />
-    <link rel="stylesheet" href="public/css/layout.cssxx" />
+    <link rel="stylesheet" href="public/vendor/css/bootstrap5/bootstrap.min.css" />
+    <link rel="stylesheet" href="public/css/layout.css" />
     
     <link href="public/vendor/fontawesome/css/all.css" rel="stylesheet"> <!--load all styles -->
 
@@ -57,6 +57,7 @@
                   </ul>
                 </li>
               </ul>
+                <span class="me-3 navbar-text">Connected to: <%= Application['dbname'].ToString() %></span>
                 <span class="navbar-text">                   
                     <% If (Request.IsAuthenticated) %>                
                         Welcome back, <asp:LoginName ID="LoginName1" runat="server" />&nbsp;

@@ -64,7 +64,8 @@ BegClass CustomerByNameList Access(*Public)
                 Leave
             EndIf
 
-            Write MemFile                
+            Write Customers
+            //Write MemFile                
             If RowCounter = 1
                 *This.FirstCMName = Customer_CMName.Trim()
                 *This.FirstCMCustNo = Customer_CMCustNo
