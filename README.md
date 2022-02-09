@@ -70,8 +70,6 @@ DclMemoryFile MemFile ImpOpen(*Yes)
     DclRecordFormat Customers 
     DclRecordFld    Customer_CMCustNo  Type(*Packed) Len(9,0)
     DclRecordFld    Customer_CMName    Type(*Char) Len(40)
- 
-```
          - Number: provide HeaderText (`Number`) and DataField (`Customer_CMCustNo`) and DataFormatString (`{0:00000}`)
          - Name: provide HeaderText (`Name`) and DataField (`Customer_CMName`)
       - Buttton fields
@@ -86,8 +84,6 @@ DclMemoryFile MemFile ImpOpen(*Yes)
 ```
 <asp:ButtonField CommandName="ActionEdit" Text="<i class='fa-solid fa-pencil'></i>" />
 <asp:ButtonField CommandName="ActionDelete" Text="<i class='fa-light fa-trash-can'></i>" />
- 
-```
    - Add DataKeyNames (`customer_cmname,customer_cmcustno`)
       - DataKeyNames are essentially hidden fields in the GridView
    - GridView events
@@ -101,6 +97,17 @@ DclMemoryFile MemFile ImpOpen(*Yes)
 
 Discuss connection pooling and singleton DB pattern
 
+- Examples
+   - With connection pooling on, connect in an aspx page but do not disconnect. Show jobs grow with each postback
+      - Fix it with Disconnect DGDB before page goes out of scope
+   - With connection pooling off, connect in an aspx page and disconnect. Show how there are no jobs after the page goes out of scope. Seems good, _but_ you are creating a new IBM i job from scratch for every request This is not good! That is expensive.
+      - Show how with no disconnect, this also stacks up orphan jobs.
+   - Create a class that uses a DB (without singleton DB pattern). Show that it creates orphan jobs -- notice that jobs grow by one with each postback (those are orphan jobs from the class). Add "Open Customer" in constructor and show the orphan jobs have open files!
+      - Fix it first with a Close method in the class
+         - Note this fixes it -- but you gotta remember to do it!
+      - Fix it with the SingletonDB pattern
+   - Add a file to index.aspx.vr and open it in the constructor. Use a breakpoint in UseFile to show that there are two instances of the CMastNewL2 file opened.
+   - Show job difference between TerminateAll and just plain ol' ending
 - [Read about DataGate connection pooling](https://asna.com/us/tech/kb/doc/connection-pooling)
 - [Read about how to find ASP.NET job leaks](https://asna.com/us/tech/kb/doc/ibm-i-orphan-jobs)
 - [Singleton DB pattern in AVR](https://asna.com/us/tech/kb/doc/singleton-db-pattern)
@@ -111,6 +118,7 @@ Discuss connection pooling and singleton DB pattern
 
 Helper classes
 
+- App_code folder
 - CustomerByNameList
    - This classes provides the file IO to populate the GridView's DataSource.
 - AppStateHelpers
@@ -160,6 +168,11 @@ Enable CSS and icons
 - FontAwesome
    - https://fontawesome.com/
 
+CSS Grid and Flex
+
+- https://css-tricks.com/snippets/css/complete-guide-grid/
+- https://css-tricks.com/snippets/css/a-guide-to-flexbox/
+
 Creating the CustomerForm.aspx
 
 - Discuss [System.Web.UI.Page.Controls](https://docs.microsoft.com/en-us/dotnet/api/system.web.ui.control.controls?view=netframework-4.7.1#system-web-ui-control-controls) property
@@ -170,16 +183,20 @@ Creating the CustomerForm.aspx
 
 Creating the CustomerForm.aspx page
 
-- Validators - don't forget causesvalidation on buttons
-- Helper classes
-   - CrudHelpers
-   - CustomerCrud
-   - StateList
-      - This class is a file-specific class that creates a ListItemCollection for binding to a listcontrol.
-
-Fixing ASP.NET checkbox and radio buttons
-
-- The ASP.NET checkbox and radio button controls inject a SPAN tag around the input tag. This SPAN tag
+- CustomerList.aspx page note:
+   -  If 'first-customer-name' and 'first-customer-number' session variables exist, the list is positioned to those values; otherwise the list is positioned at the top of the file.
+- Navigating to the CustomerForm.aspx.page
+   - Add update form
+      - Add controls
+         - Input controls as needed
+         - Buttons
+            - Update
+               - The 'update' button puts the updated customer name and number in the session variables to reposition the list page to the customer updated.
+            - Cancel
+               - The 'cancel' button uses two session variables to reposition the list back where it was.
+      - Validators - don't forget causesvalidation on buttons
+   - Fixing ASP.NET checkbox and radio buttons
+      - The ASP.NET checkbox and radio button controls inject a SPAN tag around the input tag. This SPAN tag
 breaks Bootstrap checkbox/radiobutton rendering.
 
 ```
@@ -242,3 +259,30 @@ This JavaScript calls the `removeAspNetCheckboxWrapper` method:
     </script>
 </asp:Content>
 ```
+
+Helper classes
+
+- CustomerCrud
+   - This class does the IO for reading and updating a single customer.
+   - See this [GitHub repo](https://github.com/ASNA/deprecated-avr-asp-net-example) for a more old-school example writing all of the file update logic by hand.
+- CrudHelpers
+   - Methods
+      - GetDataRowValuesForDebugging
+         - creates a string of field names and corresponding values for debugging/demoing purposes. By default uses row zero of the dt parameter but an overload also lets you specific a specific row.
+      - GetDataFieldNames
+         - Given a DataTable, creates a string collection of lower-case field names found in the DataTable's Columns collection. This field name list is often used to collection values from a DataRow by field name. This list is referenced as the FieldNameList in the other method docs below.
+      - PopulateUIFromDataRow
+         - Given an owner ASP.NET Control (a control with a Controls collection) and a DataTable, this method iterates over the the FieldNameList for the DataTable's zeroth DataRow and assigns values to that zeroth row from corresponding ASP.NET controls with the same ID as the field name.
+         - Source control types can be TextBox, Label, RadioButton, CheckBox, and ListControl. Data from any other control types need to be fetched and assigned to the corresponding DataRow field manually after calling PopulateUIFromDataRow.
+      - PopulateControlValue
+         - Given a control parent (a control with a Controls collection), a field name, and a DataRow, find the control where its lower-case id matches the lower case field name and that field value to the control's value.
+      - PopulateDataRowFromUI
+         - Given an owner ASP.NET Control (a control with a Controls collection), a field name, and a DataTable, this method iterates over the the FieldNameList for the DataTable's zeroth DataRow and finds the correpsonding ASP.NET control and assigns its value to the zeroth DataRow.
+      - PopulateDataRowField
+         - Given a control parent (a control with a Controls collection), a field name, and a DataRow, find the control where its lower-case id matches the lower case field name and assign that control's value to the DataRow.
+      - FindControlRecursive
+         - Given an owner ASP.NET Control (a control with a Controls collection) and a control ID (a field name in this case) recursively search the Control's for that control. The ASP.NET controls should named 'field_' + the field name.
+      - LoadListControl
+- StateList
+   - This class is a file-specific class that creates a ListItemCollection for binding to a listcontrol
+   - Also discuss, briefly, how the ASNA.DataGateHelper may work here.
