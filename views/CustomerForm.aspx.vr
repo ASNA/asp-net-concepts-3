@@ -33,13 +33,13 @@ BegClass CustomerForm Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
             *This.Title = dt.Rows[0]['CMName'].ToString()
 
             // Alternative way of populating a ListItemCollection dynamically. 
-            DclFld lih Type(ASNA.DataGateHelper.ListItemHelper) New(*This.DGDB) 
-            lih.LoadList('examples', 'states', 'state', 'abbrev')
-            CrudHelpers.LoadListControl(CMState, lih.ListItems) 
+            //DclFld lih Type(ASNA.DataGateHelper.ListItemHelper) New(*This.DGDB) 
+            //lih.LoadList('examples', 'states', 'state', 'abbrev')
+            //CrudHelpers.LoadListControl(field_CMState, lih.ListItems) 
                        
             // Use hand-written class to populate a ListItemCollection.
-            // StatesList = (*New StateList(DGDB)).GetList()
-            // CrudHelpers.LoadListControl(CMState, StatesList)
+            StatesList = (*New StateList(DGDB)).GetList()
+            CrudHelpers.LoadListControl(field_CMState, StatesList)
 
             CrudHelpers.PopulateUIFromDataRow(*This, dt) 
         Else
@@ -64,23 +64,23 @@ BegClass CustomerForm Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
             LeaveSr 
         EndIf 
 
-        CustomerNumber = Convert.ToInt32(CMCustNo.Text) 
+        CustomerNumber = Convert.ToInt32(field_CMCustNo.Text) 
 
+        // This read adds one record ot the memory file in the CustomerCrud class.
         dt = Crud.ReadCustomer(CustomerNumber)       
+        // This update adds another record to the memory file in the CustomerCrud class.
         CrudHelpers.PopulateDataRowFromUI(*This, dt) 
+        // This second 
         Crud.UpdateCustomer(CustomerNumber, dt) 
 
-        Session['first-customer-name'] = CMName.Text
-        Session['first-customer-number'] = CMCustNo.Text
+        Session['first-customer-name'] = field_CMName.Text
+        Session['first-customer-number'] = field_CMCustNo.Text
         Response.Redirect("CustomerList.aspx") 
 	EndSr
 
 	BegSr buttonCancel_Click Access(*Private) Event(*This.buttonCancel.Click)
 		DclSrParm sender Type(*Object)
 		DclSrParm e Type(System.EventArgs)
-
-        Session['first-customer-name']   = Session['first-customer-name'] 
-        Session['first-customer-number'] = Session['first-customer-number']
 
         Response.Redirect("CustomerList.aspx") 
     EndSr
@@ -89,7 +89,7 @@ BegClass CustomerForm Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
 		DclSrParm source Type(*Object)
 		DclSrParm args Type(System.Web.UI.WebControls.ServerValidateEventArgs)
 		
-        If CMName.Text.Trim().ToLower() = "neil young"
+        If field_CMName.Text.Trim().ToLower() = "neil young"
             args.IsValid = *False 
             customvalidatorCMName.ErrorMessage = "Sorry, the name can't be Neil Young!" 
         EndIf 

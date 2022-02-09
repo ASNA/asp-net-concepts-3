@@ -94,7 +94,8 @@ BegClass CrudHelpers Access(*Public)
          | those controls manually after calling this method to populate 
          | the other controls.
          */
-        ctrl = FindControlRecursive(Parent, FldName) 
+
+        ctrl = FindControlRecursive(Parent, GetPrefixedControlId(FldName)) 
         If ctrl <> *Nothing 
             If ctrl *Is TextBox 
                 (ctrl *As TextBox).Text = dr[fldName].ToString().Trim()
@@ -145,7 +146,8 @@ BegClass CrudHelpers Access(*Public)
          | the necessary DataRow fields manually after calling this method 
          | to populate the other DataRow fields. 
          */
-        ctrl = FindControlRecursive(Parent, FldName) 
+
+        ctrl = FindControlRecursive(Parent, GetPrefixedControlId(FldName)) 
         If ctrl <> *Nothing 
             If ctrl *Is TextBox 
                  dr[fldName] = (ctrl *As TextBox).Text.Trim()
@@ -171,7 +173,7 @@ BegClass CrudHelpers Access(*Public)
 
         DclFld foundControl Type(Control) 
 
-        If parent.id <> *Nothing AND parent.id.ToLower() = id.ToLower()
+        If parent.id <> *Nothing AND parent.id.ToLower() = id
             Leavesr parent 
         EndIf 
 
@@ -183,6 +185,12 @@ BegClass CrudHelpers Access(*Public)
         EndFor 
 
         LeaveSr *Nothing 
+    EndFunc 
+
+    BegFunc GetPrefixedControlId Type(*String) Shared(*Yes)
+        DclSrParm id Type(*String) 
+
+        LeaveSr ('field_' + Id).ToLower() 
     EndFunc 
 
     /*
