@@ -51,7 +51,7 @@
                   <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="customerList.aspx">Customer List</a></li>
                     <%--<li><a class="dropdown-item" href="system/testdbconnection.aspx">Test DB connection</a></li>--%>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><a class="dropdown-item" href="customerListsql.aspx">Customer List w/SQL</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="#">Something else here</a></li>
                   </ul>

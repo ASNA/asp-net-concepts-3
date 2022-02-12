@@ -66,11 +66,11 @@ BegClass CustomerForm Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
 
         CustomerNumber = Convert.ToInt32(field_CMCustNo.Text) 
 
-        // This read adds one record ot the memory file in the CustomerCrud class.
+        // This read adds one record to the memory file in the CustomerCrud class.
         dt = Crud.ReadCustomer(CustomerNumber)       
-        // This update adds another record to the memory file in the CustomerCrud class.
+        // Update data row fields just read with values from the UI.
         CrudHelpers.PopulateDataRowFromUI(*This, dt) 
-        // This second 
+        // Update the customer record.
         Crud.UpdateCustomer(CustomerNumber, dt) 
 
         Session['first-customer-name'] = field_CMName.Text
