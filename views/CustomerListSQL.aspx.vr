@@ -27,9 +27,6 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
         DclSrParm sender Type(*Object)
         DclSrParm e Type(System.EventArgs)
 
-        DclFld CustomerName Type(*String) 
-        DclFld CustomerNumber Type(*Integer4) 
-
         DGDB.DBName = StateHelper.GetApplicationValue('dbname').ToString()
         *This.Title = 'Customer List'
 
@@ -45,13 +42,11 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
 
         If (NOT Page.IsPostBack)
            *This.PageNumber = 1
-            GetPageData()
-//            If  ArePositionToValuesProvided()
-//                CustomerName = StateHelper.GetSessionValueAsString('first-customer-name')
-//                CustomerNumber = StateHelper.GetSessionValueAsInt32('first-customer-number')
-//
-//            Else 
-//            EndIf 
+            If  ArePositionToValuesProvided()
+                PositionToCustomerNameAndCustomerNumber()
+            Else 
+                GetPageData()
+            EndIf 
         Else
         EndIf
     EndSr
@@ -77,6 +72,11 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
         Sql = PagedData.CreateSql(SqlClauses) 
 
         pd.WriteThenReadTempFile(PAGE_SIZE, *This.PageNumber, Sql)
+
+        If pd.RowsRead = 0 
+            Sql = 'x'
+
+        EndIf 
         
         *This.PageNumber += 1
 
@@ -98,9 +98,7 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
             Session['first-customer-number'] = Cust.CMCustNo
         EndIf 
 
-        If e.CurrentRowCounter < PAGE_SIZE 
-            Customers.Add(Cust) 
-        EndIf 
+        Customers.Add(Cust) 
     EndSr
 
     BegFunc ArePositionToValuesProvided Type(*Boolean) 
@@ -152,29 +150,28 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
 	BegSr buttonPositionTo_Click Access(*Private) Event(*This.buttonPositionTo.Click)
 		DclSrParm sender Type(*Object)
 		DclSrParm e Type(System.EventArgs)
-       
-        *This.WhereClause = String.Format("LOWER(cmname) >= '{0}'", textboxPositionTo.Text.ToLower().Trim())
-         textboxPositionTo.Text = String.Empty 
 
+        *This.WhereClause = String.Format("LOWER(cmname) >= '{0}'", textboxPositionTo.Text.ToLower().Trim())
         Viewstate['whereclause'] = *This.WhereClause
+        textboxPositionTo.Text = String.Empty 
 
         *This.PageNumber = 1 
 
         GetPageData() 
-
-
-                //SqlClauses.Add('where', "LOWER(cmname) LIKE '%smith%'")       // Optional -- defaults to no WHERE clause
-
-//        DclFld dt Type(DataTable) 
-//
-//        If textboxPositionTo.Text.Trim() <> String.Empty
-//            dt = PositionListTo(textboxPositionTo.Text)
-//            If dt.Rows.Count <> 0 
-//                BindGridView(dt) 		
-//                textboxPositionTo.Text = String.Empty 
-//            EndIf 
-//        EndIf 
 	EndSr
+
+    BegSr PositionToCustomerNameAndCustomerNumber
+        DclFld CustomerName Type(*String) 
+        DclFld CustomerNumber Type(*Integer4) 
+
+        CustomerName = StateHelper.GetSessionValueAsString('first-customer-name')
+        CustomerNumber = StateHelper.GetSessionValueAsInt32('first-customer-number')
+
+        *This.WhereClause = String.Format("LOWER(CONCAT(LOWER(TRIM(cmname)),cmcustno)) >= '{0}{1}'", CustomerName.ToLower().Trim(), CustomerNumber.ToString())
+        Viewstate['whereclause'] = *This.WhereClause
+        *This.PageNumber = 1 
+        GetPageData() 
+    EndSr
 
 	BegSr gridviewCust_RowCommand Access(*Private) Event(*This.gridviewCust.RowCommand)
 		DclSrParm sender Type(*Object)
@@ -186,7 +183,7 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
 
         CommandName = e.CommandName
         SelectedIndex = e.CommandArgument.ToString() 
-        CustomerNumber = gridviewCust.DataKeys[SelectedIndex]["customer_cmcustno"].ToString()		
+        CustomerNumber = gridviewCust.DataKeys[SelectedIndex]["cmcustno"].ToString()		
 
         If CommandName = 'ActionEdit'
             Session['customer-number'] = CustomerNumber
@@ -195,19 +192,6 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
             // Do something here for delete action.
         EndIf 
 	EndSr
-
-//    BegFunc PositionListTo Type(DataTable) 
-//        DclSrParm CustomerName Type(*String) 
-//
-//        LeaveSr PositionListTo(CustomerName, 0) 
-//    EndFunc             
-
-//    BegFunc  PositionListTo Type(DataTable) 
-//        DclSrParm CustomerName Type(*String) 
-//        DclSrParm CustomerNumber Type(*Integer4) 
-//
-//    EndFunc 
-
 
 EndClass
 

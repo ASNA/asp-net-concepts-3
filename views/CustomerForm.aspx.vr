@@ -82,7 +82,7 @@ BegClass CustomerForm Partial(*Yes) Access(*Public) Extends(System.Web.UI.Page)
 		DclSrParm sender Type(*Object)
 		DclSrParm e Type(System.EventArgs)
 
-        Response.Redirect("CustomerList.aspx") 
+        Response.Redirect("CustomerListSQL.aspx") 
     EndSr
 
 	BegSr CustomValidator1_ServerValidate Access(*Private) Event(*This.customvalidatorCMName.ServerValidate)
