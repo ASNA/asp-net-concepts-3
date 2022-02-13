@@ -3,6 +3,7 @@ Using System.Data
 Using System.Configuration
 Using System.Collections
 Using System.Collections.Generic
+Using System.Text.RegularExpressions
 Using System.Web
 Using System.Web.Security
 Using System.Web.UI
@@ -163,23 +164,26 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
             *This.PageNumber = 1 
             
             GetPageData()
-            BindGridView()
-    
-            *This.PageNumber += 1
+//            *This.PageNumber += 1
             LeaveSr
         EndIf
 
-        If textboxPositionTo.Text.Trim().Substring(0,1) = '>'
-            textboxPositionTo.Text = textboxPositionTo.Text.Replace('>',String.Empty)
-            *This.WhereClause = String.Format("LOWER(cmname) LIKE '%{0}%'", textboxPositionTo.Text.ToLower().Trim())
-        Else 
+//        DclFld AllDigits Type(*String) Inz('^\d+$') 
+//        If RegEx.Matches(textboxPositionTo.Text.Trim(), AllDigits)
+//            *This.WhereClause = String.Format("LOWER(cmname) LIKE '%{0}%'", textboxPositionTo.Text.ToLower().Trim())
+//        EndIf 
+
+        If textboxPositionTo.Text.Trim().Substring(0,1) = '^'
+            //textboxPositionTo.Text = Regex.Replace(textboxPositionTo.Text,'^',String.Empty) 
+            textboxPositionTo.Text = textboxPositionTo.Text.Replace('^',String.Empty)
             *This.WhereClause = String.Format("LOWER(cmname) >= '{0}'", textboxPositionTo.Text.ToLower().Trim())
+        Else 
+            *This.WhereClause = String.Format("lower(concat(cmcustno,trim(cmname))) LIKE '%{0}%'", textboxPositionTo.Text.ToLower().Trim())
+            //*This.WhereClause = String.Format("LOWER(cmname) LIKE '%{0}%'", textboxPositionTo.Text.ToLower().Trim())
         EndIf 
 
         textboxPositionTo.Text = String.Empty 
-
         *This.PageNumber = 1 
-
         GetPageData() 
 	EndSr
 
