@@ -20,6 +20,7 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
     DclFld StateHelper Type(AppStateHelpers) New(*This.Context) 
     DclFld Customers Type(List(*Of Customer)) New()
     DclFld pd Type(PagedData) WithEvents(*Yes)  
+
     DclFld PageNumber Type(*Integer4) 
     DclFld WhereClause Type(*String) 
 
@@ -74,13 +75,11 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
         pd.WriteThenReadTempFile(PAGE_SIZE, *This.PageNumber, Sql)
 
         If pd.RowsRead = 0 
-            Sql = 'x'
-
+             labelTableFooter.Text = 'No rows found to match that query.'
+             LeaveSr
         EndIf 
         
         *This.PageNumber += 1
-
-        ViewState['pagenumber'] = *This.PageNumber
 
         BindGridView()
     EndSr
@@ -118,6 +117,14 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
         EndIf 
     EndSr 
 
+    BegSr Page_PreRender Access(*Private) Event(*This.PreRender) 
+        DclSrParm sender Type(*Object)
+        DclSrParm e Type(System.EventArgs)
+
+        Viewstate['whereclause'] = *This.WhereClause
+        ViewState['pagenumber'] = *This.PageNumber
+    EndSr
+
     BegSr Page_Unload Access(*Private) Event(*This.Unload)
         DclSrParm sender Type(*Object)
         DclSrParm e Type(System.EventArgs)
@@ -151,8 +158,24 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
 		DclSrParm sender Type(*Object)
 		DclSrParm e Type(System.EventArgs)
 
-        *This.WhereClause = String.Format("LOWER(cmname) >= '{0}'", textboxPositionTo.Text.ToLower().Trim())
-        Viewstate['whereclause'] = *This.WhereClause
+        If String.IsNullOrEmpty(textboxPositionTo.Text)
+            *This.WhereClause = *Nothing 
+            *This.PageNumber = 1 
+            
+            GetPageData()
+            BindGridView()
+    
+            *This.PageNumber += 1
+            LeaveSr
+        EndIf
+
+        If textboxPositionTo.Text.Trim().Substring(0,1) = '>'
+            textboxPositionTo.Text = textboxPositionTo.Text.Replace('>',String.Empty)
+            *This.WhereClause = String.Format("LOWER(cmname) LIKE '%{0}%'", textboxPositionTo.Text.ToLower().Trim())
+        Else 
+            *This.WhereClause = String.Format("LOWER(cmname) >= '{0}'", textboxPositionTo.Text.ToLower().Trim())
+        EndIf 
+
         textboxPositionTo.Text = String.Empty 
 
         *This.PageNumber = 1 
