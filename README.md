@@ -183,7 +183,9 @@ Creating the CustomerForm.aspx
 
 An alternative to the previously-discussed Customer List which requires a custom-written class (`CustomerList.aspx.vr` in this example) is to use the ASNA.DataGateHelpers assembly. This class provides a couple of classes that not only dramatically reduce the manual code you need to write, but also makes it trivial to do paging and more enhanced searching.
 
-Using this SQL method, the UI elements are fundamentally the same (we do need a few more buttons here).
+Using this SQL method, the UI elements are fundamentally the same (we do need a few more buttons here). Here is the grid presented when using the `CustomerListSQL.aspx` page.
+
+![](https://asna.com/filebin/marketing/chrome_w0DUJYzRc4.png)
 
 [See this page for an annotated example of a using SQL with the ASNA.DataGateHelpers.PagedList class.](https://asna.github.io/avr-asp-net-concepts-3/views/CustomerListSQL.aspx.vr.html)
 
