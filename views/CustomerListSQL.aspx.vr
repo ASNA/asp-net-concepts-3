@@ -19,7 +19,7 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
     DclConst PAGE_SIZE Value(12) 
 
     DclFld StateHelper Type(AppStateHelpers) New(*This.Context) 
-    DclFld Customers Type(List(*Of Customer)) New()
+    DclFld Customers Type(List(*Of CustomerGridModel)) New()
     DclFld pd Type(PagedData) WithEvents(*Yes)  
 
     DclFld PageNumber Type(*Integer4) 
@@ -32,99 +32,44 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
         DGDB.DBName = StateHelper.GetApplicationValue('dbname').ToString()
         *This.Title = 'Customer List'
 
-        If Viewstate['pagenumber'] = *Nothing
-            *This.PageNumber = 1
-        Else 
-            *This.PageNumber = Convert.ToInt32(Viewstate['pagenumber']) 
-        EndIf 
+        *This.PageNumber = (Viewstate['pagenumber'] = *Nothing) ? 1 : Convert.ToInt32(Viewstate['pagenumber']) 
 
         If Viewstate['whereclause'] <> *Nothing
             *This.WhereClause = Viewstate['whereclause'].ToString()
         EndIf
 
         If (NOT Page.IsPostBack)
-           *This.PageNumber = 1
+            AddGridViewColumns()
             If  ArePositionToValuesProvided()
                 PositionToCustomerNameAndCustomerNumber()
             Else 
-                GetPageData()
+                GetAndShowPage()
             EndIf 
         Else
         EndIf
-    EndSr
-
-    BegSr GetPageData
-        DclFld Sql Type(*String) 
-        DclFld SqlClauses Type(Dictionary (*Of *String, *String)) New()       
-
-        pd = *New PagedData(DGDB, 'rp_data', 'rpzimmie', 'sqlimmed', *TypeOf(Customer)) 
-
-        SqlClauses.Add('select', 'cmcustno, cmname')           // Optional -- defaults to SELECT * 
-        SqlClauses.Add('from', 'examples/cmastnewL2')                   // Required
-
-        If NOT String.IsNullOrEmpty(*This.WhereClause) 
-            SqlClauses.Add('where', *This.WhereClause) 
-        EndIf 
-        //SqlClauses.Add('where', "LOWER(cmname) LIKE '%smith%'")       // Optional -- defaults to no WHERE clause
-        //SqlClauses.Add('where', "lower(concat(cmcustno,trim(cmname))) LIKE '%itt%'")      // Optional -- defaults to no WHERE clause
-        //SqlClauses.Add('where', "lower(concat(cmcustno,trim(cmname))) LIKE '%10500%'")    // Optional -- defaults to no WHERE clause
-        SqlClauses.Add('orderby', 'cmname, cmcustno')                                       // Required -- ORDER BY required by LIMIT/OFFSET
-
-
-        Sql = PagedData.CreateSql(SqlClauses) 
-
-        pd.WriteThenReadTempFile(PAGE_SIZE, *This.PageNumber, Sql)
-
-        If pd.RowsRead = 0 
-             labelTableFooter.Text = 'No rows found to match that query.'
-             LeaveSr
-        EndIf 
-        
-        *This.PageNumber += 1
-
-        BindGridView()
     EndSr
 
     BegSr OnAfterRowRead Event(pd.AfterRowRead) 
         DclSrParm Sender Type(*Object)
         DclSrParm e Type(ASNA.DataGateHelper.AfterRowReadArgs) 
 
-        DclFld Cust Type(Customer) 
+        DclFld Cust Type(CustomerGridModel) 
 
-        Cust = e.CustomClassInstance *As Customer 
+        Cust = e.CustomClassInstance *As CustomerGridModel 
 
         If e.CurrentRowCounter = 1
-            Session['first-customer-name'] = Cust.CMName
-            Session['first-customer-number'] = Cust.CMCustNo
+            SaveRowValuesToLaterRedisplayPageFromHere(Cust)
         EndIf 
 
         Customers.Add(Cust) 
     EndSr
-
-    BegFunc ArePositionToValuesProvided Type(*Boolean) 
-        LeaveSr Session['first-customer-name'] <> *Nothing AND +
-                Session['first-customer-number'] <> *Nothing
-    EndFunc
-
-    BegSr BindGridView 
-        gridviewCust.DataSource = *This.Customers
-        gridviewCust.DataBind()
-
-        buttonNext.Enabled = pd.MoreRecords
-        If buttonNext.Enabled 
-            labelTableFooter.Text = 'More records to show'
-        Else
-            labelTableFooter.Text = 'No more records to show'
-        EndIf 
-    EndSr 
 
     BegSr Page_PreRender Access(*Private) Event(*This.PreRender) 
         DclSrParm sender Type(*Object)
         DclSrParm e Type(System.EventArgs)
 
         buttonPrev.Enabled = (*This.PageNumber > 2) ? *True : *False
-
-        *This.Title =  *This.PageNumber
+        buttonFirst.Enabled = buttonPrev.Enabled
 
         Viewstate['whereclause'] = *This.WhereClause
         ViewState['pagenumber'] = *This.PageNumber
@@ -152,11 +97,40 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
         CustomerName = gridviewCust.DataKeys[SelectedRow]['customer_cmname'].ToString()
 	EndSr
 
+    BegSr buttonFirst_Click Access(*Private) Event(*This.buttonFirst.Click)
+		DclSrParm sender Type(*Object)
+		DclSrParm e Type(System.EventArgs)
+		
+        *This.WhereClause = *Nothing 
+        *This.PageNumber = 1 
+            
+        GetAndShowPage()
+	EndSr
+
 	BegSr buttonNext_Click Access(*Private) Event(*This.buttonNext.Click)
 		DclSrParm sender Type(*Object)
 		DclSrParm e Type(System.EventArgs)
 
-        GetPageData()
+        GetAndShowPage()
+	EndSr
+
+	BegSr buttonPrev_Click Access(*Private) Event(*This.buttonPrev.Click)
+		DclSrParm sender Type(*Object)
+		DclSrParm e Type(System.EventArgs)
+
+        // The page is always presented with *This.Page set to what the 
+        // _next_ page number displayed should be.
+        // Displayed     *This.PageNumber   Prev button status
+        //    1               2                 *False       
+        //    2               3                 *True
+
+        // When *This.PageNumber is 3, page 2 is diplayed. Therefore
+        // you need to subtract 2 from *This.PageNumber to show the previous page.
+
+        *This.WhereClause = *Nothing 
+        *This.PageNumber -= 2 
+                
+        GetAndShowPage()
 	EndSr
 
 	BegSr buttonPositionTo_Click Access(*Private) Event(*This.buttonPositionTo.Click)
@@ -166,38 +140,18 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
         If String.IsNullOrEmpty(textboxPositionTo.Text)
             LeaveSr
         EndIf
-
-        DclFld AllDigits Type(*String) Inz('^\d+$') 
         
-        //If RegEx.IsMatch(textboxPositionTo.Text.Trim(), AllDigits)
-//            *This.WhereClause = String.Format("LOWER(cmname) LIKE '%{0}%'", textboxPositionTo.Text.ToLower().Trim())
-//        EndIf 
-
         If textboxPositionTo.Text.Trim().Substring(0,1) = '^'
             textboxPositionTo.Text = Regex.Replace(textboxPositionTo.Text,'\^',String.Empty) 
             *This.WhereClause = String.Format("LOWER(cmname) >= '{0}'", textboxPositionTo.Text.ToLower().Trim())
         Else 
             *This.WhereClause = String.Format("lower(concat(cmcustno,trim(cmname))) LIKE '%{0}%'", textboxPositionTo.Text.ToLower().Trim())
-            //*This.WhereClause = String.Format("LOWER(cmname) LIKE '%{0}%'", textboxPositionTo.Text.ToLower().Trim())
         EndIf 
 
         textboxPositionTo.Text = String.Empty 
         *This.PageNumber = 1 
-        GetPageData() 
+        GetAndShowPage() 
 	EndSr
-
-    BegSr PositionToCustomerNameAndCustomerNumber
-        DclFld CustomerName Type(*String) 
-        DclFld CustomerNumber Type(*Integer4) 
-
-        CustomerName = StateHelper.GetSessionValueAsString('first-customer-name')
-        CustomerNumber = StateHelper.GetSessionValueAsInt32('first-customer-number')
-
-        *This.WhereClause = String.Format("LOWER(CONCAT(LOWER(TRIM(cmname)),cmcustno)) >= '{0}{1}'", CustomerName.ToLower().Trim(), CustomerNumber.ToString())
-        Viewstate['whereclause'] = *This.WhereClause
-        *This.PageNumber = 1 
-        GetPageData() 
-    EndSr
 
 	BegSr gridviewCust_RowCommand Access(*Private) Event(*This.gridviewCust.RowCommand)
 		DclSrParm sender Type(*Object)
@@ -219,28 +173,92 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
         EndIf 
 	EndSr
 
-	BegSr buttonFirst_Click Access(*Private) Event(*This.buttonFirst.Click)
-		DclSrParm sender Type(*Object)
-		DclSrParm e Type(System.EventArgs)
-		
-        *This.WhereClause = *Nothing 
+    BegFunc ArePositionToValuesProvided Type(*Boolean) 
+        LeaveSr Session['first-customer-name'] <> *Nothing AND +
+                Session['first-customer-number'] <> *Nothing
+    EndFunc
+
+    BegSr BindGridView 
+        gridviewCust.DataBind()
+
+        buttonNext.Enabled = pd.MoreRecords
+
+        labelTableFooter.Text = (buttonNext.Enabled) ? + 
+            String.Format("Page {0} - more records to show", *This.PageNumber - 1) : +
+            String.Format("Page {0} - no more records to show", *This.PageNumber - 1)
+    EndSr 
+
+    BegSr GetAndShowPage
+        DclFld Sql Type(*String) 
+        DclFld SqlClauses Type(Dictionary (*Of *String, *String)) New()       
+
+        pd = *New PagedData(DGDB, 'rp_data', 'rpzimmie', 'sqlimmed', *TypeOf(CustomerGridModel)) 
+
+        SqlClauses.Add('select', 'cmcustno, cmname')   
+        SqlClauses.Add('from', 'examples/cmastnewL2')  
+        
+        If NOT String.IsNullOrEmpty(*This.WhereClause) 
+            SqlClauses.Add('where', *This.WhereClause) 
+        EndIf 
+        
+        SqlClauses.Add('orderby', 'cmname, cmcustno')  
+
+        Sql = PagedData.CreateSql(SqlClauses) 
+
+        pd.WriteThenReadTempFile(PAGE_SIZE, *This.PageNumber, Sql)
+
+        If pd.RowsRead = 0 
+             labelTableFooter.Text = 'No rows found to match that query.'
+             LeaveSr
+        EndIf 
+        
+        *This.PageNumber += 1
+
+        gridviewCust.DataSource = *This.Customers
+        BindGridView()
+    EndSr
+
+    BegSr PositionToCustomerNameAndCustomerNumber
+        DclFld CustomerName Type(*String) 
+        DclFld CustomerNumber Type(*Integer4) 
+
+        CustomerName = StateHelper.GetSessionValueAsString('first-customer-name')
+        CustomerNumber = StateHelper.GetSessionValueAsInt32('first-customer-number')
+
+        *This.WhereClause = String.Format("LOWER(CONCAT(LOWER(TRIM(cmname)),cmcustno)) >= '{0}{1}'", +
+                                          CustomerName.ToLower().Trim(), CustomerNumber.ToString())
+        Viewstate['whereclause'] = *This.WhereClause
         *This.PageNumber = 1 
-            
-        GetPageData()
-	EndSr
+        GetAndShowPage() 
+    EndSr
 
-	BegSr buttonPrev_Click Access(*Private) Event(*This.buttonPrev.Click)
-		DclSrParm sender Type(*Object)
-		DclSrParm e Type(System.EventArgs)
+    BegSr SaveRowValuesToLaterRedisplayPageFromHere
+        DclSrParm Cust Type(CustomerGridModel) 
 
-        *This.WhereClause = *Nothing 
-        *This.PageNumber -= 2 
-                
-        GetPageData()
-	EndSr
+        Session['first-customer-name'] = Cust.CMName
+        Session['first-customer-number'] = Cust.CMCustNo
+    EndSr
+
+    BegSr AddGridViewColumns
+        DclFld bf Type(BoundField) 
+
+        bf = *New BoundField()
+        bf.HeaderText = 'Number'
+        bf.DataField = 'cmcustno'
+        bf.DataFormatString = '{0:00000}'
+        bf.ItemStyle.CssClass = 'col-number'
+        gridviewCust.Columns.Insert(0, bf)
+        
+        bf = *New BoundField()
+        bf.HeaderText = 'Name'
+        bf.DataField = 'cmname'
+        bf.ItemStyle.CssClass = 'col-name'
+        gridviewCust.Columns.Insert(1, bf) 
+    EndSr 
+
 EndClass
 
-BegClass Customer Access(*Public) 
+BegClass CustomerGridModel Access(*Public) 
     DclProp CMCustNo Type(*Packed) Len(9,0) Access(*Public)
     DclProp CMName Type(*String) Access(*Public)
     DclProp CMState Type(*String) Access(*Public)

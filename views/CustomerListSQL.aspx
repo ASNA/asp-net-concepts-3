@@ -25,13 +25,14 @@
                 <!-- gridview start -->
                 <asp:GridView ID="gridviewCust" runat="server" AutoGenerateColumns="False" CssClass="gridview zebra-stripe customerlist" DataKeyNames="cmname,cmcustno">
                     <Columns>
-                        <asp:BoundField DataField="cmcustno" HeaderText="Number" DataFormatString="{0:00000}" HtmlEncode="False">
+
+<%--                        <asp:BoundField DataField="cmcustno" HeaderText="Number" DataFormatString="{0:00000}" HtmlEncode="False">
                         <ItemStyle CssClass="col-number" />
                         </asp:BoundField>
 
                         <asp:BoundField DataField="cmname" HeaderText="Name" >                
                         <ItemStyle CssClass="col-name" />
-                        </asp:BoundField>
+                        </asp:BoundField>--%>
 
                         <%--<asp:ButtonField CommandName="ActionEdit" Text="Edit" >--%>
                         <asp:ButtonField CommandName="ActionEdit" Text='<i class="fas fa-edit"></i>' >
