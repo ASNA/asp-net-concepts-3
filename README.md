@@ -173,15 +173,18 @@ CSS Grid and Flex
 - https://css-tricks.com/snippets/css/complete-guide-grid/
 - https://css-tricks.com/snippets/css/a-guide-to-flexbox/
 
-Creating the CustomerForm.aspx
 
-- Discuss [System.Web.UI.Page.Controls](https://docs.microsoft.com/en-us/dotnet/api/system.web.ui.control.controls?view=netframework-4.7.1#system-web-ui-control-controls) property
-   - There are several controls that are containers that also have a `Controls` property.
-   - Best way to find a control is to recursively iterate a `controls` property looking for the desired control by Id. See `FindControlRecursive` in the `CrudHelpers` class.
+### CUSTOMER LIST WITH SQL 
+
+An alternative to the previously-discussed Customer List which requires a custom-written class (`CustomerList.aspx.vr` in this example) is to use the ASNA.DataGateHelpers assembly. This class provides a couple of classes that not only dramatically reduce the manual code you need to write, but also makes it trivial to do paging and more enhanced searching. 
 
 ### CUSTOMER FORM
 
 Creating the CustomerForm.aspx page
+
+- Discuss [System.Web.UI.Page.Controls](https://docs.microsoft.com/en-us/dotnet/api/system.web.ui.control.controls?view=netframework-4.7.1#system-web-ui-control-controls) property
+   - There are several controls that are containers that also have a `Controls` property.
+   - Best way to find a control is to recursively iterate a `controls` property looking for the desired control by Id. See `FindControlRecursive` in the `CrudHelpers` class.
 
 - CustomerList.aspx page note:
    -  If 'first-customer-name' and 'first-customer-number' session variables exist, the list is positioned to those values; otherwise the list is positioned at the top of the file.

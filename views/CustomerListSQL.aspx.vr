@@ -16,12 +16,18 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
 
     DclDB DGDB DBName('*Public/Leyland') 
     
+    // This dictates the number of rows shown to the user. 
     DclConst PAGE_SIZE Value(12) 
 
-    DclFld StateHelper Type(AppStateHelpers) New(*This.Context) 
-    DclFld Customers Type(List(*Of CustomerGridModel)) New()
+    // Collection of PageModel objects. 
+    DclFld Customers Type(List(*Of CustomerPageModel)) New()
+    // Declare the PagedData class--we'll instance it in a minute.
     DclFld pd Type(PagedData) WithEvents(*Yes)  
+    // App and Session state helper. 
+    DclFld StateHelper Type(AppStateHelpers) New(*This.Context) 
 
+    // Global variables to hold current PageNumber and WhereClause 
+    // for the life of this class (which only lasts from PageLoad to PageUnload). 
     DclFld PageNumber Type(*Integer4) 
     DclFld WhereClause Type(*String) 
 
@@ -29,20 +35,29 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
         DclSrParm sender Type(*Object)
         DclSrParm e Type(System.EventArgs)
 
+        // Instance the state helper.
         DGDB.DBName = StateHelper.GetApplicationValue('dbname').ToString()
         *This.Title = 'Customer List'
 
+        // Set the current page number. if Viewstate['pagenumber'] is *Nothing, then set it to 1,
+        // otherwise fetch if from the Viewstate['pagenumber'] value.
         *This.PageNumber = (Viewstate['pagenumber'] = *Nothing) ? 1 : Convert.ToInt32(Viewstate['pagenumber']) 
 
+        // If there is a WhereClause saved in Viewstate['whereclause'] then restore it for this page.
         If Viewstate['whereclause'] <> *Nothing
             *This.WhereClause = Viewstate['whereclause'].ToString()
         EndIf
 
         If (NOT Page.IsPostBack)
+            // Add GridView columns at runtime. This isn't unique to this SQL version, I 
+            // am just showing that it can be done.
             AddGridViewColumns()
+            // If PositionTo session variables are present
             If  ArePositionToValuesProvided()
+                // position the list at those values.    
                 PositionToCustomerNameAndCustomerNumber()
             Else 
+                // other fetch a page based on current page number.
                 GetAndShowPage()
             EndIf 
         Else
@@ -53,32 +68,52 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
         DclSrParm Sender Type(*Object)
         DclSrParm e Type(ASNA.DataGateHelper.AfterRowReadArgs) 
 
-        DclFld Cust Type(CustomerGridModel) 
+        // The event fires each time the PagedData class reads a read 
+        // from the SQL temporary file.
+        DclFld Cust Type(CustomerPageModel) 
 
-        Cust = e.CustomClassInstance *As CustomerGridModel 
+        // Instance the PageModel and add it to this code-behind's 
+        // PageModel collection.
+        Cust = e.CustomClassInstance *As CustomerPageModel             
+        Customers.Add(Cust) 
 
+        // If this is the first row read, save its values to later 
+        // page repositioning.
         If e.CurrentRowCounter = 1
             SaveRowValuesToLaterRedisplayPageFromHere(Cust)
         EndIf 
-
-        Customers.Add(Cust) 
     EndSr
 
     BegSr Page_PreRender Access(*Private) Event(*This.PreRender) 
         DclSrParm sender Type(*Object)
         DclSrParm e Type(System.EventArgs)
 
+        // The PreRender is your last change to update the UI or 
+        // save values to Session or ViewState collections.
+
+        // Set Prev and First buttons enabled based on current page.         
         buttonPrev.Enabled = (*This.PageNumber > 2) ? *True : *False
         buttonFirst.Enabled = buttonPrev.Enabled
 
+        // Save WhereClause and PageNumber to Viewstate so they are 
+        // available for the next instance of this class.
         Viewstate['whereclause'] = *This.WhereClause
         ViewState['pagenumber'] = *This.PageNumber
+
+        // Set enabled status of Next button based on PagedList's MoreRecords Boolean property.
+        buttonNext.Enabled = pd.MoreRecords
+
+        // Set the foot text. 
+        labelTableFooter.Text = (buttonNext.Enabled) ? + 
+            String.Format("Page {0} - more records to show", *This.PageNumber - 1) : +
+            String.Format("Page {0} - no more records to show", *This.PageNumber - 1)
     EndSr
 
     BegSr Page_Unload Access(*Private) Event(*This.Unload)
         DclSrParm sender Type(*Object)
         DclSrParm e Type(System.EventArgs)
 
+        // Disconnect database object.
         Disconnect DGDB 
     EndSr
 
@@ -88,11 +123,12 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
 		
         DclFld SelectedRow Type(*Integer4) 
 
+        // Get GridView seleced row. 
         SelectedRow = gridviewCust.SelectedIndex
 
         DclFld CustomerNumber Type(*Integer4) 
         DclFld CustomerName Type(*String) 
-
+        
         CustomerNumber = Convert.ToInt32(gridviewCust.DataKeys[SelectedRow]['customer_cmcustno'])
         CustomerName = gridviewCust.DataKeys[SelectedRow]['customer_cmname'].ToString()
 	EndSr
@@ -101,9 +137,12 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
 		DclSrParm sender Type(*Object)
 		DclSrParm e Type(System.EventArgs)
 		
+        // When going to page 1, clear existing WhereClause. 
         *This.WhereClause = *Nothing 
+        // Reset page number to 1.
         *This.PageNumber = 1 
             
+        // Get and show the next page.
         GetAndShowPage()
 	EndSr
 
@@ -111,6 +150,7 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
 		DclSrParm sender Type(*Object)
 		DclSrParm e Type(System.EventArgs)
 
+        // Get and show the next page.
         GetAndShowPage()
 	EndSr
 
@@ -118,6 +158,9 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
 		DclSrParm sender Type(*Object)
 		DclSrParm e Type(System.EventArgs)
 
+        // Clear existing WhereClause. 
+        *This.WhereClause = *Nothing 
+        // Decrement PageNumber by 2.
         // The page is always presented with *This.Page set to what the 
         // _next_ page number displayed should be.
         // Displayed     *This.PageNumber   Prev button status
@@ -126,29 +169,34 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
 
         // When *This.PageNumber is 3, page 2 is diplayed. Therefore
         // you need to subtract 2 from *This.PageNumber to show the previous page.
-
-        *This.WhereClause = *Nothing 
         *This.PageNumber -= 2 
                 
         GetAndShowPage()
 	EndSr
 
-	BegSr buttonPositionTo_Click Access(*Private) Event(*This.buttonPositionTo.Click)
+	BegSr buttonSearch_Click Access(*Private) Event(*This.buttonSearch.Click)
 		DclSrParm sender Type(*Object)
 		DclSrParm e Type(System.EventArgs)
 
-        If String.IsNullOrEmpty(textboxPositionTo.Text)
+        If String.IsNullOrEmpty(textboxSearch.Text)
+            // If no search value provided, ignore search request.
             LeaveSr
         EndIf
         
-        If textboxPositionTo.Text.Trim().Substring(0,1) = '^'
-            textboxPositionTo.Text = Regex.Replace(textboxPositionTo.Text,'\^',String.Empty) 
-            *This.WhereClause = String.Format("LOWER(cmname) >= '{0}'", textboxPositionTo.Text.ToLower().Trim())
+        // If search value starts with '^' then start next page at the customer 
+        // name provided.
+        If textboxSearch.Text.Trim().Substring(0,1) = '^'
+            textboxSearch.Text = Regex.Replace(textboxSearch.Text,'\^',String.Empty) 
+            *This.WhereClause = String.Format("LOWER(cmname) >= '{0}'", textboxSearch.Text.ToLower().Trim())
+        // Otherwise, do an SQL LIKE search looking for the given value in the customer name or custom number. 
+        // This makes the search less model. The search mechanism can find customers by either name or number.
         Else 
-            *This.WhereClause = String.Format("lower(concat(cmcustno,trim(cmname))) LIKE '%{0}%'", textboxPositionTo.Text.ToLower().Trim())
+            *This.WhereClause = String.Format("lower(concat(cmcustno,trim(cmname))) LIKE '%{0}%'", textboxSearch.Text.ToLower().Trim())
         EndIf 
 
-        textboxPositionTo.Text = String.Empty 
+        // Show new page. During PreRender the WhereClause is saved in Viewstate. The next page of customers
+        // is fetched from that context. 
+        textboxSearch.Text = String.Empty 
         *This.PageNumber = 1 
         GetAndShowPage() 
 	EndSr
@@ -161,70 +209,91 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
         DclFld SelectedIndex  Type(*Integer4) 
         DclFld CustomerNumber Type(*Integer4)
 
+        // Get button command name. 
         CommandName = e.CommandName
         SelectedIndex = e.CommandArgument.ToString() 
         CustomerNumber = gridviewCust.DataKeys[SelectedIndex]["cmcustno"].ToString()		
 
+        // If the button's CommandName is `ActionEdit` then go to the update page.
         If CommandName = 'ActionEdit'
             Session['customer-number'] = CustomerNumber
             Response.Redirect('customerform.aspx')
+        // It's not implemented here, but go to the delete page if the button's CommandName
+        // is `ActionDelete`.
         ElseIf CommandName = 'ActionDelete'
             // Do something here for delete action.
         EndIf 
 	EndSr
 
     BegFunc ArePositionToValuesProvided Type(*Boolean) 
+        // Leave with *True if position-to values are present in the session state.
         LeaveSr Session['first-customer-name'] <> *Nothing AND +
                 Session['first-customer-number'] <> *Nothing
     EndFunc
 
-    BegSr BindGridView 
-        gridviewCust.DataBind()
-
-        buttonNext.Enabled = pd.MoreRecords
-
-        labelTableFooter.Text = (buttonNext.Enabled) ? + 
-            String.Format("Page {0} - more records to show", *This.PageNumber - 1) : +
-            String.Format("Page {0} - no more records to show", *This.PageNumber - 1)
-    EndSr 
-
     BegSr GetAndShowPage
+        // Declare an SQL string variable.
         DclFld Sql Type(*String) 
+        // Declare a string dictionary for the SQL clauses.
         DclFld SqlClauses Type(Dictionary (*Of *String, *String)) New()       
 
-        pd = *New PagedData(DGDB, 'rp_data', 'rpzimmie', 'sqlimmed', *TypeOf(CustomerGridModel)) 
+        // Instance the PagedData class.
 
+        // 1. DGDB = DG database connection to use for RPG program call.
+        // 2. 'qtemp' = target library for work file.
+        // 3. 'rpzimmie' = library containing program to call.
+        // 4. 'sqlimmed' = program to call.
+        // 5. `PAGE_SIZE` = page size to produce (See `PAGE_SIZE` constant)
+        // 6. `*TypeOf(CustomerPageModel)` tells the `PagedData` class what object type to populate for each row read.
+        pd = *New PagedData(DGDB, 'qtemp', 'rpzimmie', 'sqlimmed', PAGE_SIZE, *TypeOf(CustomerPageModel)) 
+
+        // Add SELECT clause. These field names must be present in the GridModel.
         SqlClauses.Add('select', 'cmcustno, cmname')   
+        // Add FROM clauses. The file specified must contain the fields in the SELECT clause.
         SqlClauses.Add('from', 'examples/cmastnewL2')  
-        
+
+        // If a WhereClause is provided add it to SQL clauses.        
         If NOT String.IsNullOrEmpty(*This.WhereClause) 
             SqlClauses.Add('where', *This.WhereClause) 
         EndIf 
         
+        // Add a valid ORDER BY clause. 
         SqlClauses.Add('orderby', 'cmname, cmcustno')  
 
+        // Create the SQL. 
         Sql = PagedData.CreateSql(SqlClauses) 
 
-        pd.WriteThenReadTempFile(PAGE_SIZE, *This.PageNumber, Sql)
+        //  Query and write the page data. 
+        //  SQL's OFFSET value is zero-based. An OFFSET of zero gets you page 1. To help keep you sane, the 
+        //  page number provided to the `WriteThenReadTempFile` method is one-based (ie, when PageNumber = 1 you get page 1.) 
+        //  A "page" of data is derived by SQL with its LIMIT and OFFSET classes and the ORDER BY clause governs the arrival
+        //  sequence of the rows into the list and how pages are determined.          
+        pd.WriteThenReadTempFile(*This.PageNumber, Sql)
 
+        // If no rows were read in the PagedData class, show no rows found message.
         If pd.RowsRead = 0 
              labelTableFooter.Text = 'No rows found to match that query.'
              LeaveSr
         EndIf 
         
+        // Increment page number for next page. 
         *This.PageNumber += 1
-
+        // Assign GridModel collection to GridView.
         gridviewCust.DataSource = *This.Customers
-        BindGridView()
+        // Bind the assigned data source (the PageModel collection) to the GridView.
+        gridviewCust.DataBind()
     EndSr
 
     BegSr PositionToCustomerNameAndCustomerNumber
         DclFld CustomerName Type(*String) 
         DclFld CustomerNumber Type(*Integer4) 
 
+        // Get CustomerName and CustomerNumber from Session state and position to those values
+        // and reset page number to 1 and show the page.
         CustomerName = StateHelper.GetSessionValueAsString('first-customer-name')
         CustomerNumber = StateHelper.GetSessionValueAsInt32('first-customer-number')
 
+        // This weird-looking WHERE clause is an SQL hack to achieve SETLL-like behvavior.
         *This.WhereClause = String.Format("LOWER(CONCAT(LOWER(TRIM(cmname)),cmcustno)) >= '{0}{1}'", +
                                           CustomerName.ToLower().Trim(), CustomerNumber.ToString())
         Viewstate['whereclause'] = *This.WhereClause
@@ -233,7 +302,7 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
     EndSr
 
     BegSr SaveRowValuesToLaterRedisplayPageFromHere
-        DclSrParm Cust Type(CustomerGridModel) 
+        DclSrParm Cust Type(CustomerPageModel) 
 
         Session['first-customer-name'] = Cust.CMName
         Session['first-customer-number'] = Cust.CMCustNo
@@ -241,6 +310,14 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
 
     BegSr AddGridViewColumns
         DclFld bf Type(BoundField) 
+
+        // This is how you assign columns to the GridView at runtime.
+        // This has nothing to the do directly with the SQL-centric nature of this
+        // example, it's just reminder that you can do this. 
+        
+        // However, given the vastly more more dynamic nature of paging 
+        // data with SQL, there are interesting possibilities to ponder 
+        // with adding (and perhaps removing) columns at runtime.
 
         bf = *New BoundField()
         bf.HeaderText = 'Number'
@@ -258,8 +335,8 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
 
 EndClass
 
-BegClass CustomerGridModel Access(*Public) 
+// The PageModel that governs the class created by the PagedList. 
+BegClass CustomerPageModel Access(*Public) 
     DclProp CMCustNo Type(*Packed) Len(9,0) Access(*Public)
     DclProp CMName Type(*String) Access(*Public)
-    DclProp CMState Type(*String) Access(*Public)
 EndClass

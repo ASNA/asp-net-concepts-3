@@ -17,9 +17,9 @@
                     <asp:Button ID="buttonFirst" runat="server" Text="First" CssClass="me-3" />
                     <asp:Button ID="buttonNext" runat="server" Text="Next"  CssClass="me-3"/>
                     <asp:Button ID="buttonPrev" runat="server" Text="Prev" CssClass="me-3" />
-                    <asp:Panel ID="Panel1" runat="server" DefaultButton="buttonPositionTo">
-                        <asp:Button cssClass="xxms-3" ID="buttonPositionTo" runat="server" Text="Position to"/>
-                        <asp:TextBox ID="textboxPositionTo" runat="server" placeholder="Position to value"></asp:TextBox>
+                    <asp:Panel ID="Panel1" runat="server" DefaultButton="buttonSearch">
+                        <asp:Button cssClass="xxms-3" ID="buttonSearch" runat="server" Text="Search"/>
+                        <asp:TextBox ID="textboxSearch" runat="server" placeholder="Position to value"></asp:TextBox>
                     </asp:Panel> 
                 </div>
                 <!-- gridview start -->

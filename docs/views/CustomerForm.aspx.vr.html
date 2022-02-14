@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>CustomerForm.aspx.vr</title>
+  <link rel="stylesheet" href="..\pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>CustomerForm.aspx.vr</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="nx">Using</span> <span class="nx">System</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Data</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">UI</span><span class="p">.</span><span class="nx">WebControls</span>
+
+<span class="nx">BegClass</span> <span class="nx">CustomerForm</span> <span class="nx">Partial</span><span class="p">(</span><span class="o">*</span><span class="nx">Yes</span><span class="p">)</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> <span class="nx">Extends</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">UI</span><span class="p">.</span><span class="nx">Page</span><span class="p">)</span>
+
+    <span class="nx">DclDB</span> <span class="nx">DGDB</span> 
+    <span class="nx">DclFld</span> <span class="nx">dt</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">DataTable</span><span class="p">)</span> 
+
+    <span class="nx">DclFld</span> <span class="nx">crud</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">CustomerCrud</span><span class="p">)</span> 
+    <span class="nx">DclFld</span> <span class="nx">StateHelper</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">AppStateHelpers</span><span class="p">)</span> <span class="nx">New</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> 
+
+    <span class="nx">BegSr</span> <span class="nx">Page_Load</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Private</span><span class="p">)</span> <span class="nx">Event</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">Load</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">sender</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">e</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">EventArgs</span><span class="p">)</span>
+            
+        <span class="nx">DclFld</span> <span class="nx">CustomerNumber</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span> 
+        <span class="nx">DclFld</span> <span class="nx">statesList</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">ListItemCollection</span><span class="p">)</span> 
+
+        <span class="nx">DGDB</span><span class="p">.</span><span class="nx">DBName</span> <span class="o">=</span> <span class="nx">StateHelper</span><span class="p">.</span><span class="nx">GetApplicationValueAsString</span><span class="p">(</span><span class="s1">&#39;dbname&#39;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>DGDB.User = StateHelper.GetSessionValueAsString(&lsquo;user&rsquo;) 
+DGDB.Password = StateHelper.GetSessionValueAsString(&lsquo;password&rsquo;) </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">Connect</span> <span class="nx">DGDB</span> 
+        <span class="nx">crud</span> <span class="o">=</span> <span class="o">*</span><span class="nx">New</span> <span class="nx">CustomerCrud</span><span class="p">(</span><span class="nx">DGDB</span><span class="p">)</span>
+
+        <span class="nx">If</span> <span class="p">(</span><span class="nx">NOT</span> <span class="nx">Page</span><span class="p">.</span><span class="nx">IsPostBack</span><span class="p">)</span>
+            <span class="nx">CustomerNumber</span> <span class="o">=</span> <span class="nx">StateHelper</span><span class="p">.</span><span class="nx">GetSessionValueAsInt32</span><span class="p">(</span><span class="s1">&#39;customer-number&#39;</span><span class="p">)</span> 
+            <span class="nx">dt</span> <span class="o">=</span> <span class="nx">Crud</span><span class="p">.</span><span class="nx">ReadCustomer</span><span class="p">(</span><span class="nx">CustomerNumber</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>Access to fields is available through the zeroth row of the DataTable.
+Set page title.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">Title</span> <span class="o">=</span> <span class="nx">dt</span><span class="p">.</span><span class="nx">Rows</span><span class="p">[</span><span class="mf">0</span><span class="p">][</span><span class="s1">&#39;CMName&#39;</span><span class="p">].</span><span class="nx">ToString</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Alternative way of populating a ListItemCollection dynamically. 
+DclFld lih Type(ASNA.DataGateHelper.ListItemHelper) New(*This.DGDB) 
+lih.LoadList(&lsquo;examples&rsquo;, &lsquo;states&rsquo;, &lsquo;state&rsquo;, &lsquo;abbrev&rsquo;)
+CrudHelpers.LoadListControl(field_CMState, lih.ListItems) </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>Use hand-written class to populate a ListItemCollection.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="nx">StatesList</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="nx">New</span> <span class="nx">StateList</span><span class="p">(</span><span class="nx">DGDB</span><span class="p">)).</span><span class="nx">GetList</span><span class="p">()</span>
+            <span class="nx">CrudHelpers</span><span class="p">.</span><span class="nx">LoadListControl</span><span class="p">(</span><span class="nx">field_CMState</span><span class="p">,</span> <span class="nx">StatesList</span><span class="p">)</span>
+
+            <span class="nx">CrudHelpers</span><span class="p">.</span><span class="nx">PopulateUIFromDataRow</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">,</span> <span class="nx">dt</span><span class="p">)</span> 
+        <span class="nx">Else</span>
+        <span class="nx">EndIf</span> 
+    <span class="nx">EndSr</span> 
+
+    <span class="nx">BegSr</span> <span class="nx">Page_Unload</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Private</span><span class="p">)</span> <span class="nx">Event</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">Unload</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">sender</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">e</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">EventArgs</span><span class="p">)</span>
+
+        <span class="nx">Disconnect</span> <span class="nx">DGDB</span> 
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegSr</span> <span class="nx">buttonUpdateCustomer_Click</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Private</span><span class="p">)</span> <span class="nx">Event</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">buttonUpdateCustomer</span><span class="p">.</span><span class="nx">Click</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">sender</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">e</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">EventArgs</span><span class="p">)</span>
+
+        <span class="nx">DclFld</span> <span class="nx">CustomerNumber</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span> 
+        <span class="nx">DclFld</span> <span class="nx">dtClone</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">DataTable</span><span class="p">)</span> 
+
+        <span class="nx">If</span> <span class="nx">NOT</span> <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">IsValid</span>
+            <span class="nx">LeaveSr</span> 
+        <span class="nx">EndIf</span> 
+
+        <span class="nx">CustomerNumber</span> <span class="o">=</span> <span class="nx">Convert</span><span class="p">.</span><span class="nx">ToInt32</span><span class="p">(</span><span class="nx">field_CMCustNo</span><span class="p">.</span><span class="nx">Text</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>This read adds one record to the memory file in the CustomerCrud class.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">dt</span> <span class="o">=</span> <span class="nx">Crud</span><span class="p">.</span><span class="nx">ReadCustomer</span><span class="p">(</span><span class="nx">CustomerNumber</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>Update data row fields just read with values from the UI.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">CrudHelpers</span><span class="p">.</span><span class="nx">PopulateDataRowFromUI</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">,</span> <span class="nx">dt</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>Update the customer record.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">Crud</span><span class="p">.</span><span class="nx">UpdateCustomer</span><span class="p">(</span><span class="nx">CustomerNumber</span><span class="p">,</span> <span class="nx">dt</span><span class="p">)</span> 
+
+        <span class="nx">Session</span><span class="p">[</span><span class="s1">&#39;first-customer-name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">field_CMName</span><span class="p">.</span><span class="nx">Text</span>
+        <span class="nx">Session</span><span class="p">[</span><span class="s1">&#39;first-customer-number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">field_CMCustNo</span><span class="p">.</span><span class="nx">Text</span>
+        <span class="nx">Response</span><span class="p">.</span><span class="nx">Redirect</span><span class="p">(</span><span class="s2">&quot;CustomerList.aspx&quot;</span><span class="p">)</span> 
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegSr</span> <span class="nx">buttonCancel_Click</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Private</span><span class="p">)</span> <span class="nx">Event</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">buttonCancel</span><span class="p">.</span><span class="nx">Click</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">sender</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">e</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">EventArgs</span><span class="p">)</span>
+
+        <span class="nx">Response</span><span class="p">.</span><span class="nx">Redirect</span><span class="p">(</span><span class="s2">&quot;CustomerListSQL.aspx&quot;</span><span class="p">)</span> 
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegSr</span> <span class="nx">CustomValidator1_ServerValidate</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Private</span><span class="p">)</span> <span class="nx">Event</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">customvalidatorCMName</span><span class="p">.</span><span class="nx">ServerValidate</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">source</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">args</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">UI</span><span class="p">.</span><span class="nx">WebControls</span><span class="p">.</span><span class="nx">ServerValidateEventArgs</span><span class="p">)</span>
+        
+        <span class="nx">If</span> <span class="nx">field_CMName</span><span class="p">.</span><span class="nx">Text</span><span class="p">.</span><span class="nx">Trim</span><span class="p">().</span><span class="nx">ToLower</span><span class="p">()</span> <span class="o">=</span> <span class="s2">&quot;neil young&quot;</span>
+            <span class="nx">args</span><span class="p">.</span><span class="nx">IsValid</span> <span class="o">=</span> <span class="o">*</span><span class="nx">False</span> 
+            <span class="nx">customvalidatorCMName</span><span class="p">.</span><span class="nx">ErrorMessage</span> <span class="o">=</span> <span class="s2">&quot;Sorry, the name can&#39;t be Neil Young!&quot;</span> 
+        <span class="nx">EndIf</span> 
+    <span class="nx">EndSr</span>
+<span class="nx">EndClass</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

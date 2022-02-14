@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>CustomerListSQL.aspx.vr</title>
+  <link rel="stylesheet" href="..\pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>CustomerListSQL.aspx.vr</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="nx">Using</span> <span class="nx">System</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Data</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Configuration</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Collections</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">Generic</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Text</span><span class="p">.</span><span class="nx">RegularExpressions</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Web</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">Security</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">UI</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">UI</span><span class="p">.</span><span class="nx">WebControls</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">UI</span><span class="p">.</span><span class="nx">WebControls</span><span class="p">.</span><span class="nx">WebParts</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">UI</span><span class="p">.</span><span class="nx">HtmlControls</span>
+<span class="nx">Using</span> <span class="nx">ASNA</span><span class="p">.</span><span class="nx">DataGateHelper</span>
+
+<span class="nx">BegClass</span> <span class="nx">views_CustomerListSQL</span> <span class="nx">Partial</span><span class="p">(</span><span class="o">*</span><span class="nx">Yes</span><span class="p">)</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> <span class="nx">Extends</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">UI</span><span class="p">.</span><span class="nx">Page</span><span class="p">)</span>
+
+    <span class="nx">DclDB</span> <span class="nx">DGDB</span> <span class="nx">DBName</span><span class="p">(</span><span class="s1">&#39;*Public/Leyland&#39;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>This dictates the number of rows shown to the user. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">DclConst</span> <span class="nx">PAGE_SIZE</span> <span class="nx">Value</span><span class="p">(</span><span class="mf">12</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>Collection of PageModel objects. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">DclFld</span> <span class="nx">Customers</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">List</span><span class="p">(</span><span class="o">*</span><span class="nx">Of</span> <span class="nx">CustomerPageModel</span><span class="p">))</span> <span class="nx">New</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Declare the PagedData class&ndash;we&rsquo;ll instance it in a minute.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">DclFld</span> <span class="nx">pd</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">PagedData</span><span class="p">)</span> <span class="nx">WithEvents</span><span class="p">(</span><span class="o">*</span><span class="nx">Yes</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>App and Session state helper. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">DclFld</span> <span class="nx">StateHelper</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">AppStateHelpers</span><span class="p">)</span> <span class="nx">New</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Global variables to hold current PageNumber and WhereClause 
+for the life of this class (which only lasts from PageLoad to PageUnload). </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">DclFld</span> <span class="nx">PageNumber</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span> 
+    <span class="nx">DclFld</span> <span class="nx">WhereClause</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+
+    <span class="nx">BegSr</span> <span class="nx">Page_Load</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Private</span><span class="p">)</span> <span class="nx">Event</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">Load</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">sender</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">e</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">EventArgs</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>Instance the state helper.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">DGDB</span><span class="p">.</span><span class="nx">DBName</span> <span class="o">=</span> <span class="nx">StateHelper</span><span class="p">.</span><span class="nx">GetApplicationValue</span><span class="p">(</span><span class="s1">&#39;dbname&#39;</span><span class="p">).</span><span class="nx">ToString</span><span class="p">()</span>
+        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">Title</span> <span class="o">=</span> <span class="s1">&#39;Customer List&#39;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>Set the current page number. if Viewstate[&lsquo;pagenumber&rsquo;] is *Nothing, then set it to 1,
+otherwise fetch if from the Viewstate[&lsquo;pagenumber&rsquo;] value.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">PageNumber</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Viewstate</span><span class="p">[</span><span class="s1">&#39;pagenumber&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">*</span><span class="nx">Nothing</span><span class="p">)</span> <span class="o">?</span> <span class="mf">1</span> <span class="o">:</span> <span class="nx">Convert</span><span class="p">.</span><span class="nx">ToInt32</span><span class="p">(</span><span class="nx">Viewstate</span><span class="p">[</span><span class="s1">&#39;pagenumber&#39;</span><span class="p">])</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>If there is a WhereClause saved in Viewstate[&lsquo;whereclause&rsquo;] then restore it for this page.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">If</span> <span class="nx">Viewstate</span><span class="p">[</span><span class="s1">&#39;whereclause&#39;</span><span class="p">]</span> <span class="o">&lt;&gt;</span> <span class="o">*</span><span class="nx">Nothing</span>
+            <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">WhereClause</span> <span class="o">=</span> <span class="nx">Viewstate</span><span class="p">[</span><span class="s1">&#39;whereclause&#39;</span><span class="p">].</span><span class="nx">ToString</span><span class="p">()</span>
+        <span class="nx">EndIf</span>
+
+        <span class="nx">If</span> <span class="p">(</span><span class="nx">NOT</span> <span class="nx">Page</span><span class="p">.</span><span class="nx">IsPostBack</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p>Add GridView columns at runtime. This isn&rsquo;t unique to this SQL version, I 
+am just showing that it can be done.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="nx">AddGridViewColumns</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p>If PositionTo session variables are present</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="nx">If</span>  <span class="nx">ArePositionToValuesProvided</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p>position the list at those values.    </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                <span class="nx">PositionToCustomerNameAndCustomerNumber</span><span class="p">()</span>
+            <span class="nx">Else</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p>other fetch a page based on current page number.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                <span class="nx">GetAndShowPage</span><span class="p">()</span>
+            <span class="nx">EndIf</span> 
+        <span class="nx">Else</span>
+        <span class="nx">EndIf</span>
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegSr</span> <span class="nx">OnAfterRowRead</span> <span class="nx">Event</span><span class="p">(</span><span class="nx">pd</span><span class="p">.</span><span class="nx">AfterRowRead</span><span class="p">)</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">Sender</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">e</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">ASNA</span><span class="p">.</span><span class="nx">DataGateHelper</span><span class="p">.</span><span class="nx">AfterRowReadArgs</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <p>The event fires each time the PagedData class reads a read 
+from the SQL temporary file.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">DclFld</span> <span class="nx">Cust</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">CustomerPageModel</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <p>Instance the PageModel and add it to this code-behind&rsquo;s 
+PageModel collection.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">Cust</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">CustomClassInstance</span> <span class="o">*</span><span class="nx">As</span> <span class="nx">CustomerPageModel</span>             
+        <span class="nx">Customers</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="nx">Cust</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      <p>If this is the first row read, save its values to later 
+page repositioning.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">If</span> <span class="nx">e</span><span class="p">.</span><span class="nx">CurrentRowCounter</span> <span class="o">=</span> <span class="mf">1</span>
+            <span class="nx">SaveRowValuesToLaterRedisplayPageFromHere</span><span class="p">(</span><span class="nx">Cust</span><span class="p">)</span>
+        <span class="nx">EndIf</span> 
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegSr</span> <span class="nx">Page_PreRender</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Private</span><span class="p">)</span> <span class="nx">Event</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">PreRender</span><span class="p">)</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">sender</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">e</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">EventArgs</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <p>The PreRender is your last change to update the UI or 
+save values to Session or ViewState collections.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      <p>Set Prev and First buttons enabled based on current page.         </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">buttonPrev</span><span class="p">.</span><span class="nx">Enabled</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">PageNumber</span> <span class="o">&gt;</span> <span class="mf">2</span><span class="p">)</span> <span class="o">?</span> <span class="o">*</span><span class="nx">True</span> <span class="o">:</span> <span class="o">*</span><span class="nx">False</span>
+        <span class="nx">buttonFirst</span><span class="p">.</span><span class="nx">Enabled</span> <span class="o">=</span> <span class="nx">buttonPrev</span><span class="p">.</span><span class="nx">Enabled</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      <p>Save WhereClause and PageNumber to Viewstate so they are 
+available for the next instance of this class.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">Viewstate</span><span class="p">[</span><span class="s1">&#39;whereclause&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">WhereClause</span>
+        <span class="nx">ViewState</span><span class="p">[</span><span class="s1">&#39;pagenumber&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">PageNumber</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-19'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-19'>#</a>
+      </div>
+      <p>Set enabled status of Next button based on PagedList&rsquo;s MoreRecords Boolean property.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">buttonNext</span><span class="p">.</span><span class="nx">Enabled</span> <span class="o">=</span> <span class="nx">pd</span><span class="p">.</span><span class="nx">MoreRecords</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-20'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-20'>#</a>
+      </div>
+      <p>Set the foot text. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">labelTableFooter</span><span class="p">.</span><span class="nx">Text</span> <span class="o">=</span> <span class="p">(</span><span class="nx">buttonNext</span><span class="p">.</span><span class="nx">Enabled</span><span class="p">)</span> <span class="o">?</span> <span class="o">+</span> 
+            <span class="nb">String</span><span class="p">.</span><span class="nx">Format</span><span class="p">(</span><span class="s2">&quot;Page {0} - more records to show&quot;</span><span class="p">,</span> <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">PageNumber</span> <span class="o">-</span> <span class="mf">1</span><span class="p">)</span> <span class="o">:</span> <span class="o">+</span>
+            <span class="nb">String</span><span class="p">.</span><span class="nx">Format</span><span class="p">(</span><span class="s2">&quot;Page {0} - no more records to show&quot;</span><span class="p">,</span> <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">PageNumber</span> <span class="o">-</span> <span class="mf">1</span><span class="p">)</span>
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegSr</span> <span class="nx">Page_Unload</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Private</span><span class="p">)</span> <span class="nx">Event</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">Unload</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">sender</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">e</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">EventArgs</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-21'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-21'>#</a>
+      </div>
+      <p>Disconnect database object.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">Disconnect</span> <span class="nx">DGDB</span> 
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegSr</span> <span class="nx">gridviewCust_SelectedIndexChanged</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Private</span><span class="p">)</span> <span class="nx">Event</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">gridviewCust</span><span class="p">.</span><span class="nx">SelectedIndexChanged</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">sender</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">e</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">EventArgs</span><span class="p">)</span>
+        
+        <span class="nx">DclFld</span> <span class="nx">SelectedRow</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-22'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-22'>#</a>
+      </div>
+      <p>Get GridView seleced row. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">SelectedRow</span> <span class="o">=</span> <span class="nx">gridviewCust</span><span class="p">.</span><span class="nx">SelectedIndex</span>
+
+        <span class="nx">DclFld</span> <span class="nx">CustomerNumber</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span> 
+        <span class="nx">DclFld</span> <span class="nx">CustomerName</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+        
+        <span class="nx">CustomerNumber</span> <span class="o">=</span> <span class="nx">Convert</span><span class="p">.</span><span class="nx">ToInt32</span><span class="p">(</span><span class="nx">gridviewCust</span><span class="p">.</span><span class="nx">DataKeys</span><span class="p">[</span><span class="nx">SelectedRow</span><span class="p">][</span><span class="s1">&#39;customer_cmcustno&#39;</span><span class="p">])</span>
+        <span class="nx">CustomerName</span> <span class="o">=</span> <span class="nx">gridviewCust</span><span class="p">.</span><span class="nx">DataKeys</span><span class="p">[</span><span class="nx">SelectedRow</span><span class="p">][</span><span class="s1">&#39;customer_cmname&#39;</span><span class="p">].</span><span class="nx">ToString</span><span class="p">()</span>
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegSr</span> <span class="nx">buttonFirst_Click</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Private</span><span class="p">)</span> <span class="nx">Event</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">buttonFirst</span><span class="p">.</span><span class="nx">Click</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">sender</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">e</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">EventArgs</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-23'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-23'>#</a>
+      </div>
+      <p>When going to page 1, clear existing WhereClause. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">WhereClause</span> <span class="o">=</span> <span class="o">*</span><span class="nx">Nothing</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-24'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-24'>#</a>
+      </div>
+      <p>Reset page number to 1.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">PageNumber</span> <span class="o">=</span> <span class="mf">1</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-25'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-25'>#</a>
+      </div>
+      <p>Get and show the next page.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">GetAndShowPage</span><span class="p">()</span>
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegSr</span> <span class="nx">buttonNext_Click</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Private</span><span class="p">)</span> <span class="nx">Event</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">buttonNext</span><span class="p">.</span><span class="nx">Click</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">sender</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">e</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">EventArgs</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-26'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-26'>#</a>
+      </div>
+      <p>Get and show the next page.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">GetAndShowPage</span><span class="p">()</span>
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegSr</span> <span class="nx">buttonPrev_Click</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Private</span><span class="p">)</span> <span class="nx">Event</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">buttonPrev</span><span class="p">.</span><span class="nx">Click</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">sender</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">e</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">EventArgs</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-27'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-27'>#</a>
+      </div>
+      <p>Clear existing WhereClause. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">WhereClause</span> <span class="o">=</span> <span class="o">*</span><span class="nx">Nothing</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-28'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-28'>#</a>
+      </div>
+      <p>Decrement PageNumber by 2.
+The page is always presented with <em>This.Page set to what the 
+<em>next</em> page number displayed should be.
+Displayed     </em>This.PageNumber   Prev button status
+   1               2                 <em>False     <br />
+   2               3                 </em>True</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-29'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-29'>#</a>
+      </div>
+      <p>When <em>This.PageNumber is 3, page 2 is diplayed. Therefore
+you need to subtract 2 from </em>This.PageNumber to show the previous page.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">PageNumber</span> <span class="o">-=</span> <span class="mf">2</span> 
+                
+        <span class="nx">GetAndShowPage</span><span class="p">()</span>
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegSr</span> <span class="nx">buttonSearch_Click</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Private</span><span class="p">)</span> <span class="nx">Event</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">buttonSearch</span><span class="p">.</span><span class="nx">Click</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">sender</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">e</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">EventArgs</span><span class="p">)</span>
+
+        <span class="nx">If</span> <span class="nb">String</span><span class="p">.</span><span class="nx">IsNullOrEmpty</span><span class="p">(</span><span class="nx">textboxSearch</span><span class="p">.</span><span class="nx">Text</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-30'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-30'>#</a>
+      </div>
+      <p>If no search value provided, ignore search request.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="nx">LeaveSr</span>
+        <span class="nx">EndIf</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-31'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-31'>#</a>
+      </div>
+      <p>If search value starts with &lsquo;^&rsquo; then start next page at the customer 
+name provided.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">If</span> <span class="nx">textboxSearch</span><span class="p">.</span><span class="nx">Text</span><span class="p">.</span><span class="nx">Trim</span><span class="p">().</span><span class="nx">Substring</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">)</span> <span class="o">=</span> <span class="s1">&#39;^&#39;</span>
+            <span class="nx">textboxSearch</span><span class="p">.</span><span class="nx">Text</span> <span class="o">=</span> <span class="nx">Regex</span><span class="p">.</span><span class="nx">Replace</span><span class="p">(</span><span class="nx">textboxSearch</span><span class="p">.</span><span class="nx">Text</span><span class="p">,</span><span class="s1">&#39;\^&#39;</span><span class="p">,</span><span class="nb">String</span><span class="p">.</span><span class="nx">Empty</span><span class="p">)</span> 
+            <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">WhereClause</span> <span class="o">=</span> <span class="nb">String</span><span class="p">.</span><span class="nx">Format</span><span class="p">(</span><span class="s2">&quot;LOWER(cmname) &gt;= &#39;{0}&#39;&quot;</span><span class="p">,</span> <span class="nx">textboxSearch</span><span class="p">.</span><span class="nx">Text</span><span class="p">.</span><span class="nx">ToLower</span><span class="p">().</span><span class="nx">Trim</span><span class="p">())</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-32'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-32'>#</a>
+      </div>
+      <p>Otherwise, do an SQL LIKE search looking for the given value in the customer name or custom number. 
+This makes the search less model. The search mechanism can find customers by either name or number.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">Else</span> 
+            <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">WhereClause</span> <span class="o">=</span> <span class="nb">String</span><span class="p">.</span><span class="nx">Format</span><span class="p">(</span><span class="s2">&quot;lower(concat(cmcustno,trim(cmname))) LIKE &#39;%{0}%&#39;&quot;</span><span class="p">,</span> <span class="nx">textboxSearch</span><span class="p">.</span><span class="nx">Text</span><span class="p">.</span><span class="nx">ToLower</span><span class="p">().</span><span class="nx">Trim</span><span class="p">())</span>
+        <span class="nx">EndIf</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-33'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-33'>#</a>
+      </div>
+      <p>Show new page. During PreRender the WhereClause is saved in Viewstate. The next page of customers
+is fetched from that context. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">textboxSearch</span><span class="p">.</span><span class="nx">Text</span> <span class="o">=</span> <span class="nb">String</span><span class="p">.</span><span class="nx">Empty</span> 
+        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">PageNumber</span> <span class="o">=</span> <span class="mf">1</span> 
+        <span class="nx">GetAndShowPage</span><span class="p">()</span> 
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegSr</span> <span class="nx">gridviewCust_RowCommand</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Private</span><span class="p">)</span> <span class="nx">Event</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">gridviewCust</span><span class="p">.</span><span class="nx">RowCommand</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">sender</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">e</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">UI</span><span class="p">.</span><span class="nx">WebControls</span><span class="p">.</span><span class="nx">GridViewCommandEventArgs</span><span class="p">)</span>
+
+        <span class="nx">DclFld</span> <span class="nx">CommandName</span>    <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span>
+        <span class="nx">DclFld</span> <span class="nx">SelectedIndex</span>  <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span> 
+        <span class="nx">DclFld</span> <span class="nx">CustomerNumber</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-34'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-34'>#</a>
+      </div>
+      <p>Get button command name. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">CommandName</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">CommandName</span>
+        <span class="nx">SelectedIndex</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">CommandArgument</span><span class="p">.</span><span class="nx">ToString</span><span class="p">()</span> 
+        <span class="nx">CustomerNumber</span> <span class="o">=</span> <span class="nx">gridviewCust</span><span class="p">.</span><span class="nx">DataKeys</span><span class="p">[</span><span class="nx">SelectedIndex</span><span class="p">][</span><span class="s2">&quot;cmcustno&quot;</span><span class="p">].</span><span class="nx">ToString</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-35'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-35'>#</a>
+      </div>
+      <p>If the button&rsquo;s CommandName is <code>ActionEdit</code> then go to the update page.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">If</span> <span class="nx">CommandName</span> <span class="o">=</span> <span class="s1">&#39;ActionEdit&#39;</span>
+            <span class="nx">Session</span><span class="p">[</span><span class="s1">&#39;customer-number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">CustomerNumber</span>
+            <span class="nx">Response</span><span class="p">.</span><span class="nx">Redirect</span><span class="p">(</span><span class="s1">&#39;customerform.aspx&#39;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-36'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-36'>#</a>
+      </div>
+      <p>It&rsquo;s not implemented here, but go to the delete page if the button&rsquo;s CommandName
+is <code>ActionDelete</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">ElseIf</span> <span class="nx">CommandName</span> <span class="o">=</span> <span class="s1">&#39;ActionDelete&#39;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-37'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-37'>#</a>
+      </div>
+      <p>Do something here for delete action.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">EndIf</span> 
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegFunc</span> <span class="nx">ArePositionToValuesProvided</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Boolean</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-38'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-38'>#</a>
+      </div>
+      <p>Leave with *True if position-to values are present in the session state.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">LeaveSr</span> <span class="nx">Session</span><span class="p">[</span><span class="s1">&#39;first-customer-name&#39;</span><span class="p">]</span> <span class="o">&lt;&gt;</span> <span class="o">*</span><span class="nx">Nothing</span> <span class="nx">AND</span> <span class="o">+</span>
+                <span class="nx">Session</span><span class="p">[</span><span class="s1">&#39;first-customer-number&#39;</span><span class="p">]</span> <span class="o">&lt;&gt;</span> <span class="o">*</span><span class="nx">Nothing</span>
+    <span class="nx">EndFunc</span>
+
+    <span class="nx">BegSr</span> <span class="nx">GetAndShowPage</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-39'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-39'>#</a>
+      </div>
+      <p>Declare an SQL string variable.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">DclFld</span> <span class="nx">Sql</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-40'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-40'>#</a>
+      </div>
+      <p>Declare a string dictionary for the SQL clauses.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">DclFld</span> <span class="nx">SqlClauses</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">Dictionary</span> <span class="p">(</span><span class="o">*</span><span class="nx">Of</span> <span class="o">*</span><span class="nb">String</span><span class="p">,</span> <span class="o">*</span><span class="nb">String</span><span class="p">))</span> <span class="nx">New</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-41'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-41'>#</a>
+      </div>
+      <p>Instance the PagedData class.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-42'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-42'>#</a>
+      </div>
+      <ol>
+<li>DGDB = DG database connection to use for RPG program call.</li>
+<li>&lsquo;qtemp&rsquo; = target library for work file.</li>
+<li>&lsquo;rpzimmie&rsquo; = library containing program to call.</li>
+<li>&lsquo;sqlimmed&rsquo; = program to call.</li>
+<li><code>PAGE_SIZE</code> = page size to produce (See <code>PAGE_SIZE</code> constant)</li>
+<li><code>*TypeOf(CustomerPageModel)</code> tells the <code>PagedData</code> class what object type to populate for each row read.</li>
+</ol>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">pd</span> <span class="o">=</span> <span class="o">*</span><span class="nx">New</span> <span class="nx">PagedData</span><span class="p">(</span><span class="nx">DGDB</span><span class="p">,</span> <span class="s1">&#39;qtemp&#39;</span><span class="p">,</span> <span class="s1">&#39;rpzimmie&#39;</span><span class="p">,</span> <span class="s1">&#39;sqlimmed&#39;</span><span class="p">,</span> <span class="nx">PAGE_SIZE</span><span class="p">,</span> <span class="o">*</span><span class="nx">TypeOf</span><span class="p">(</span><span class="nx">CustomerPageModel</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-43'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-43'>#</a>
+      </div>
+      <p>Add SELECT clause. These field names must be present in the GridModel.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">SqlClauses</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="s1">&#39;select&#39;</span><span class="p">,</span> <span class="s1">&#39;cmcustno, cmname&#39;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-44'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-44'>#</a>
+      </div>
+      <p>Add FROM clauses. The file specified must contain the fields in the SELECT clause.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">SqlClauses</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="s1">&#39;from&#39;</span><span class="p">,</span> <span class="s1">&#39;examples/cmastnewL2&#39;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-45'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-45'>#</a>
+      </div>
+      <p>If a WhereClause is provided, add it to SQL clauses.        </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">If</span> <span class="nx">NOT</span> <span class="nb">String</span><span class="p">.</span><span class="nx">IsNullOrEmpty</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">WhereClause</span><span class="p">)</span> 
+            <span class="nx">SqlClauses</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="s1">&#39;where&#39;</span><span class="p">,</span> <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">WhereClause</span><span class="p">)</span> 
+        <span class="nx">EndIf</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-46'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-46'>#</a>
+      </div>
+      <p>Add a valid ORDER BY clause. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">SqlClauses</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="s1">&#39;orderby&#39;</span><span class="p">,</span> <span class="s1">&#39;cmname, cmcustno&#39;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-47'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-47'>#</a>
+      </div>
+      <p>Create the SQL. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">Sql</span> <span class="o">=</span> <span class="nx">PagedData</span><span class="p">.</span><span class="nx">CreateSql</span><span class="p">(</span><span class="nx">SqlClauses</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-48'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-48'>#</a>
+      </div>
+      <p>Query and write the page data. 
+ SQL&rsquo;s OFFSET value is zero-based. An OFFSET of zero gets you page 1. To help keep you sane, the 
+ page number provided to the <code>WriteThenReadTempFile</code> method is one-based (ie, when PageNumber = 1 you get page 1.) 
+ A &ldquo;page&rdquo; of data is derived by SQL with its LIMIT and OFFSET classes and the ORDER BY clause governs the arrival
+ sequence of the rows into the list and how pages are determined.          </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">pd</span><span class="p">.</span><span class="nx">WriteThenReadTempFile</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">PageNumber</span><span class="p">,</span> <span class="nx">Sql</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-49'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-49'>#</a>
+      </div>
+      <p>If no rows were read in the PagedData class, show no rows found message.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">If</span> <span class="nx">pd</span><span class="p">.</span><span class="nx">RowsRead</span> <span class="o">=</span> <span class="mf">0</span> 
+             <span class="nx">labelTableFooter</span><span class="p">.</span><span class="nx">Text</span> <span class="o">=</span> <span class="s1">&#39;No rows found to match that query.&#39;</span>
+             <span class="nx">LeaveSr</span>
+        <span class="nx">EndIf</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-50'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-50'>#</a>
+      </div>
+      <p>Increment page number. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">PageNumber</span> <span class="o">+=</span> <span class="mf">1</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-51'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-51'>#</a>
+      </div>
+      <p>Assign GridModel collection to GridView.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">gridviewCust</span><span class="p">.</span><span class="nx">DataSource</span> <span class="o">=</span> <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">Customers</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-52'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-52'>#</a>
+      </div>
+      <p>Do the DataBind() other other 
+BindGridView()
+Bind the assigned data source (the PageModel collection) to the GridView.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">gridviewCust</span><span class="p">.</span><span class="nx">DataBind</span><span class="p">()</span>
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegSr</span> <span class="nx">PositionToCustomerNameAndCustomerNumber</span>
+        <span class="nx">DclFld</span> <span class="nx">CustomerName</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+        <span class="nx">DclFld</span> <span class="nx">CustomerNumber</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-53'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-53'>#</a>
+      </div>
+      <p>Get CustomerName and CustomerNumber from Session state and position to those values
+and reset page number to 1 and show the page.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">CustomerName</span> <span class="o">=</span> <span class="nx">StateHelper</span><span class="p">.</span><span class="nx">GetSessionValueAsString</span><span class="p">(</span><span class="s1">&#39;first-customer-name&#39;</span><span class="p">)</span>
+        <span class="nx">CustomerNumber</span> <span class="o">=</span> <span class="nx">StateHelper</span><span class="p">.</span><span class="nx">GetSessionValueAsInt32</span><span class="p">(</span><span class="s1">&#39;first-customer-number&#39;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-54'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-54'>#</a>
+      </div>
+      <p>This weird-looking WHERE clause is an SQL hack to achieve SETLL-like behvavior.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">WhereClause</span> <span class="o">=</span> <span class="nb">String</span><span class="p">.</span><span class="nx">Format</span><span class="p">(</span><span class="s2">&quot;LOWER(CONCAT(LOWER(TRIM(cmname)),cmcustno)) &gt;= &#39;{0}{1}&#39;&quot;</span><span class="p">,</span> <span class="o">+</span>
+                                          <span class="nx">CustomerName</span><span class="p">.</span><span class="nx">ToLower</span><span class="p">().</span><span class="nx">Trim</span><span class="p">(),</span> <span class="nx">CustomerNumber</span><span class="p">.</span><span class="nx">ToString</span><span class="p">())</span>
+        <span class="nx">Viewstate</span><span class="p">[</span><span class="s1">&#39;whereclause&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">WhereClause</span>
+        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">PageNumber</span> <span class="o">=</span> <span class="mf">1</span> 
+        <span class="nx">GetAndShowPage</span><span class="p">()</span> 
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegSr</span> <span class="nx">SaveRowValuesToLaterRedisplayPageFromHere</span>
+        <span class="nx">DclSrParm</span> <span class="nx">Cust</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">CustomerPageModel</span><span class="p">)</span> 
+
+        <span class="nx">Session</span><span class="p">[</span><span class="s1">&#39;first-customer-name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Cust</span><span class="p">.</span><span class="nx">CMName</span>
+        <span class="nx">Session</span><span class="p">[</span><span class="s1">&#39;first-customer-number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Cust</span><span class="p">.</span><span class="nx">CMCustNo</span>
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegSr</span> <span class="nx">AddGridViewColumns</span>
+        <span class="nx">DclFld</span> <span class="nx">bf</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">BoundField</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-55'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-55'>#</a>
+      </div>
+      <p>This how you assign columns to the GridView at runtime.
+This has nothing to the do directly with the SQL-centric nature of this
+example, it&rsquo;s just reminder that you can do this. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-56'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-56'>#</a>
+      </div>
+      <p>However, given the vastly more more dynamic nature page paging 
+data with SQL, there are interesting possibilities with adding 
+(and perhaps removing) columns at runtime.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">bf</span> <span class="o">=</span> <span class="o">*</span><span class="nx">New</span> <span class="nx">BoundField</span><span class="p">()</span>
+        <span class="nx">bf</span><span class="p">.</span><span class="nx">HeaderText</span> <span class="o">=</span> <span class="s1">&#39;Number&#39;</span>
+        <span class="nx">bf</span><span class="p">.</span><span class="nx">DataField</span> <span class="o">=</span> <span class="s1">&#39;cmcustno&#39;</span>
+        <span class="nx">bf</span><span class="p">.</span><span class="nx">DataFormatString</span> <span class="o">=</span> <span class="s1">&#39;{0:00000}&#39;</span>
+        <span class="nx">bf</span><span class="p">.</span><span class="nx">ItemStyle</span><span class="p">.</span><span class="nx">CssClass</span> <span class="o">=</span> <span class="s1">&#39;col-number&#39;</span>
+        <span class="nx">gridviewCust</span><span class="p">.</span><span class="nx">Columns</span><span class="p">.</span><span class="nx">Insert</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="nx">bf</span><span class="p">)</span>
+        
+        <span class="nx">bf</span> <span class="o">=</span> <span class="o">*</span><span class="nx">New</span> <span class="nx">BoundField</span><span class="p">()</span>
+        <span class="nx">bf</span><span class="p">.</span><span class="nx">HeaderText</span> <span class="o">=</span> <span class="s1">&#39;Name&#39;</span>
+        <span class="nx">bf</span><span class="p">.</span><span class="nx">DataField</span> <span class="o">=</span> <span class="s1">&#39;cmname&#39;</span>
+        <span class="nx">bf</span><span class="p">.</span><span class="nx">ItemStyle</span><span class="p">.</span><span class="nx">CssClass</span> <span class="o">=</span> <span class="s1">&#39;col-name&#39;</span>
+        <span class="nx">gridviewCust</span><span class="p">.</span><span class="nx">Columns</span><span class="p">.</span><span class="nx">Insert</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="nx">bf</span><span class="p">)</span> 
+    <span class="nx">EndSr</span> 
+
+<span class="nx">EndClass</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-57'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-57'>#</a>
+      </div>
+      <p>The PageModel that governs the class created by the PagedList. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nx">BegClass</span> <span class="nx">CustomerPageModel</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> 
+    <span class="nx">DclProp</span> <span class="nx">CMCustNo</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Packed</span><span class="p">)</span> <span class="nx">Len</span><span class="p">(</span><span class="mf">9</span><span class="p">,</span><span class="mf">0</span><span class="p">)</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span>
+    <span class="nx">DclProp</span> <span class="nx">CMName</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span>
+<span class="nx">EndClass</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

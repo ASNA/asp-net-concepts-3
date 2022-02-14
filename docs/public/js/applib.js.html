@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>applib.js</title>
+  <link rel="stylesheet" href="..\..\pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>applib.js</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">applib</span> <span class="o">=</span> <span class="nx">applib</span> <span class="o">||</span> <span class="p">{};</span>
+
+<span class="nx">applib</span> <span class="o">=</span> <span class="kd">class</span> <span class="nx">Core</span> <span class="p">{</span>
+
+    <span class="k">static</span> <span class="nx">removeAspNetCheckboxWrapper</span><span class="p">(</span><span class="nx">selector</span><span class="p">)</span> <span class="p">{</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>ASP.NET&rsquo;s checkbox control puts a span tag wrapper around
+the checkbox. This wrapper disturbs correct Bootstrap 
+checkbox behavior. This function removes that wrapper for 
+a given checkbox element. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>Select all elements that match selector.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="kd">const</span> <span class="nx">wrappedElements</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="nx">selector</span><span class="p">);</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>For each selected element&hellip; </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">wrappedElements</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">wrappedElement</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="kd">const</span> <span class="nx">elementToRemove</span> <span class="o">=</span> <span class="nx">wrappedElement</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
+
+            <span class="kd">const</span> <span class="nx">elementToMove</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createDocumentFragment</span><span class="p">();</span>
+            <span class="nx">elementToMove</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">wrappedElement</span><span class="p">);</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>ASP.NET also removed this class name. This puts it back.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="nx">wrappedElement</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;form-check-input&#39;</span><span class="p">);</span>
+            <span class="nx">elementToRemove</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">replaceChild</span><span class="p">(</span><span class="nx">elementToMove</span><span class="p">,</span> <span class="nx">elementToRemove</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

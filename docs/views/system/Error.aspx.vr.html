@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>Error.aspx.vr</title>
+  <link rel="stylesheet" href="..\..\pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>Error.aspx.vr</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="nx">Using</span> <span class="nx">System</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Text</span> 
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">Specialized</span>    
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">IO</span> 
+
+<span class="nx">BegClass</span> <span class="ne">Error</span> <span class="nx">Partial</span><span class="p">(</span><span class="o">*</span><span class="nx">Yes</span><span class="p">)</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> <span class="nx">Extends</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">UI</span><span class="p">.</span><span class="nx">Page</span><span class="p">)</span>
+
+    <span class="nx">DclConst</span> <span class="nx">CRLF</span>  <span class="nx">Value</span><span class="p">(</span> <span class="nx">U</span><span class="s1">&#39;000D000A&#39;</span> <span class="p">)</span>  <span class="nx">Access</span><span class="p">(</span> <span class="o">*</span><span class="nx">Public</span> <span class="p">)</span> 
+
+    <span class="nx">BegSr</span> <span class="nx">Page_Load</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Private</span><span class="p">)</span> <span class="nx">Event</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">Load</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">sender</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">e</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">EventArgs</span><span class="p">)</span>
+       
+        <span class="nx">DclFld</span> <span class="ne">Error</span>   <span class="nx">Type</span><span class="p">(</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Exception</span> <span class="p">)</span> 
+        <span class="nx">DclFld</span> <span class="nx">ErrorKey</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+        
+        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">Title</span> <span class="o">=</span> <span class="s2">&quot;An error occurred&quot;</span>
+
+        <span class="nx">If</span> <span class="p">(</span><span class="nx">NOT</span> <span class="nx">Page</span><span class="p">.</span><span class="nx">IsPostBack</span><span class="p">)</span>
+            <span class="nx">ErrorKey</span> <span class="o">=</span> <span class="nx">Request</span><span class="p">.</span><span class="nx">QueryString</span><span class="p">[</span><span class="s1">&#39;error&#39;</span><span class="p">]</span>
+
+            <span class="ne">Error</span> <span class="o">=</span> <span class="nx">Application</span><span class="p">[</span><span class="nx">ErrorKey</span><span class="p">]</span> <span class="o">*</span><span class="nx">As</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Exception</span> 
+
+            <span class="nx">If</span> <span class="ne">Error</span> <span class="o">&lt;&gt;</span> <span class="o">*</span><span class="nx">Nothing</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Show error details.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                <span class="nx">literalErrorDetail</span><span class="p">.</span><span class="nx">Text</span> <span class="o">=</span> <span class="nx">GetErrorDetails</span><span class="p">(</span><span class="ne">Error</span><span class="p">,</span> <span class="nx">CRLF</span><span class="p">)</span>             
+            <span class="nx">EndIf</span>             
+        <span class="nx">EndIf</span>
+    <span class="nx">EndSr</span>
+
+   <span class="nx">BegFunc</span> <span class="nx">GetErrorDetails</span> <span class="nx">Type</span><span class="p">(</span> <span class="o">*</span><span class="nb">String</span> <span class="p">)</span>  <span class="nx">Access</span><span class="p">(</span> <span class="o">*</span><span class="nx">Public</span> <span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>Get all error message and stack trace info for a given error.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">DclSrParm</span> <span class="ne">Error</span>    <span class="nx">Type</span><span class="p">(</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Exception</span> <span class="p">)</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">NewLine</span>  <span class="nx">Type</span><span class="p">(</span> <span class="o">*</span><span class="nb">String</span>  <span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>NewLine provides the way new lines should be formed. When the
+text is used inside a multi-line textbox, a CRLF should be used 
+as a newline. When the text is sent as a formatted email (as 
+an HTML document) the <br> tag should be used.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">DclFld</span> <span class="nx">ErrorDetails</span> <span class="nx">Type</span><span class="p">(</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Text</span><span class="p">.</span><span class="nx">StringBuilder</span> <span class="p">)</span> <span class="nx">New</span><span class="p">(</span> <span class="mf">512</span> <span class="p">)</span> 
+        <span class="nx">DclFld</span> <span class="nx">NestedDetails</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">StringCollection</span><span class="p">)</span> <span class="nx">New</span><span class="p">()</span>
+        <span class="nx">DclFld</span> <span class="nx">Counter</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span> 
+        
+        <span class="nx">DclFld</span> <span class="nx">Level</span>        <span class="nx">Type</span><span class="p">(</span> <span class="o">*</span><span class="nx">Integer4</span> <span class="p">)</span> 
+        <span class="nx">DclFld</span> <span class="nx">Now</span>          <span class="nx">Type</span><span class="p">(</span> <span class="nx">DateTime</span> <span class="p">)</span> 
+        <span class="nx">DclFld</span> <span class="nx">MsgMask</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+        <span class="nx">DclFld</span> <span class="nx">Index</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span> 
+
+        <span class="nx">MsgMask</span> <span class="o">=</span> <span class="s1">&#39;This error occured on {0} at {1}M{2}&#39;</span> 
+                
+        <span class="nx">Now</span> <span class="o">=</span> <span class="nx">DateTime</span><span class="p">.</span><span class="nx">Now</span> 
+        <span class="nx">labelErrorHeading</span><span class="p">.</span><span class="nx">Text</span> <span class="o">=</span> <span class="nb">String</span><span class="p">.</span><span class="nx">Format</span><span class="p">(</span><span class="nx">MsgMask</span><span class="p">,</span> <span class="nx">Now</span><span class="p">.</span><span class="nx">ToString</span><span class="p">(</span> <span class="s2">&quot;dddd, MMMM dd, yyyy&quot;</span> <span class="p">),</span> <span class="nx">Now</span><span class="p">.</span><span class="nx">ToString</span><span class="p">(</span> <span class="s2">&quot;hh:mm:ss t&quot;</span> <span class="p">),</span> <span class="nx">NewLine</span> <span class="o">+</span> <span class="nx">NewLine</span><span class="p">)</span>
+
+        <span class="nx">CollectNestedErrorDetail</span><span class="p">(</span><span class="ne">Error</span><span class="p">,</span> <span class="nx">NestedDetails</span><span class="p">,</span> <span class="nx">Level</span><span class="p">,</span> <span class="nx">NewLine</span> <span class="p">)</span>         
+
+        <span class="ne">Error</span> <span class="o">=</span> <span class="ne">Error</span><span class="p">.</span><span class="nx">InnerException</span>
+        <span class="nx">DoWhile</span> <span class="p">(</span> <span class="ne">Error</span> <span class="o">&lt;&gt;</span> <span class="o">*</span><span class="nx">Nothing</span> <span class="p">)</span> 
+            <span class="nx">Level</span> <span class="o">=</span> <span class="nx">Level</span> <span class="o">+</span> <span class="mf">1</span>
+            <span class="nx">CollectNestedErrorDetail</span><span class="p">(</span><span class="ne">Error</span><span class="p">,</span> <span class="nx">NestedDetails</span><span class="p">,</span> <span class="nx">Level</span><span class="p">,</span> <span class="nx">NewLine</span> <span class="p">)</span> 
+            <span class="ne">Error</span> <span class="o">=</span> <span class="ne">Error</span><span class="p">.</span><span class="nx">InnerException</span>
+        <span class="nx">EndDo</span> 
+       
+        <span class="nx">For</span> <span class="nx">Index</span><span class="p">(</span><span class="nx">Counter</span> <span class="o">=</span> <span class="nx">NestedDetails</span><span class="p">.</span><span class="nx">Count</span> <span class="o">-</span><span class="mf">1</span><span class="p">)</span> <span class="nx">DownTo</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span> 
+            <span class="nx">ErrorDetails</span><span class="p">.</span><span class="nx">Append</span><span class="p">(</span><span class="nx">NestedDetails</span><span class="p">[</span><span class="nx">Counter</span><span class="p">])</span>
+            <span class="nx">If</span> <span class="nx">Counter</span> <span class="o">&lt;&gt;</span> <span class="mf">0</span> 
+                <span class="nx">ErrorDetails</span><span class="p">.</span><span class="nx">Append</span><span class="p">(</span><span class="o">*</span><span class="nx">New</span> <span class="nx">System</span><span class="p">.</span><span class="nb">String</span><span class="p">(</span><span class="s1">&#39;-&#39;</span> <span class="o">*</span><span class="nx">As</span> <span class="o">*</span><span class="nx">OneChar</span><span class="p">,</span> <span class="mf">150</span><span class="p">)</span> <span class="o">+</span> <span class="nx">NewLine</span><span class="p">)</span>
+            <span class="nx">EndIf</span> 
+        <span class="nx">EndFor</span> 
+
+        <span class="nx">LogError</span><span class="p">(</span><span class="nx">ErrorDetails</span><span class="p">.</span><span class="nx">ToString</span><span class="p">())</span>
+
+        <span class="nx">LeaveSr</span> <span class="nx">ErrorDetails</span><span class="p">.</span><span class="nx">ToString</span><span class="p">()</span> 
+    <span class="nx">EndFunc</span> 
+    
+    <span class="nx">BegSr</span> <span class="nx">CollectNestedErrorDetail</span>
+        <span class="nx">DclSrParm</span> <span class="ne">Error</span>         <span class="nx">Type</span><span class="p">(</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Exception</span> <span class="p">)</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">NestedDetails</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">StringCollection</span><span class="p">)</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">Level</span>         <span class="nx">Type</span><span class="p">(</span> <span class="o">*</span><span class="nx">Integer4</span> <span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">NewLine</span>       <span class="nx">Type</span><span class="p">(</span> <span class="o">*</span><span class="nb">String</span>  <span class="p">)</span> 
+        
+        <span class="nx">DclFld</span> <span class="nx">ErrorDetails</span>  <span class="nx">Type</span><span class="p">(</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Text</span><span class="p">.</span><span class="nx">StringBuilder</span> <span class="p">)</span> <span class="nx">New</span><span class="p">()</span>
+
+        <span class="nx">ErrorDetails</span><span class="p">.</span><span class="nx">Append</span><span class="p">(</span> <span class="s2">&quot;Error level &quot;</span> <span class="o">+</span> <span class="nx">Level</span><span class="p">.</span><span class="nx">ToString</span><span class="p">()</span> <span class="o">+</span> <span class="nx">NewLine</span> <span class="p">)</span>              
+        <span class="nx">ErrorDetails</span><span class="p">.</span><span class="nx">Append</span><span class="p">(</span> <span class="s2">&quot;Error message: &quot;</span> <span class="p">)</span>
+        <span class="nx">ErrorDetails</span><span class="p">.</span><span class="nx">Append</span><span class="p">(</span> <span class="ne">Error</span><span class="p">.</span><span class="nx">Message</span> <span class="o">+</span> <span class="nx">NewLine</span> <span class="o">+</span> <span class="nx">NewLine</span> <span class="p">)</span> 
+        <span class="nx">ErrorDetails</span><span class="p">.</span><span class="nx">Append</span><span class="p">(</span> <span class="s2">&quot;Stack trace:&quot;</span> <span class="o">+</span> <span class="nx">NewLine</span> <span class="p">)</span> 
+        <span class="nx">ErrorDetails</span><span class="p">.</span><span class="nx">Append</span><span class="p">(</span> <span class="ne">Error</span><span class="p">.</span><span class="nx">StackTrace</span> <span class="o">+</span> <span class="nx">NewLine</span> <span class="o">+</span> <span class="nx">NewLine</span> <span class="o">+</span> <span class="nx">NewLine</span> <span class="o">+</span> <span class="nx">NewLine</span> <span class="p">)</span> 
+
+        <span class="nx">NestedDetails</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="nx">ErrorDetails</span><span class="p">.</span><span class="nx">ToString</span><span class="p">())</span> 
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegSr</span> <span class="nx">LogError</span>
+        <span class="nx">DclSrParm</span> <span class="nx">ErrorDetails</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+
+        <span class="nx">DclFld</span> <span class="nx">ErrorsFolderPath</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+        <span class="nx">DclFld</span> <span class="nx">Filename</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+        <span class="nx">DclFld</span> <span class="nx">FullFilename</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+        <span class="nx">DclFld</span> <span class="nx">Now</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+        <span class="nx">DclFld</span> <span class="nx">sb</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">StringBuilder</span><span class="p">)</span> <span class="nx">New</span><span class="p">()</span>
+
+        <span class="nx">DclFld</span> <span class="nx">User</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+        
+        <span class="nx">ErrorsFolderPath</span>  <span class="o">=</span> <span class="nx">Server</span><span class="p">.</span><span class="nx">MapPath</span><span class="p">(</span><span class="s1">&#39;/error-logs&#39;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>Get date and time for error file name.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">Now</span> <span class="o">=</span> <span class="nx">DateTime</span><span class="p">.</span><span class="nx">Now</span><span class="p">.</span><span class="nx">ToString</span><span class="p">(</span><span class="s1">&#39;yyyy-MM-dd-HH-mm-ss&#39;</span><span class="p">)</span>
+        <span class="nx">FullFilename</span> <span class="o">=</span> <span class="nb">String</span><span class="p">.</span><span class="nx">Format</span><span class="p">(</span><span class="s1">&#39;{0}\{1}.log&#39;</span><span class="p">,</span> <span class="nx">ErrorsFolderPath</span><span class="p">,</span> <span class="nx">Now</span><span class="p">)</span>
+
+        <span class="nx">User</span> <span class="o">=</span> <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">Context</span><span class="p">.</span><span class="nx">Current</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">Identity</span><span class="p">.</span><span class="nx">Name</span>
+        <span class="nx">User</span> <span class="o">=</span> <span class="p">(</span><span class="nx">User</span> <span class="o">=</span> <span class="nb">String</span><span class="p">.</span><span class="nx">Empty</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;No user logged in&#39;</span> <span class="o">:</span> <span class="nx">User</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Get date and time for error file contents.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">Now</span> <span class="o">=</span> <span class="nx">DateTime</span><span class="p">.</span><span class="nx">Now</span><span class="p">.</span><span class="nx">ToString</span><span class="p">(</span><span class="s1">&#39;yyyy-MM-dd HH.mm.ss&#39;</span><span class="p">)</span>
+
+        <span class="nx">sb</span><span class="p">.</span><span class="nx">AppendLine</span><span class="p">(</span><span class="nb">String</span><span class="p">.</span><span class="nx">Format</span><span class="p">(</span><span class="s1">&#39;User: {0}&#39;</span><span class="p">,</span> <span class="nx">User</span><span class="p">))</span> 
+        <span class="nx">sb</span><span class="p">.</span><span class="nx">AppendLine</span><span class="p">(</span><span class="nb">String</span><span class="p">.</span><span class="nx">Format</span><span class="p">(</span><span class="s1">&#39;Date and time: {0}&#39;</span><span class="p">,</span> <span class="nx">Now</span><span class="p">))</span> 
+        <span class="nx">sb</span><span class="p">.</span><span class="nx">AppendLine</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="nx">sb</span><span class="p">.</span><span class="nx">Append</span><span class="p">(</span><span class="nx">ErrorDetails</span><span class="p">)</span> 
+
+        <span class="nx">File</span><span class="p">.</span><span class="nx">WriteAllText</span><span class="p">(</span><span class="nx">FullFilename</span><span class="p">,</span> <span class="nx">sb</span><span class="p">.</span><span class="nx">ToString</span><span class="p">().</span><span class="nx">TrimEnd</span><span class="p">()</span> <span class="p">)</span>   
+    <span class="nx">EndSr</span> 
+
+<span class="nx">EndClass</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

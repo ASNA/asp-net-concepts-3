@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>StateList.vr</title>
+  <link rel="stylesheet" href="..\pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>StateList.vr</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="nx">Using</span> <span class="nx">System</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Data</span> 
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">UI</span><span class="p">.</span><span class="nx">WebControls</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Web</span>
+
+<span class="nx">BegClass</span> <span class="nx">StateList</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> <span class="nx">Extends</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nb">Object</span><span class="p">)</span> 
+
+    <span class="nx">DclDB</span> <span class="nx">DGDB</span> <span class="nx">DBName</span><span class="p">(</span><span class="s2">&quot;*Public/DG NET Local&quot;</span><span class="p">)</span> 
+
+    <span class="nx">DclDiskFile</span>  <span class="nx">States</span>              <span class="o">+</span>
+          <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Input</span> <span class="p">)</span>            <span class="o">+</span>
+          <span class="nx">Org</span><span class="p">(</span><span class="o">*</span><span class="nx">Indexed</span><span class="p">)</span>            <span class="o">+</span>
+          <span class="nx">Prefix</span><span class="p">(</span><span class="nx">States_</span><span class="p">)</span>          <span class="o">+</span>
+          <span class="nx">File</span><span class="p">(</span><span class="s2">&quot;Examples/States&quot;</span><span class="p">)</span>  <span class="o">+</span>
+          <span class="nx">DB</span><span class="p">(</span><span class="nx">DGDB</span><span class="p">)</span>                <span class="o">+</span>
+          <span class="nx">ImpOpen</span><span class="p">(</span><span class="o">*</span><span class="nx">No</span><span class="p">)</span>  
+
+    <span class="nx">BegConstructor</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">DGDB</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">ASNA</span><span class="p">.</span><span class="nx">VisualRPG</span><span class="p">.</span><span class="nx">Runtime</span><span class="p">.</span><span class="nx">Database</span><span class="p">)</span> 
+
+        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">DGDB</span> <span class="o">=</span> <span class="nx">DGDB</span>
+    <span class="nx">EndConstructor</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>BegFunc GetList Type(ListItemCollection) Access(<em>Public) 
+       DclSrParm Library Type(</em>String) 
+       DclSrParm File Type(<em>String) 
+       DclSrParm TextField Type(</em>String) 
+       DclSrParm ValueField  Type(*String) </p>
+<pre><code>   DclFld lih Type(ASNA.DataGateHelper.ListItemHelper) New(*This.DGDB) 
+   DclFld RecordsRead Type(*Integer4)
+
+   RecordsRead = lih.LoadList(Library, File, TextField, ValueField) 
+   If RecordsRead &gt; 0 
+       LeaveSr lih.ListItems
+   Else
+       LeaveSr *Nothing
+   EndIf
+</code></pre>
+<p>EndFunc</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">BegFunc</span> <span class="nx">GetList</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">ListItemCollection</span><span class="p">)</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> 
+        <span class="nx">DclFld</span> <span class="nx">Result</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">ListItemCollection</span><span class="p">)</span> <span class="nx">New</span><span class="p">()</span>
+        
+        <span class="nx">OpenData</span><span class="p">()</span>
+
+        <span class="nx">Read</span> <span class="nx">States</span>
+        <span class="nx">DoWhile</span> <span class="p">(</span><span class="nx">NOT</span> <span class="nx">States</span><span class="p">.</span><span class="nx">IsEof</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>Either of these may need a ToString() and/or Trim(), 
+depending on your data.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="nx">Result</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="o">*</span><span class="nx">New</span> <span class="nx">ListItem</span><span class="p">(</span><span class="nx">States_State</span><span class="p">.</span><span class="nx">Trim</span><span class="p">(),</span> <span class="nx">States_Abbrev</span><span class="p">))</span>
+            <span class="nx">Read</span> <span class="nx">States</span>
+        <span class="nx">EndDo</span> 
+
+        <span class="nx">CloseData</span><span class="p">()</span>
+
+        <span class="nx">LeaveSr</span> <span class="nx">Result</span> 
+    <span class="nx">EndFunc</span>          
+
+    <span class="nx">BegSr</span> <span class="nx">OpenData</span> 
+        <span class="nx">If</span> <span class="p">(</span><span class="nx">NOT</span> <span class="nx">DGDB</span><span class="p">.</span><span class="nx">IsOpen</span><span class="p">)</span> 
+            <span class="nx">Connect</span> <span class="nx">DGDB</span> 
+        <span class="nx">EndIf</span>     
+        <span class="nx">Open</span> <span class="nx">States</span>
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegSr</span> <span class="nx">CloseData</span>
+        <span class="nx">Close</span> <span class="o">*</span><span class="nx">All</span> 
+    <span class="nx">EndSr</span>          
+
+<span class="nx">EndClass</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

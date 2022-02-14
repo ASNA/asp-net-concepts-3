@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>CustomerList.aspx.vr</title>
+  <link rel="stylesheet" href="..\pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>CustomerList.aspx.vr</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="nx">Using</span> <span class="nx">System</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Data</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">UI</span><span class="p">.</span><span class="nx">WebControls</span>
+
+<span class="nx">BegClass</span> <span class="nx">views_CustomerList</span> <span class="nx">Partial</span><span class="p">(</span><span class="o">*</span><span class="nx">Yes</span><span class="p">)</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> <span class="nx">Extends</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">UI</span><span class="p">.</span><span class="nx">Page</span><span class="p">)</span>
+
+    <span class="nx">DclDB</span> <span class="nx">DGDB</span> 
+    <span class="nx">DclFld</span> <span class="nx">CustNameList</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">CustomerByNameList</span><span class="p">)</span> 
+    <span class="nx">DclConst</span> <span class="nx">ROWS_TO_DISPLAY</span> <span class="nx">Value</span><span class="p">(</span><span class="mf">12</span><span class="p">)</span> 
+
+    <span class="nx">DclFld</span> <span class="nx">StateHelper</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">AppStateHelpers</span><span class="p">)</span> <span class="nx">New</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> 
+
+    <span class="nx">BegSr</span> <span class="nx">Page_Load</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Private</span><span class="p">)</span> <span class="nx">Event</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">Load</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">sender</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">e</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">EventArgs</span><span class="p">)</span>
+
+        <span class="nx">DclFld</span> <span class="nx">dt</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">DataTable</span><span class="p">)</span> 
+        <span class="nx">DclFld</span> <span class="nx">CustomerName</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+        <span class="nx">DclFld</span> <span class="nx">CustomerNumber</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span> 
+
+        <span class="nx">DGDB</span><span class="p">.</span><span class="nx">DBName</span> <span class="o">=</span> <span class="nx">StateHelper</span><span class="p">.</span><span class="nx">GetApplicationValue</span><span class="p">(</span><span class="s1">&#39;dbname&#39;</span><span class="p">).</span><span class="nx">ToString</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>DGDB.User = StateHelper.GetSessionValueAsString(&lsquo;user&rsquo;)
+DGDB.Password = StateHelper.GetSessionValueAsString(&lsquo;password&rsquo;)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">Title</span> <span class="o">=</span> <span class="s1">&#39;Customer List&#39;</span>
+
+        <span class="nx">Connect</span> <span class="nx">DGDB</span> 
+        <span class="nx">CustNameList</span> <span class="o">=</span> <span class="o">*</span><span class="nx">New</span> <span class="nx">CustomerByNameList</span><span class="p">(</span><span class="nx">DGDB</span><span class="p">,</span> <span class="nx">ROWS_TO_DISPLAY</span><span class="p">)</span> 
+
+        <span class="nx">If</span> <span class="p">(</span><span class="nx">NOT</span> <span class="nx">Page</span><span class="p">.</span><span class="nx">IsPostBack</span><span class="p">)</span>
+            <span class="nx">If</span>  <span class="nx">ArePositionToValuesProvided</span><span class="p">()</span>
+                <span class="nx">CustomerName</span> <span class="o">=</span> <span class="nx">StateHelper</span><span class="p">.</span><span class="nx">GetSessionValueAsString</span><span class="p">(</span><span class="s1">&#39;first-customer-name&#39;</span><span class="p">)</span>
+                <span class="nx">CustomerNumber</span> <span class="o">=</span> <span class="nx">StateHelper</span><span class="p">.</span><span class="nx">GetSessionValueAsInt32</span><span class="p">(</span><span class="s1">&#39;first-customer-number&#39;</span><span class="p">)</span>
+
+                <span class="nx">dt</span> <span class="o">=</span> <span class="nx">PositionListTo</span><span class="p">(</span><span class="nx">CustomerName</span><span class="p">,</span> <span class="nx">CustomerNumber</span><span class="p">)</span> 
+                <span class="nx">BindGridView</span><span class="p">(</span><span class="nx">dt</span><span class="p">)</span> 
+            <span class="nx">Else</span> 
+                <span class="nx">dt</span> <span class="o">=</span> <span class="nx">CustNamelist</span><span class="p">.</span><span class="nx">ReadPage</span><span class="p">()</span>            
+                <span class="nx">BindGridView</span><span class="p">(</span><span class="nx">dt</span><span class="p">)</span> 
+            <span class="nx">EndIf</span> 
+        <span class="nx">Else</span>
+        <span class="nx">EndIf</span>
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegFunc</span> <span class="nx">ArePositionToValuesProvided</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Boolean</span><span class="p">)</span> 
+        <span class="nx">LeaveSr</span> <span class="nx">Session</span><span class="p">[</span><span class="s1">&#39;first-customer-name&#39;</span><span class="p">]</span> <span class="o">&lt;&gt;</span> <span class="o">*</span><span class="nx">Nothing</span> <span class="nx">AND</span> <span class="o">+</span>
+                <span class="nx">Session</span><span class="p">[</span><span class="s1">&#39;first-customer-number&#39;</span><span class="p">]</span> <span class="o">&lt;&gt;</span> <span class="o">*</span><span class="nx">Nothing</span>
+    <span class="nx">EndFunc</span>
+
+    <span class="nx">BegSr</span> <span class="nx">BindGridView</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">dt</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">DataTable</span><span class="p">)</span> 
+
+        <span class="nx">gridviewCust</span><span class="p">.</span><span class="nx">DataSource</span> <span class="o">=</span> <span class="nx">dt</span>
+        <span class="nx">gridviewCust</span><span class="p">.</span><span class="nx">DataBind</span><span class="p">()</span>
+
+        <span class="nx">ViewState</span><span class="p">[</span><span class="s1">&#39;last-customer-name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">CustNameList</span><span class="p">.</span><span class="nx">LastCMName</span><span class="p">.</span><span class="nx">Trim</span><span class="p">()</span>
+        <span class="nx">ViewState</span><span class="p">[</span><span class="s1">&#39;last-customer-number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">CustNameList</span><span class="p">.</span><span class="nx">LastCMCustNo</span>
+
+        <span class="nx">Session</span><span class="p">[</span><span class="s1">&#39;first-customer-name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">CustNameList</span><span class="p">.</span><span class="nx">FirstCMName</span><span class="p">.</span><span class="nx">Trim</span><span class="p">()</span>
+        <span class="nx">Session</span><span class="p">[</span><span class="s1">&#39;first-customer-number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">CustNameList</span><span class="p">.</span><span class="nx">FirstCMCustNo</span>
+
+        <span class="nx">buttonNext</span><span class="p">.</span><span class="nx">Enabled</span> <span class="o">=</span> <span class="nx">CustNameList</span><span class="p">.</span><span class="nx">MoreRows</span>
+        <span class="nx">If</span> <span class="nx">buttonNext</span><span class="p">.</span><span class="nx">Enabled</span> 
+            <span class="nx">labelTableFooter</span><span class="p">.</span><span class="nx">Text</span> <span class="o">=</span> <span class="s1">&#39;More records to show&#39;</span>
+        <span class="nx">Else</span>
+            <span class="nx">labelTableFooter</span><span class="p">.</span><span class="nx">Text</span> <span class="o">=</span> <span class="s1">&#39;No more records to show&#39;</span>
+        <span class="nx">EndIf</span> 
+    <span class="nx">EndSr</span> 
+
+    <span class="nx">BegSr</span> <span class="nx">Page_Unload</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Private</span><span class="p">)</span> <span class="nx">Event</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">Unload</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">sender</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">e</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">EventArgs</span><span class="p">)</span>
+
+        <span class="nx">Disconnect</span> <span class="nx">DGDB</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>Called when the page is unloaded.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">EndSr</span>
+
+    <span class="nx">BegSr</span> <span class="nx">gridviewCust_SelectedIndexChanged</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Private</span><span class="p">)</span> <span class="nx">Event</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">gridviewCust</span><span class="p">.</span><span class="nx">SelectedIndexChanged</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">sender</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">e</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">EventArgs</span><span class="p">)</span>
+        
+        <span class="nx">DclFld</span> <span class="nx">SelectedRow</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span> 
+
+        <span class="nx">SelectedRow</span> <span class="o">=</span> <span class="nx">gridviewCust</span><span class="p">.</span><span class="nx">SelectedIndex</span>
+
+        <span class="nx">DclFld</span> <span class="nx">CustomerNumber</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span> 
+        <span class="nx">DclFld</span> <span class="nx">CustomerName</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+
+        <span class="nx">CustomerNumber</span> <span class="o">=</span> <span class="nx">Convert</span><span class="p">.</span><span class="nx">ToInt32</span><span class="p">(</span><span class="nx">gridviewCust</span><span class="p">.</span><span class="nx">DataKeys</span><span class="p">[</span><span class="nx">SelectedRow</span><span class="p">][</span><span class="s1">&#39;customer_cmcustno&#39;</span><span class="p">])</span>
+        <span class="nx">CustomerName</span> <span class="o">=</span> <span class="nx">gridviewCust</span><span class="p">.</span><span class="nx">DataKeys</span><span class="p">[</span><span class="nx">SelectedRow</span><span class="p">][</span><span class="s1">&#39;customer_cmname&#39;</span><span class="p">].</span><span class="nx">ToString</span><span class="p">()</span>
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegSr</span> <span class="nx">buttonNext_Click</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Private</span><span class="p">)</span> <span class="nx">Event</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">buttonNext</span><span class="p">.</span><span class="nx">Click</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">sender</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">e</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">EventArgs</span><span class="p">)</span>
+
+        <span class="nx">DclFld</span> <span class="nx">dt</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">DataTable</span><span class="p">)</span> 
+
+        <span class="nx">CustNameList</span><span class="p">.</span><span class="nx">LastCMName</span> <span class="o">=</span> <span class="nx">ViewState</span><span class="p">[</span><span class="s1">&#39;last-customer-name&#39;</span><span class="p">].</span><span class="nx">ToString</span><span class="p">()</span>
+        <span class="nx">CustNameList</span><span class="p">.</span><span class="nx">LastCMCustNo</span> <span class="o">=</span> <span class="nx">ViewState</span><span class="p">[</span><span class="s1">&#39;last-customer-number&#39;</span><span class="p">].</span><span class="nx">ToString</span><span class="p">()</span>
+ 
+        <span class="nx">dt</span> <span class="o">=</span> <span class="nx">CustNamelist</span><span class="p">.</span><span class="nx">ReadNextPage</span><span class="p">()</span>
+
+        <span class="nx">BindGridView</span><span class="p">(</span><span class="nx">dt</span><span class="p">)</span>         
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegSr</span> <span class="nx">buttonPositionTo_Click</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Private</span><span class="p">)</span> <span class="nx">Event</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">buttonPositionTo</span><span class="p">.</span><span class="nx">Click</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">sender</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">e</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">EventArgs</span><span class="p">)</span>
+
+        <span class="nx">DclFld</span> <span class="nx">dt</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">DataTable</span><span class="p">)</span> 
+
+        <span class="nx">If</span> <span class="nx">textboxPositionTo</span><span class="p">.</span><span class="nx">Text</span><span class="p">.</span><span class="nx">Trim</span><span class="p">()</span> <span class="o">&lt;&gt;</span> <span class="nb">String</span><span class="p">.</span><span class="nx">Empty</span>
+            <span class="nx">dt</span> <span class="o">=</span> <span class="nx">PositionListTo</span><span class="p">(</span><span class="nx">textboxPositionTo</span><span class="p">.</span><span class="nx">Text</span><span class="p">)</span>
+            <span class="nx">If</span> <span class="nx">dt</span><span class="p">.</span><span class="nx">Rows</span><span class="p">.</span><span class="nx">Count</span> <span class="o">&lt;&gt;</span> <span class="mf">0</span> 
+                <span class="nx">BindGridView</span><span class="p">(</span><span class="nx">dt</span><span class="p">)</span>         
+                <span class="nx">textboxPositionTo</span><span class="p">.</span><span class="nx">Text</span> <span class="o">=</span> <span class="nb">String</span><span class="p">.</span><span class="nx">Empty</span> 
+            <span class="nx">EndIf</span> 
+        <span class="nx">EndIf</span> 
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegSr</span> <span class="nx">gridviewCust_RowCommand</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Private</span><span class="p">)</span> <span class="nx">Event</span><span class="p">(</span><span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">gridviewCust</span><span class="p">.</span><span class="nx">RowCommand</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">sender</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">e</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">UI</span><span class="p">.</span><span class="nx">WebControls</span><span class="p">.</span><span class="nx">GridViewCommandEventArgs</span><span class="p">)</span>
+
+        <span class="nx">DclFld</span> <span class="nx">CommandName</span>    <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span>
+        <span class="nx">DclFld</span> <span class="nx">SelectedIndex</span>  <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span> 
+        <span class="nx">DclFld</span> <span class="nx">CustomerNumber</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span>
+
+        <span class="nx">CommandName</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">CommandName</span>
+        <span class="nx">SelectedIndex</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">CommandArgument</span><span class="p">.</span><span class="nx">ToString</span><span class="p">()</span> 
+        <span class="nx">CustomerNumber</span> <span class="o">=</span> <span class="nx">gridviewCust</span><span class="p">.</span><span class="nx">DataKeys</span><span class="p">[</span><span class="nx">SelectedIndex</span><span class="p">][</span><span class="s2">&quot;customer_cmcustno&quot;</span><span class="p">].</span><span class="nx">ToString</span><span class="p">()</span>        
+
+        <span class="nx">If</span> <span class="nx">CommandName</span> <span class="o">=</span> <span class="s1">&#39;ActionEdit&#39;</span>
+            <span class="nx">Session</span><span class="p">[</span><span class="s1">&#39;customer-number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">CustomerNumber</span>
+            <span class="nx">Response</span><span class="p">.</span><span class="nx">Redirect</span><span class="p">(</span><span class="s1">&#39;customerform.aspx&#39;</span><span class="p">)</span>
+        <span class="nx">ElseIf</span> <span class="nx">CommandName</span> <span class="o">=</span> <span class="s1">&#39;ActionDelete&#39;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Do something here for delete action.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="nx">EndIf</span> 
+    <span class="nx">EndSr</span>
+
+    <span class="nx">BegFunc</span> <span class="nx">PositionListTo</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">DataTable</span><span class="p">)</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">CustomerName</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+
+        <span class="nx">LeaveSr</span> <span class="nx">PositionListTo</span><span class="p">(</span><span class="nx">CustomerName</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span> 
+    <span class="nx">EndFunc</span>             
+
+    <span class="nx">BegFunc</span>  <span class="nx">PositionListTo</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">DataTable</span><span class="p">)</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">CustomerName</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">CustomerNumber</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span> 
+
+        <span class="nx">DclFld</span> <span class="nx">dt</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">DataTable</span><span class="p">)</span> 
+
+        <span class="nx">dt</span> <span class="o">=</span> <span class="nx">CustNamelist</span><span class="p">.</span><span class="nx">PositionPageTo</span><span class="p">(</span><span class="nx">CustomerName</span><span class="p">.</span><span class="nx">Trim</span><span class="p">(),</span> <span class="nx">CustomerNumber</span><span class="p">)</span>
+        <span class="nx">If</span> <span class="nx">dt</span><span class="p">.</span><span class="nx">Rows</span><span class="p">.</span><span class="nx">Count</span> <span class="o">=</span> <span class="mf">0</span> 
+            <span class="nx">LeaveSr</span> <span class="o">*</span><span class="nx">Nothing</span> 
+        <span class="nx">EndIf</span> 
+
+        <span class="nx">LeaveSr</span> <span class="nx">dt</span>
+    <span class="nx">EndFunc</span> 
+
+
+<span class="nx">EndClass</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>AppStateHelpers.vr</title>
+  <link rel="stylesheet" href="..\pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>AppStateHelpers.vr</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="nx">Using</span> <span class="nx">System</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">Generic</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Linq</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Data</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Configuration</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Web</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">Security</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">UI</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">UI</span><span class="p">.</span><span class="nx">WebControls</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">UI</span><span class="p">.</span><span class="nx">WebControls</span><span class="p">.</span><span class="nx">WebParts</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">UI</span><span class="p">.</span><span class="nx">HtmlControls</span>
+
+<span class="nx">BegClass</span> <span class="nx">AppStateHelpers</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span>
+
+    <span class="nx">DclFld</span> <span class="nx">Context</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">HttpContext</span><span class="p">)</span> 
+
+    <span class="nx">BegConstructor</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span>
+        <span class="nx">DclSrParm</span> <span class="nx">Context</span> <span class="nx">Type</span><span class="p">(</span><span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">HttpContext</span><span class="p">)</span> 
+
+        <span class="o">*</span><span class="nx">This</span><span class="p">.</span><span class="nx">Context</span> <span class="o">=</span> <span class="nx">Context</span>
+    <span class="nx">EndConstructor</span>
+
+    <span class="nx">BegFunc</span> <span class="nx">GetSessionValue</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">Key</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+
+        <span class="nx">If</span> <span class="nx">Context</span><span class="p">.</span><span class="nx">Session</span><span class="p">[</span><span class="nx">Key</span><span class="p">]</span> <span class="o">=</span> <span class="o">*</span><span class="nx">Nothing</span>
+            <span class="nx">Throw</span> <span class="o">*</span><span class="nx">New</span> <span class="nx">ArgumentException</span><span class="p">(</span><span class="nb">String</span><span class="p">.</span><span class="nx">Format</span><span class="p">(</span><span class="s2">&quot;Session state value &#39;{0}&#39; is null&quot;</span><span class="p">,</span> <span class="nx">Key</span><span class="p">))</span> 
+        <span class="nx">EndIf</span>
+        
+        <span class="nx">LeaveSr</span> <span class="nx">Context</span><span class="p">.</span><span class="nx">Session</span><span class="p">[</span><span class="nx">Key</span><span class="p">]</span>
+    <span class="nx">EndFunc</span> 
+
+    <span class="nx">BegFunc</span> <span class="nx">GetSessionValueThenRemove</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">Key</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+
+        <span class="nx">DclFld</span> <span class="nx">Result</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span> 
+
+        <span class="nx">Result</span> <span class="o">=</span> <span class="nx">GetSessionValue</span><span class="p">(</span><span class="nx">Key</span><span class="p">)</span> 
+
+        <span class="nx">Context</span><span class="p">.</span><span class="nx">Session</span><span class="p">.</span><span class="nx">Remove</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">)</span> 
+        
+        <span class="nx">LeaveSr</span> <span class="nx">Result</span> 
+    <span class="nx">EndFunc</span> 
+
+    <span class="nx">BegFunc</span> <span class="nx">GetSessionValueAsString</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">Key</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+
+        <span class="nx">LeaveSr</span> <span class="nx">GetSessionValue</span><span class="p">(</span><span class="nx">key</span><span class="p">).</span><span class="nx">ToString</span><span class="p">()</span> 
+    <span class="nx">EndFunc</span> 
+
+    <span class="nx">BegFunc</span> <span class="nx">GetSessionValueAsInt32</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">Key</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+
+        <span class="nx">LeaveSr</span> <span class="nx">Convert</span><span class="p">.</span><span class="nx">ToInt32</span><span class="p">(</span><span class="nx">GetSessionValue</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span>
+    <span class="nx">EndFunc</span> 
+
+    <span class="nx">BegFunc</span> <span class="nx">GetSessionValueAsStringThenRemove</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">Key</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+
+        <span class="nx">DclFld</span> <span class="nx">Result</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+
+        <span class="nx">Result</span> <span class="o">=</span> <span class="nx">GetSessionValue</span><span class="p">(</span><span class="nx">Key</span><span class="p">).</span><span class="nx">ToString</span><span class="p">()</span>
+        <span class="nx">Context</span><span class="p">.</span><span class="nx">Session</span><span class="p">.</span><span class="nx">Remove</span><span class="p">(</span><span class="nx">Key</span><span class="p">)</span> 
+        <span class="nx">LeaveSr</span> <span class="nx">Result</span> 
+    <span class="nx">EndFunc</span> 
+
+    <span class="nx">BegFunc</span> <span class="nx">GetSessionValueAsInt32ThenRemove</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">Key</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+
+        <span class="nx">DclFld</span> <span class="nx">Result</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nx">Integer4</span><span class="p">)</span> 
+
+        <span class="nx">Result</span> <span class="o">=</span> <span class="nx">Convert</span><span class="p">.</span><span class="nx">ToInt32</span><span class="p">(</span><span class="nx">GetSessionValue</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span>
+        <span class="nx">Context</span><span class="p">.</span><span class="nx">Session</span><span class="p">.</span><span class="nx">Remove</span><span class="p">(</span><span class="nx">Key</span><span class="p">)</span> 
+        <span class="nx">LeaveSr</span> <span class="nx">Result</span> 
+    <span class="nx">EndFunc</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Application values.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nx">BegFunc</span> <span class="nx">GetApplicationValue</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">Object</span><span class="p">)</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">Key</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+
+        <span class="nx">If</span> <span class="nx">Context</span><span class="p">.</span><span class="nx">Application</span><span class="p">[</span><span class="nx">Key</span><span class="p">]</span> <span class="o">=</span> <span class="o">*</span><span class="nx">Nothing</span>
+            <span class="nx">Throw</span> <span class="o">*</span><span class="nx">New</span> <span class="nx">ArgumentException</span><span class="p">(</span><span class="nb">String</span><span class="p">.</span><span class="nx">Format</span><span class="p">(</span><span class="s2">&quot;Application state value &#39;{0}&#39; is null&quot;</span><span class="p">,</span> <span class="nx">Key</span><span class="p">))</span> 
+        <span class="nx">EndIf</span>
+        
+        <span class="nx">LeaveSr</span> <span class="nx">Context</span><span class="p">.</span><span class="nx">Application</span><span class="p">[</span><span class="nx">Key</span><span class="p">]</span>
+    <span class="nx">EndFunc</span> 
+
+    <span class="nx">BegFunc</span> <span class="nx">GetApplicationValueAsString</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">Key</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+
+        <span class="nx">LeaveSr</span> <span class="nx">GetApplicationValue</span><span class="p">(</span><span class="nx">key</span><span class="p">).</span><span class="nx">ToString</span><span class="p">()</span> 
+    <span class="nx">EndFunc</span> 
+
+    <span class="nx">BegFunc</span> <span class="nx">GetApplicationValueAsInt32</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span> 
+        <span class="nx">DclSrParm</span> <span class="nx">Key</span> <span class="nx">Type</span><span class="p">(</span><span class="o">*</span><span class="nb">String</span><span class="p">)</span> 
+
+        <span class="nx">LeaveSr</span> <span class="nx">Convert</span><span class="p">.</span><span class="nx">ToInt32</span><span class="p">(</span><span class="nx">GetApplicationValue</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span>
+    <span class="nx">EndFunc</span> 
+
+<span class="nx">EndClass</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

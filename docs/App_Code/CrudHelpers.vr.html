@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>CrudHelpers.vr</title>
+  <link rel="stylesheet" href="..\pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>CrudHelpers.vr</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>| These routines are all helper routines to make it easier to populate ASP.NET WebForms
+| and to move data from the WebForm back to the database.
+| These routines are all shared (static).</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="nx">Using</span> <span class="nx">System</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Data</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Collections</span><span class="p">.</span><span class="nx">Specialized</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Text</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">UI</span>
+<span class="nx">Using</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">UI</span><span class="p">.</span><span class="nx">WebControls</span>
+
+ <span class="o">*</span><span class="err">/</span>
+<span class="nx">BegClass</span> <span class="nx">CrudHelpers</span> <span class="nx">Access</span><span class="p">(</span><span class="o">*</span><span class="nx">Public</span><span class="p">)</span>
+
+    <span class="o">/*</span>
+     <span class="o">|</span> <span class="nx">This</span> <span class="nx">is</span> <span class="nx">primarily</span> <span class="k">for</span> <span class="nx">debugging</span><span class="o">:</span>
+     <span class="o">|</span> <span class="nx">Return</span> <span class="nx">a</span> <span class="nx">formatted</span> <span class="nx">string</span> <span class="nx">showing</span> <span class="nx">field</span> <span class="nx">names</span> <span class="nx">and</span> <span class="nx">values</span> <span class="k">for</span> <span class="nx">the</span> <span class="nx">given</span> <span class="nx">DataRow</span><span class="p">.</span> 
+     <span class="o">|</span> <span class="nx">Two</span> <span class="nx">overloads</span><span class="o">:</span> <span class="nx">first</span> <span class="nx">defaults</span> <span class="nx">to</span> <span class="nx">zeroth</span> <span class="nx">DataRow</span><span class="p">,</span> <span class="nx">second</span>
+     <span class="o">|</span> <span class="nx">uses</span> <span class="nx">zero</span><span class="o">-</span><span class="nx">based</span> <span class="nx">row</span> <span class="nx">position</span> <span class="nx">provided</span><span class="p">.</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <pre><code>BegFunc GetDataRowValuesForDebugging Type(*String)  Access(*Public) Shared(*Yes)
+</code></pre>
+<p>DclSrParm dt Type(DataTable) </p>
+<p>LeaveSr GetDataRowValuesForDebugging(dt, 0) 
+    EndFunc </p>
+<pre><code>BegFunc GetDataRowValuesForDebugging Type(*String)  Access(*Public) Shared(*Yes)
+</code></pre>
+<p>DclSrParm dt Type(DataTable) 
+  DclSrParm Row Type(*Integer4) </p>
+<p>DclFld sb Type(StringBuilder) New()
+  DclFld dr Type(DataRow) </p>
+<p>dr = dt.Rows[Row]</p>
+<p>ForEach Field Type(*String) Collection(CrudHelpers.GetDataFieldNames(dt))
+      sb.AppendLine(String.Format(&ldquo;{0,-16} = {1}&rdquo;, Field, dr[Field]))<br />
+  EndFor </p>
+<p>LeaveSr sb.ToString()
+    EndFunc </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>     <span class="o">|</span> <span class="nx">Get</span> <span class="nx">field</span> <span class="nx">names</span> <span class="kr">from</span> <span class="nx">a</span> <span class="nx">DataTable</span><span class="err">&#39;</span><span class="nx">s</span> <span class="nx">Columns</span> <span class="nx">collecton</span> <span class="kr">as</span> <span class="nx">a</span> <span class="nx">string</span> <span class="nx">collection</span><span class="p">.</span> 
+     <span class="o">|</span> <span class="nx">Field</span> <span class="nx">names</span> <span class="nx">are</span> <span class="nx">returned</span> <span class="kr">as</span> <span class="nx">lower</span> <span class="k">case</span><span class="p">.</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <pre><code>BegFunc GetDataFieldNames Type(StringCollection) Access(*Public) Shared(*Yes)
+</code></pre>
+<p>DclSrParm dt Type(DataTable) </p>
+<p>DclFld FieldNameList Type(StringCollection) New()
+  DclFld dc Type(DataColumn) 
+  DclFld i Type(*Integer4) </p>
+<p>For Index(i = 0) To(dt.Columns.Count - 1)
+      dc = dt.Columns[i]
+      FieldNameList.Add(dt.Columns[i].ColumnName.ToLower())
+  EndFor </p>
+<p>LeaveSr FieldNameList 
+    EndFunc </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>     <span class="o">|</span> <span class="nx">For</span> <span class="nx">each</span> <span class="nx">field</span> <span class="nx">name</span> <span class="ow">in</span> <span class="nx">the</span> <span class="nx">FieldNameList</span><span class="p">,</span> <span class="nx">update</span> <span class="nx">the</span> <span class="nx">ASP</span><span class="p">.</span><span class="nx">NET</span> <span class="nx">control</span>
+     <span class="o">|</span> <span class="nx">on</span> <span class="nx">the</span> <span class="nx">form</span> <span class="kd">with</span> <span class="nx">that</span> <span class="nx">field</span> <span class="nx">name</span> <span class="kr">as</span> <span class="nx">its</span> <span class="nx">Id</span><span class="p">.</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <pre><code>BegSr PopulateUIFromDataRow Access(*Public)  Shared(*Yes)
+</code></pre>
+<p>DclSrParm Parent Type(Control) 
+  DclSrParm dt Type(DataTable) </p>
+<p>DclFld FieldNameList Type(StringCollection)</p>
+<p>FieldNameList = GetDataFieldNames(dt)</p>
+<p>ForEach FieldName Type(*String) Collection(FieldNameList) 
+      PopulateControlValue(Parent, FieldName, dt.Rows[0]) 
+  EndFor<br />
+    EndSr </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>     <span class="o">|</span> <span class="nx">For</span> <span class="nx">a</span> <span class="nx">given</span> <span class="nx">field</span> <span class="nx">name</span> <span class="nx">update</span> <span class="nx">the</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">the</span> <span class="nx">ASP</span><span class="p">.</span><span class="nx">NET</span> <span class="nx">control</span>
+     <span class="o">|</span> <span class="nx">on</span> <span class="nx">the</span> <span class="nx">form</span> <span class="kd">with</span> <span class="nx">that</span> <span class="nx">field</span> <span class="nx">name</span> <span class="kr">as</span> <span class="nx">its</span> <span class="nx">Id</span><span class="p">.</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <pre><code>BegSr PopulateControlValue Access(*Public) Shared(*Yes)
+</code></pre>
+<p>DclSrParm Parent Type(Control) 
+  DclSrParm FldName Type(*String) 
+  DclSrParm dr Type(DataRow) </p>
+<p>DclFld ctrl Type(Control) </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>         <span class="o">|</span> <span class="nx">This</span> <span class="nx">is</span> <span class="nx">a</span> <span class="nx">subset</span> <span class="k">of</span> <span class="nx">the</span> <span class="nx">UI</span> <span class="nx">controls</span> <span class="nx">available</span><span class="p">.</span> <span class="nx">For</span> <span class="nx">example</span><span class="p">,</span>
+         <span class="o">|</span> <span class="nx">it</span> <span class="nx">does</span> <span class="nx">not</span> <span class="nx">include</span> <span class="nx">CheckBoxList</span> <span class="nx">and</span> <span class="nx">RadioButtonList</span> <span class="nx">controls</span><span class="p">.</span>
+         <span class="o">|</span> <span class="nx">For</span> <span class="nx">those</span> <span class="nx">controls</span><span class="p">,</span> <span class="nx">and</span> <span class="nx">other</span> <span class="nx">others</span> <span class="nx">not</span> <span class="nx">included</span><span class="p">,</span> <span class="nx">populate</span> 
+         <span class="o">|</span> <span class="nx">those</span> <span class="nx">controls</span> <span class="nx">manually</span> <span class="nx">after</span> <span class="nx">calling</span> <span class="k">this</span> <span class="nx">method</span> <span class="nx">to</span> <span class="nx">populate</span> 
+         <span class="o">|</span> <span class="nx">the</span> <span class="nx">other</span> <span class="nx">controls</span><span class="p">.</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <pre><code>    ctrl = FindControlRecursive(Parent, GetPrefixedControlId(FldName)) 
+    If ctrl &lt;&gt; *Nothing
+</code></pre>
+<p>If ctrl <em>Is TextBox 
+      (ctrl </em>As TextBox).Text = dr[fldName].ToString().Trim()
+  ElseIf ctrl <em>Is Label
+      (ctrl </em>As Label).Text = dr[fldName].ToString().Trim()
+  Elseif ctrl <em>Is RadioButton
+      (ctrl </em>As RadioButton).Text =  dr[fldName].ToString().Trim() = &lsquo;1&rsquo;
+  Elseif ctrl <em>Is CheckBox 
+      (ctrl </em>As CheckBox).Checked = dr[fldName].ToString().Trim() = &lsquo;1&rsquo;
+  Elseif ctrl <em>Is ListControl
+      (ctrl </em>As ListControl).SelectedValue = dr[fldName].ToString().Trim()
+  EndIf 
+        EndIf 
+    EndSr </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>     <span class="o">|</span> <span class="nx">For</span> <span class="nx">each</span> <span class="nx">field</span> <span class="nx">name</span> <span class="ow">in</span> <span class="nx">the</span> <span class="nx">FieldNameList</span><span class="p">,</span> <span class="nx">populate</span> <span class="nx">the</span> <span class="nx">corresponding</span>
+     <span class="o">|</span> <span class="nx">zeroth</span> <span class="nx">DataRow</span> <span class="nx">field</span> <span class="nx">value</span> <span class="kd">with</span> <span class="nx">the</span> <span class="nx">like</span><span class="o">-</span><span class="nx">named</span> <span class="nx">ASP</span><span class="p">.</span><span class="nx">NET</span> <span class="nx">control</span> <span class="nx">value</span><span class="p">.</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <pre><code>BegSr PopulateDataRowFromUI Access(*Public) Shared(*Yes)
+</code></pre>
+<p>DclSrParm Parent Type(Control) 
+  DclSrParm dt Type(DataTable) </p>
+<p>DclFld FieldNameList Type(StringCollection)</p>
+<p>FieldNameList = GetDataFieldNames(dt)</p>
+<p>ForEach FieldName Type(*String) Collection(FieldNameList) 
+      PopulateDataRowField(Parent, FieldName, dt.Rows[0]) 
+  EndFor<br />
+    EndSr </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>     <span class="o">|</span> <span class="nx">For</span> <span class="nx">a</span> <span class="nx">given</span> <span class="nx">field</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">populate</span> <span class="nx">the</span> <span class="nx">corresponding</span>
+     <span class="o">|</span> <span class="nx">DataRow</span> <span class="nx">field</span> <span class="nx">value</span> <span class="kd">with</span> <span class="nx">the</span> <span class="nx">like</span><span class="o">-</span><span class="nx">named</span> <span class="nx">ASP</span><span class="p">.</span><span class="nx">NET</span> <span class="nx">control</span> <span class="nx">value</span><span class="p">.</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <pre><code>BegSr PopulateDataRowField Access(*Public) Shared(*Yes)
+</code></pre>
+<p>DclSrParm Parent Type(Control) 
+  DclSrParm FldName Type(*String) 
+  DclSrParm dr Type(DataRow) </p>
+<p>DclFld ctrl Type(Control) </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>         <span class="o">|</span> <span class="nx">This</span> <span class="nx">is</span> <span class="nx">a</span> <span class="nx">subset</span> <span class="k">of</span> <span class="nx">the</span> <span class="nx">UI</span> <span class="nx">controls</span> <span class="nx">available</span><span class="p">.</span> <span class="nx">For</span> <span class="nx">example</span><span class="p">,</span>
+         <span class="o">|</span> <span class="nx">it</span> <span class="nx">does</span> <span class="nx">not</span> <span class="nx">include</span> <span class="nx">CheckBoxList</span> <span class="nx">and</span> <span class="nx">RadioButtonList</span> <span class="nx">controls</span><span class="p">.</span>
+         <span class="o">|</span> <span class="nx">For</span> <span class="nx">those</span> <span class="nx">controls</span><span class="p">,</span> <span class="nx">and</span> <span class="nx">other</span> <span class="nx">others</span> <span class="nx">not</span> <span class="nx">included</span><span class="p">,</span> <span class="nx">populate</span> 
+         <span class="o">|</span> <span class="nx">the</span> <span class="nx">necessary</span> <span class="nx">DataRow</span> <span class="nx">fields</span> <span class="nx">manually</span> <span class="nx">after</span> <span class="nx">calling</span> <span class="k">this</span> <span class="nx">method</span> 
+         <span class="o">|</span> <span class="nx">to</span> <span class="nx">populate</span> <span class="nx">the</span> <span class="nx">other</span> <span class="nx">DataRow</span> <span class="nx">fields</span><span class="p">.</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <pre><code>    ctrl = FindControlRecursive(Parent, GetPrefixedControlId(FldName)) 
+    If ctrl &lt;&gt; *Nothing
+</code></pre>
+<p>If ctrl <em>Is TextBox 
+       dr[fldName] = (ctrl </em>As TextBox).Text.Trim()
+  ElseIf ctrl <em>Is Label
+       dr[fldName] = (ctrl </em>As Label).Text.Trim()
+  Elseif ctrl <em>Is RadioButton
+       dr[fldName] = (ctrl </em>As RadioButton).Checked ? &lsquo;1&rsquo; : &lsquo;0&rsquo;
+  Elseif ctrl <em>Is CheckBox 
+      dr[fldName] = (ctrl </em>As CheckBox).Checked ? &lsquo;1&rsquo; : &lsquo;0&rsquo;
+  Elseif ctrl <em>Is ListControl
+      dr[FldName] = (ctrl </em>As ListControl).SelectedValue
+  EndIf 
+        EndIf 
+    EndSr</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>     <span class="o">|</span> <span class="nx">Find</span> <span class="nx">a</span> <span class="nx">control</span> <span class="kd">with</span> <span class="nx">given</span> <span class="nx">Id</span> <span class="ow">in</span> <span class="nx">the</span> <span class="nx">parent</span> <span class="nx">control</span><span class="p">.</span> <span class="nx">The</span> <span class="nx">parent</span> 
+     <span class="o">|</span> <span class="nx">control</span> <span class="nx">must</span> <span class="nx">derive</span> <span class="kr">from</span> <span class="nx">System</span><span class="p">.</span><span class="nx">Web</span><span class="p">.</span><span class="nx">UI</span><span class="p">.</span><span class="nx">Control</span><span class="p">.</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <pre><code>BegFunc FindControlRecursive Type(Control) Access(*Public) Shared(*Yes)
+</code></pre>
+<p>DclSrParm parent Type(Control) 
+  DclSrParm id Type(*String) </p>
+<p>DclFld foundControl Type(Control) </p>
+<p>If parent.id &lt;&gt; *Nothing AND parent.id.ToLower() = id
+      Leavesr parent 
+  EndIf </p>
+<p>ForEach ctrl Type(Control) Collection(parent.Controls)
+      foundControl = FindControlRecursive(Ctrl, id) 
+      If foundControl &lt;&gt; *Nothing
+          LeaveSr foundControl 
+      EndIf 
+  EndFor </p>
+<p>LeaveSr *Nothing 
+    EndFunc </p>
+<pre><code>BegFunc GetPrefixedControlId Type(*String) Shared(*Yes)
+</code></pre>
+<p>DclSrParm id Type(*String) </p>
+<p>LeaveSr (&lsquo;field_&rsquo; + Id).ToLower() 
+    EndFunc </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>     <span class="o">|</span> <span class="nx">Populate</span> <span class="nx">the</span> <span class="nx">incoming</span> <span class="nx">ListControl</span> <span class="kd">with</span> <span class="nx">the</span> <span class="nx">incoming</span> <span class="nx">ListItemCollection</span><span class="p">.</span>
+     <span class="o">|</span> <span class="nx">ListControls</span> <span class="nx">are</span><span class="o">:</span> <span class="nx">BulletedList</span><span class="p">,</span> <span class="nx">ListBox</span><span class="p">,</span> <span class="nx">DropDownList</span><span class="p">,</span> <span class="nx">CheckBoxList</span><span class="p">,</span> 
+     <span class="o">|</span> <span class="nx">and</span> <span class="nx">RadioButtonList</span><span class="p">.</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <pre><code>BegSr LoadListControl Access(*Public) Shared(*Yes)
+</code></pre>
+<p>DclSrParm ListControlInstance Type(ListControl) 
+  DclSrParm lic Type(ListItemCollection)</p>
+<p>// Use ListItem Text property for text and ListItem Value property for value.
+  ListControlInstance.DataTextField  = &ldquo;Text&rdquo;
+  ListControlInstance.DataValueField = &ldquo;Value&rdquo;</p>
+<p>ListControlInstance.DataSource = lic
+  ListControlInstance.DataBind()
+    EndSr    </p>
+<p>EndClass</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

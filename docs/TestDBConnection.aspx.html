@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>TestDBConnection.aspx</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>TestDBConnection.aspx</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>| Set pgmDB DBName &lsquo;keyword&rsquo; and DclDiskFile File &lsquo;keyword&rsquo;
+| correctly for your environment. 
+|
+| In the WriteFieldValue subroutine, specify a field name 
+| from your file.      <br />
+| 
+| Specify any overrides in the Overrides subroutine. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="o">&lt;%</span><span class="err">@</span> <span class="nx">Page</span> <span class="nx">Language</span><span class="o">=</span><span class="s2">&quot;AVR&quot;</span> <span class="o">%&gt;</span>
+<span class="o">&lt;%</span><span class="err">@</span> <span class="nx">Import</span> <span class="nx">Namespace</span><span class="o">=</span><span class="s2">&quot;System.Net.Sockets&quot;</span> <span class="o">%&gt;</span>
+<span class="o">&lt;%</span><span class="err">@</span> <span class="nx">Import</span> <span class="nx">Namespace</span><span class="o">=</span><span class="s2">&quot;System.Net.NetworkInformation&quot;</span> <span class="o">%&gt;</span>
+
+<span class="o">&lt;!</span><span class="nx">DOCTYPE</span> <span class="nx">html</span> <span class="nx">PUBLIC</span> <span class="s2">&quot;-//W3C//DTD XHTML 1.1//EN&quot;</span> <span class="s2">&quot;http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd&quot;</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="nx">script</span> <span class="nx">runat</span><span class="o">=</span><span class="s2">&quot;server&quot;</span><span class="o">&gt;</span>
+     <span class="o">*</span><span class="err">/</span>
+
+    <span class="nx">DclDB</span> <span class="nx">pgmDB</span> <span class="nx">DBName</span><span class="p">(</span><span class="s2">&quot;*PUBLIC/Cypress&quot;</span><span class="p">)</span>
+
+    <span class="nx">DclDiskFile</span>  <span class="nx">InputFile</span> <span class="o">+</span>
+          <span class="nx">Type</span><span class="p">(</span> <span class="o">*</span><span class="nx">Input</span>  <span class="p">)</span> <span class="o">+</span>
+          <span class="nx">Org</span><span class="p">(</span> <span class="o">*</span><span class="nx">Indexed</span> <span class="p">)</span> <span class="o">+</span>
+          <span class="nx">File</span><span class="p">(</span> <span class="s2">&quot;Examples/CMastNewL2&quot;</span> <span class="p">)</span> <span class="o">+</span>
+          <span class="nx">DB</span><span class="p">(</span> <span class="nx">pgmDB</span> <span class="p">)</span> <span class="o">+</span>
+          <span class="nx">ImpOpen</span><span class="p">(</span> <span class="o">*</span><span class="nx">No</span> <span class="p">)</span>
+
+    <span class="nx">BegSr</span> <span class="nx">WriteFieldValue</span> 
+        <span class="o">/*</span>
+         <span class="o">|</span> <span class="nx">Put</span> <span class="nx">field</span> <span class="nx">name</span> <span class="nx">to</span> <span class="nx">display</span> <span class="nx">here</span><span class="p">.</span>
+         <span class="o">|</span>               <span class="nx">V</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <pre><code>    Response.Write(CMName) 
+EndSr
+
+BegSr Overrides
+    //pgmDB.Server = '123.123.123.123'
+    //pgmDB.Port = 4567
+    //pgmDB.User = 'Neil'
+    //pgmDB.Password = 'y#dePL%wmcQr'
+EndSr
+
+// ---------------------------------------------------------------------------
+
+BegSr Page_Load Access(*Private) Event(*This.Load)
+    DclSrParm sender Type(*Object)
+    DclSrParm e Type(System.EventArgs)
+
+    DclFld DBName Type(*String) 
+    DclFld FilePath Type(*String) 
+    DclFld User Type(*String) 
+    DclFld Password Type(*String)
+
+    Overrides()
+
+    If Request['dbname'] AND NOT String.IsNullOrEmpty(Request['dbname'].ToString())
+</code></pre>
+<p>DBName = Request[&lsquo;dbname&rsquo;] 
+  pgmDB.DBName = DBName
+        EndIf </p>
+<pre><code>    If Request['filepath'] AND NOT String.IsNullOrEmpty(Request['filepath'].ToString())
+</code></pre>
+<p>FilePath = Request[&lsquo;FilePath&rsquo;].ToString()
+  InputFile.FilePath = FilePath 
+        EndIf </p>
+<pre><code>    If Request['user'] AND NOT String.IsNullOrEmpty(Request['user'].ToString())
+</code></pre>
+<p>User = Request[&lsquo;user&rsquo;].ToString()
+  pgmDB.User = User 
+        EndIf </p>
+<pre><code>    If Request['password'] AND NOT String.IsNullOrEmpty(Request['password'].ToString())
+</code></pre>
+<p>Password = Request[&lsquo;password&rsquo;].ToString()
+  pgmDB.Password = Password
+        EndIf </p>
+<pre><code>    Response.Write('&lt;h1&gt;ASNA DataGate connection test&lt;/h1&gt;')
+
+    Try
+</code></pre>
+<p>Connect pgmDB 
+  Response.Write(String.Format(&lsquo;<h3>Database name: <span class="highlight">{0}</span> connected successfully.</h3>&lsquo;, pgmDB.DBName)) </p>
+<p>Open InputFile
+  Read InputFile</p>
+<p>Response.Write(&lsquo;<h2 class="success">Read record succeeded</h2>&lsquo;)
+  Response.Write(String.Format(&lsquo;<span class="sm-text">File path used: <span class="highlight">{0}</span>&lsquo;, InputFile.FilePath)) 
+  Response.Write(&lsquo;<br><br><span>Field value is: </span><span class="highlight">&lsquo;)</p>
+<p>WriteFieldValue()</p>
+<p>Response.Write(&lsquo;</span>&lsquo;)
+  Response.Write(String.Format(&lsquo;<br><br><span>User profile is: </span><span class="highlight">{0}</span>&lsquo;, pgmDB.User))</p>
+<p>Close *All 
+  Disconnect pgmDB 
+        Catch ex Type(Exception) 
+  Response.Write(&lsquo;<h2 class="failure">Something is wrong</h2>&lsquo;)
+  Response.Write(String.Format(&lsquo;<br><br class="sm-text">Server is: <span class="highlight">{0}</span>&lsquo;, pgmDB.Server)) 
+  Response.Write(String.Format(&lsquo;<br><br class="sm-text">Port is: <span class="highlight">{0}</span>&lsquo;, pgmDB.Port)) 
+  Response.Write(String.Format(&lsquo;<br><br class="sm-text">User is: <span class="highlight">{0}</span>&lsquo;, pgmDB.User)) 
+  Response.Write(String.Format(&lsquo;<br><br class="sm-text">File path is: <span class="highlight">{0}</span>&lsquo;, InputFile.FilePath)) 
+  Response.Write(String.Format(&lsquo;<br><br>Top level error message: <span class="highlight">{0}</span>&lsquo;, ex.Message)) 
+  Response.Write(&lsquo;<br>&lsquo;)
+  PingServer()
+  CheckPort()
+        Finally 
+  If pgmDB.IsOpen
+      // If the job connected, end it.
+      // It will go away anyway after the Session Time-Out 
+      // value expires, but get rid of it quickly this way.
+      Disconnect pgmDB 
+  EndIf 
+        EndTry 
+    EndSr </p>
+<pre><code>BegSr PingServer
+    DclFld Server Type(*String)
+    DclFld MyPing Type(Ping) New()
+    DclFld Reply Type(PingReply)
+
+    Server = pgmDB.Server
+
+    Try
+</code></pre>
+<p>Reply = myPing.Send(Server, 1000)</p>
+<p>If Reply.Status = IPStatus.Success
+      Response.Write(String.Format(&lsquo;<br>Ping to {0} succeeded.&rsquo;, Server))
+  Else 
+      Response.Write(String.Format(&lsquo;<br>Ping to {0} failed&rsquo;, Server))
+  EndIf 
+        Catch ex Type(Exception) 
+  Response.Write(&lsquo;<br>Attempt to ping server failed.&rsquo;)
+  Response.Write(String.Format(&lsquo;<br><span class="sm-text">Exception that occurred pinging server {0}: {1}</span>&lsquo;, Server, ex.Message))               <br />
+        EndTry 
+    EndSr</p>
+<pre><code>BegSr CheckPort 
+    DclFld Port Type(*Integer4) 
+    DclFld Server Type(*String)
+
+    Server = pgmDB.Server
+    Port = pgmDB.Port
+
+    BegUsing tcpc Type(TcpClient) Value(*New TcpClient())
+</code></pre>
+<p>Try 
+      tcpc.Connect(Server, Port)    <br />
+      Response.Write(String.Format(&lsquo;<br>Port {0} appears to be open&rsquo;, Port))
+  Catch ex Type(Exception) 
+      Response.Write(String.Format(&lsquo;<br>Port {0} does not appear to be open&rsquo;, Port)) 
+      Response.Write(String.Format(&lsquo;<br><span class="sm-text">Exception that occurred checking port {0}: {1}</span>&lsquo;, Port, ex.Message))               <br />
+  EndTry 
+        EndUsing 
+    EndSr
+</script></p>
+<p><html xmlns="http://www.w3.org/1999/xhtml" >
+<head runat="server">
+    <title>Test ASNA DataGate</title>
+    <style>
+        body {
+  font-family: sans-serif;
+        }
+        .failure {
+  color: red;
+        }
+        .success {
+  color: green;
+        }
+        .highlight {
+  background-color: darkgrey;
+  padding: .5em;
+        }
+        .sm-text {
+  font-size: 75%;
+        }
+    </style>
+</head></p>
+<body>
+    <form id="form1" runat="server">
+    <div>
+        <br />
+        <hr>
+        <h3>Provide optional test overrides below:</h3>
+
+        <br />
+        <label for "dbname">Override DB Name:</label>
+        <br />  
+        <input type="text" name="dbname"/>
+        <br />  
+
+        <br />
+        <label for "filepath">Override file path:</label>
+        <br />  
+        <input type="text" name="filepath"/>
+        <br /> 
+        <span class="sm-text">Enter file path in the form "Library/File"</span>
+
+        <br />
+        <br />
+        <label for "user">Override user profile:</label>
+        <br />  
+        <input type="text" name="user"/>
+        <br />  
+
+        <br />
+        <label for "password">Override password:</label>
+        <br />  
+        <input type="text" name="password"/>
+        <br />  
+        <br />
+
+        <button type="submit">Submit test again</button>
+    </div>
+    </form>
+</body>
+<p></html></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>
