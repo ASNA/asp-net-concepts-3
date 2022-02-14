@@ -14,9 +14,11 @@
             </div>
             <div class="subnav r">
                 <div class="controls">
-                    <asp:Button ID="buttonNext" runat="server" Text="Next" />
+                    <asp:Button ID="buttonFirst" runat="server" Text="First" CssClass="me-3" />
+                    <asp:Button ID="buttonNext" runat="server" Text="Next"  CssClass="me-3"/>
+                    <asp:Button ID="buttonPrev" runat="server" Text="Prev" CssClass="me-3" />
                     <asp:Panel ID="Panel1" runat="server" DefaultButton="buttonPositionTo">
-                        <asp:Button cssClass="ms-3" ID="buttonPositionTo" runat="server" Text="Position to"/>
+                        <asp:Button cssClass="xxms-3" ID="buttonPositionTo" runat="server" Text="Position to"/>
                         <asp:TextBox ID="textboxPositionTo" runat="server" placeholder="Position to value"></asp:TextBox>
                     </asp:Panel> 
                 </div>

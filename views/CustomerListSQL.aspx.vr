@@ -122,6 +122,10 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
         DclSrParm sender Type(*Object)
         DclSrParm e Type(System.EventArgs)
 
+        buttonPrev.Enabled = (*This.PageNumber > 2) ? *True : *False
+
+        *This.Title =  *This.PageNumber
+
         Viewstate['whereclause'] = *This.WhereClause
         ViewState['pagenumber'] = *This.PageNumber
     EndSr
@@ -160,22 +164,17 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
 		DclSrParm e Type(System.EventArgs)
 
         If String.IsNullOrEmpty(textboxPositionTo.Text)
-            *This.WhereClause = *Nothing 
-            *This.PageNumber = 1 
-            
-            GetPageData()
-//            *This.PageNumber += 1
             LeaveSr
         EndIf
 
-//        DclFld AllDigits Type(*String) Inz('^\d+$') 
-//        If RegEx.Matches(textboxPositionTo.Text.Trim(), AllDigits)
+        DclFld AllDigits Type(*String) Inz('^\d+$') 
+        
+        //If RegEx.IsMatch(textboxPositionTo.Text.Trim(), AllDigits)
 //            *This.WhereClause = String.Format("LOWER(cmname) LIKE '%{0}%'", textboxPositionTo.Text.ToLower().Trim())
 //        EndIf 
 
         If textboxPositionTo.Text.Trim().Substring(0,1) = '^'
-            //textboxPositionTo.Text = Regex.Replace(textboxPositionTo.Text,'^',String.Empty) 
-            textboxPositionTo.Text = textboxPositionTo.Text.Replace('^',String.Empty)
+            textboxPositionTo.Text = Regex.Replace(textboxPositionTo.Text,'\^',String.Empty) 
             *This.WhereClause = String.Format("LOWER(cmname) >= '{0}'", textboxPositionTo.Text.ToLower().Trim())
         Else 
             *This.WhereClause = String.Format("lower(concat(cmcustno,trim(cmname))) LIKE '%{0}%'", textboxPositionTo.Text.ToLower().Trim())
@@ -220,6 +219,25 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
         EndIf 
 	EndSr
 
+	BegSr buttonFirst_Click Access(*Private) Event(*This.buttonFirst.Click)
+		DclSrParm sender Type(*Object)
+		DclSrParm e Type(System.EventArgs)
+		
+        *This.WhereClause = *Nothing 
+        *This.PageNumber = 1 
+            
+        GetPageData()
+	EndSr
+
+	BegSr buttonPrev_Click Access(*Private) Event(*This.buttonPrev.Click)
+		DclSrParm sender Type(*Object)
+		DclSrParm e Type(System.EventArgs)
+
+        *This.WhereClause = *Nothing 
+        *This.PageNumber -= 2 
+                
+        GetPageData()
+	EndSr
 EndClass
 
 BegClass Customer Access(*Public) 
