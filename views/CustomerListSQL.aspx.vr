@@ -26,6 +26,8 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
     // App and Session state helper. 
     DclFld StateHelper Type(AppStateHelpers) New(*This.Context) 
 
+    DclFld SkipPreRender Type(*Boolean) 
+
     // Global variables to hold current PageNumber and WhereClause 
     // for the life of this class (which only lasts from PageLoad to PageUnload). 
     DclFld PageNumber Type(*Integer4) 
@@ -88,13 +90,23 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
         DclSrParm sender Type(*Object)
         DclSrParm e Type(System.EventArgs)
 
+        If *This.SkipPreRender
+            LeaveSr 
+        EndIf 
+
         // The PreRender is your last change to update the UI or 
         // save values to Session or ViewState collections.
 
         // Set Prev and First buttons enabled based on current page.         
         buttonPrev.Enabled = (*This.PageNumber > 2) ? *True : *False
-        buttonFirst.Enabled = buttonPrev.Enabled
+        If NOT String.IsNullOrEmpty(*This.WhereClause) 
+            buttonFirst.Enabled = *True
+        Else 
+            buttonFirst.Enabled = buttonPrev.Enabled
+        EndIf 
 
+        textboxSearch.Text = String.Empty 
+        
         // Save WhereClause and PageNumber to Viewstate so they are 
         // available for the next instance of this class.
         Viewstate['whereclause'] = *This.WhereClause
@@ -179,6 +191,7 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
 		DclSrParm e Type(System.EventArgs)
 
         If String.IsNullOrEmpty(textboxSearch.Text)
+            *This.SkipPreRender = *True 
             // If no search value provided, ignore search request.
             LeaveSr
         EndIf
@@ -187,11 +200,11 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
         // name provided.
         If textboxSearch.Text.Trim().Substring(0,1) = '^'
             textboxSearch.Text = Regex.Replace(textboxSearch.Text,'\^',String.Empty) 
-            *This.WhereClause = String.Format("LOWER(cmname) >= '{0}'", textboxSearch.Text.ToLower().Trim())
+            *This.WhereClause = String.Format("WHERE LOWER(cmname) >= '{0}'", textboxSearch.Text.ToLower().Trim())
         // Otherwise, do an SQL LIKE search looking for the given value in the customer name or custom number. 
         // This makes the search less model. The search mechanism can find customers by either name or number.
         Else 
-            *This.WhereClause = String.Format("lower(concat(cmcustno,trim(cmname))) LIKE '%{0}%'", textboxSearch.Text.ToLower().Trim())
+            *This.WhereClause = String.Format("WHERE LOWER(CONCAT(cmcustno,trim(cmname))) LIKE '%{0}%'", textboxSearch.Text.ToLower().Trim())
         EndIf 
 
         // Show new page. During PreRender the WhereClause is saved in Viewstate. The next page of customers
@@ -232,11 +245,6 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
     EndFunc
 
     BegSr GetAndShowPage
-        // Declare an SQL string variable.
-        DclFld Sql Type(*String) 
-        // Declare a string dictionary for the SQL clauses.
-        DclFld SqlClauses Type(Dictionary (*Of *String, *String)) New()       
-
         // Instance the PagedData class.
 
         // 1. DGDB = DG database connection to use for RPG program call.
@@ -248,27 +256,24 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
         pd = *New PagedData(DGDB, 'qtemp', 'rpzimmie', 'sqlimmed', PAGE_SIZE, *TypeOf(CustomerPageModel)) 
 
         // Add SELECT clause. These field names must be present in the GridModel.
-        SqlClauses.Add('select', 'cmcustno, cmname')   
+        pd.AddSQLSelect('select cmcustno, cmname')   
         // Add FROM clauses. The file specified must contain the fields in the SELECT clause.
-        SqlClauses.Add('from', 'examples/cmastnewL2')  
+        pd.AddSQLFrom('from examples/cmastnewL2')  
 
         // If a WhereClause is provided add it to SQL clauses.        
         If NOT String.IsNullOrEmpty(*This.WhereClause) 
-            SqlClauses.Add('where', *This.WhereClause) 
+            pd.AddSQLWhere(*This.WhereClause) 
         EndIf 
         
         // Add a valid ORDER BY clause. 
-        SqlClauses.Add('orderby', 'cmname, cmcustno')  
-
-        // Create the SQL. 
-        Sql = PagedData.CreateSql(SqlClauses) 
+        pd.AddSQLOrderBy('order by cmname, cmcustno')  
 
         //  Query and write the page data. 
         //  SQL's OFFSET value is zero-based. An OFFSET of zero gets you page 1. To help keep you sane, the 
         //  page number provided to the `WriteThenReadTempFile` method is one-based (ie, when PageNumber = 1 you get page 1.) 
         //  A "page" of data is derived by SQL with its LIMIT and OFFSET classes and the ORDER BY clause governs the arrival
         //  sequence of the rows into the list and how pages are determined.          
-        pd.WriteThenReadTempFile(*This.PageNumber, Sql)
+        pd.WriteThenReadTempFile(*This.PageNumber)
 
         // If no rows were read in the PagedData class, show no rows found message.
         If pd.RowsRead = 0 
@@ -294,7 +299,7 @@ BegClass views_CustomerListSQL Partial(*Yes) Access(*Public) Extends(System.Web.
         CustomerNumber = StateHelper.GetSessionValueAsInt32('first-customer-number')
 
         // This weird-looking WHERE clause is an SQL hack to achieve SETLL-like behvavior.
-        *This.WhereClause = String.Format("LOWER(CONCAT(LOWER(TRIM(cmname)),cmcustno)) >= '{0}{1}'", +
+        *This.WhereClause = String.Format("WHERE LOWER(CONCAT(LOWER(TRIM(cmname)),cmcustno)) >= '{0}{1}'", +
                                           CustomerName.ToLower().Trim(), CustomerNumber.ToString())
         Viewstate['whereclause'] = *This.WhereClause
         *This.PageNumber = 1 
